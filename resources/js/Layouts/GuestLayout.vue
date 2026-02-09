@@ -40,14 +40,14 @@ onUnmounted(() => {
             <div class="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]"></div>
         </div>
 
-        <div class="relative z-10 mb-8 drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-700 hover:scale-105">
+        <div class="relative z-10 mb-4 drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-700 hover:scale-105">
             <Link href="/">
-                <ApplicationLogo class="h-64 fill-current text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all hover:drop-shadow-[0_0_25_rgba(255,255,255,0.5)]" />
+                <ApplicationLogo class="h-56 w-auto fill-current text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] transition-all" />
             </Link>
         </div>
 
         <div
-            class="relative z-10 w-full sm:max-w-md mt-4 px-10 py-12 bg-white/5 backdrop-blur-3xl overflow-hidden sm:rounded-3xl border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-all duration-500 hover:border-white/20"
+            class="relative z-10 w-[min(90vw,440px)] mt-4 px-8 py-10 sm:px-12 sm:py-14 bg-white/[0.07] backdrop-blur-[40px] overflow-hidden rounded-[2.5rem] border border-white/20 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] transition-all duration-500 hover:bg-white/[0.09] hover:border-white/30"
         >
             <slot />
         </div>

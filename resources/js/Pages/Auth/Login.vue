@@ -40,13 +40,13 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="space-y-12">
+        <form @submit.prevent="submit" class="space-y-10">
             <!-- Email Input -->
-            <div class="relative group">
+            <div class="relative group h-[72px]">
                 <TextInput
                     id="email"
                     type="email"
-                    class="peer block w-full bg-transparent !border-none !ring-0 !shadow-none px-8 py-5 transition-all duration-300 rounded-2xl outline-none text-white z-20 text-[17px]"
+                    class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
                     v-model="form.email"
                     required
                     autofocus
@@ -55,34 +55,34 @@ const submit = () => {
                 />
                 
                 <!-- Notched Border -->
-                <fieldset class="absolute inset-0 border border-white/20 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-[#a78bfa] group-hover:border-white/40 z-10">
-                    <legend class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap
-                                   peer-focus:px-2 peer-focus:max-w-full
-                                   [:not(:placeholder-shown)]:px-2 [:not(:placeholder-shown)]:max-w-full">
-                        <span class="text-[11px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.15em]">Email Address</span>
+                <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-cyan-400 group-hover:border-white/40 z-10">
+                    <legend 
+                        class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
+                        :class="{ 'floating-notch': form.email }"
+                    >
+                        <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
                     </legend>
                 </fieldset>
 
                 <label 
                     for="email" 
-                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[17px]
-                           peer-focus:top-0 peer-focus:text-[11px] peer-focus:text-[#a78bfa] peer-focus:font-bold peer-focus:tracking-[0.15em] peer-focus:uppercase
-                           [:not(:placeholder-shown)]:top-0 [:not(:placeholder-shown)]:text-[11px] [:not(:placeholder-shown)]:text-[#a78bfa] [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-[0.15em] [:not(:placeholder-shown)]:uppercase"
+                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                    :class="{ 'floating-label': form.email }"
                 >
                     Email Address
                 </label>
                 <div class="absolute -bottom-6 left-2">
-                    <InputError class="text-red-400 text-xs font-semibold drop-shadow-sm" :message="form.errors.email" />
+                    <InputError class="text-red-400 text-[11px] font-semibold drop-shadow-sm" :message="form.errors.email" />
                 </div>
             </div>
 
             <!-- Password Input -->
-            <div class="relative group">
-                <div class="relative">
+            <div class="relative group h-[72px]">
+                <div class="relative h-full">
                     <TextInput
                         id="password"
                         :type="showPassword ? 'text' : 'password'"
-                        class="peer block w-full bg-transparent !border-none !ring-0 !shadow-none px-8 py-5 transition-all duration-300 rounded-2xl outline-none text-white z-20 text-[17px]"
+                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
                         v-model="form.password"
                         required
                         autocomplete="current-password"
@@ -90,19 +90,19 @@ const submit = () => {
                     />
 
                     <!-- Notched Border -->
-                    <fieldset class="absolute inset-0 border border-white/20 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-[#a78bfa] group-hover:border-white/40 z-10">
-                        <legend class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap
-                                       peer-focus:px-2 peer-focus:max-w-full
-                                       [:not(:placeholder-shown)]:px-2 [:not(:placeholder-shown)]:max-w-full">
-                            <span class="text-[11px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.15em]">Password</span>
+                    <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-cyan-400 group-hover:border-white/40 z-10">
+                        <legend 
+                            class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
+                            :class="{ 'floating-notch': form.password }"
+                        >
+                            <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Password</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="password" 
-                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[17px]
-                               peer-focus:top-0 peer-focus:text-[11px] peer-focus:text-[#a78bfa] peer-focus:font-bold peer-focus:tracking-[0.15em] peer-focus:uppercase
-                               [:not(:placeholder-shown)]:top-0 [:not(:placeholder-shown)]:text-[11px] [:not(:placeholder-shown)]:text-[#a78bfa] [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-[0.15em] [:not(:placeholder-shown)]:uppercase"
+                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                        :class="{ 'floating-label': form.password }"
                     >
                         Password
                     </label>
@@ -110,7 +110,7 @@ const submit = () => {
                         v-if="form.password"
                         type="button" 
                         @click="showPassword = !showPassword"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors focus:outline-none p-2 rounded-full hover:bg-white/10 z-30"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors focus:outline-none p-2 rounded-full hover:bg-white/10 z-30"
                     >
                         <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
@@ -121,15 +121,15 @@ const submit = () => {
                         </svg>
                     </button>
                 </div>
-                <div class="absolute -bottom-7 left-2">
-                    <InputError class="text-red-400 text-xs font-semibold drop-shadow-sm" :message="form.errors.password" />
+                <div class="absolute -bottom-6 left-2">
+                    <InputError class="text-red-400 text-[11px] font-semibold drop-shadow-sm" :message="form.errors.password" />
                 </div>
             </div>
 
-            <div class="mt-10 flex items-center justify-between">
+            <div class="mt-8 flex items-center justify-between px-2">
                 <label class="flex items-center cursor-pointer group">
-                    <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/30 bg-white/20 text-[#a78bfa] transition-all shadow-sm" />
-                    <span class="ms-3 text-sm text-gray-400 group-hover:text-white transition-colors"
+                    <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-cyan-400 transition-all shadow-sm" />
+                    <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors"
                         >Stay logged in</span
                     >
                 </label>
@@ -137,7 +137,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm text-[#a78bfa] hover:text-[#c4b5fd] transition-colors font-medium border-b border-transparent hover:border-[#c4b5fd]"
+                    class="text-sm text-cyan-400 hover:text-cyan-300 transition-colors font-medium border-b border-transparent hover:border-cyan-300"
                 >
                     Forgot Password?
                 </Link>
@@ -145,7 +145,7 @@ const submit = () => {
 
             <div class="mt-12">
                 <PrimaryButton
-                    class="w-full justify-center py-4 bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] hover:from-[#4338ca] hover:to-[#6d28d9] text-white font-bold text-lg tracking-[0.2em] shadow-[0_20px_40px_-15px_rgba(79,70,229,0.5)] transition-all duration-300 rounded-2xl active:scale-95 group overflow-hidden relative"
+                    class="w-full justify-center py-5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(6,182,212,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
                     :class="{ 'opacity-50 pointer-events-none': form.processing }"
                     :disabled="form.processing"
                 >
@@ -159,8 +159,23 @@ const submit = () => {
 </template>
 
 <style scoped>
+.peer:focus ~ fieldset legend,
+.floating-notch {
+    max-width: 100% !important;
+    padding: 0 12px !important;
+}
+
+.peer:focus ~ label,
+.floating-label {
+    top: 0 !important;
+    font-size: 12px !important;
+    color: #22d3ee !important; /* cyan-400 */
+    font-weight: 700 !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
+}
+
 fieldset {
     margin-top: -1px;
 }
 </style>
-```
