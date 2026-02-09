@@ -55,7 +55,7 @@ const submit = () => {
                 />
                 
                 <!-- Notched Border -->
-                <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-cyan-400 group-hover:border-white/40 z-10">
+                <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/40 z-10">
                     <legend 
                         class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                         :class="{ 'floating-notch': form.email }"
@@ -66,7 +66,7 @@ const submit = () => {
 
                 <label 
                     for="email" 
-                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
                     :class="{ 'floating-label': form.email }"
                 >
                     Email Address
@@ -90,7 +90,7 @@ const submit = () => {
                     />
 
                     <!-- Notched Border -->
-                    <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-cyan-400 group-hover:border-white/40 z-10">
+                    <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/40 z-10">
                         <legend 
                             class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                             :class="{ 'floating-notch': form.password }"
@@ -101,7 +101,7 @@ const submit = () => {
 
                     <label 
                         for="password" 
-                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
                         :class="{ 'floating-label': form.password }"
                     >
                         Password
@@ -128,7 +128,7 @@ const submit = () => {
 
             <div class="mt-8 flex items-center justify-between px-2">
                 <label class="flex items-center cursor-pointer group">
-                    <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-cyan-400 transition-all shadow-sm" />
+                    <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-indigo-400 transition-all shadow-sm" />
                     <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors"
                         >Stay logged in</span
                     >
@@ -137,7 +137,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm text-cyan-400 hover:text-cyan-300 transition-colors font-medium border-b border-transparent hover:border-cyan-300"
+                    class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium border-b border-transparent hover:border-indigo-300"
                 >
                     Forgot Password?
                 </Link>
@@ -145,7 +145,7 @@ const submit = () => {
 
             <div class="mt-12">
                 <PrimaryButton
-                    class="w-full justify-center py-5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(6,182,212,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
+                    class="w-full justify-center py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(79,70,229,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
                     :class="{ 'opacity-50 pointer-events-none': form.processing }"
                     :disabled="form.processing"
                 >
@@ -169,7 +169,7 @@ const submit = () => {
 .floating-label {
     top: 0 !important;
     font-size: 12px !important;
-    color: #22d3ee !important; /* cyan-400 */
+    color: #818cf8 !important; /* indigo-400 */
     font-weight: 700 !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;

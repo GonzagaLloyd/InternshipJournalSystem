@@ -26,30 +26,34 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[#020617] overflow-hidden relative font-sans">
-        <!-- High Quality Background Carousel -->
-        <div class="absolute inset-0 z-0 overflow-hidden bg-[#020617]">
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden bg-slate-950">
+        <!-- Background Carousel -->
+        <div class="absolute inset-0 z-0">
             <Transition name="fade" mode="out-in">
                 <img 
                     :key="currentBg"
                     :src="backgrounds[currentBg]" 
-                    class="absolute inset-0 w-full h-full object-cover opacity-80 scale-105"
+                    class="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-[3000ms] brightness-[0.4]"
                     alt="Background"
                 />
             </Transition>
-            <div class="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]"></div>
+            <!-- Overlay and Blur -->
+            <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"></div>
         </div>
 
-        <div class="relative z-10 mb-4 drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-700 hover:scale-105">
-            <Link href="/">
-                <ApplicationLogo class="h-56 w-auto fill-current text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] transition-all" />
-            </Link>
-        </div>
+        <!-- Content Container (Pulled up for better balance) -->
+        <div class="relative z-10 flex flex-col items-center w-full max-w-lg -mt-[8vh]">
+            <div class="mb-2 drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)] transition-all duration-700 hover:scale-105">
+                <Link href="/">
+                    <ApplicationLogo class="h-64 w-auto fill-current text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]" />
+                </Link>
+            </div>
 
-        <div
-            class="relative z-10 w-[min(90vw,440px)] mt-4 px-8 py-10 sm:px-12 sm:py-14 bg-white/[0.07] backdrop-blur-[40px] overflow-hidden rounded-[2.5rem] border border-white/20 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] transition-all duration-500 hover:bg-white/[0.09] hover:border-white/30"
-        >
-            <slot />
+            <div
+                class="w-full bg-white/[0.08] backdrop-blur-[45px] overflow-hidden rounded-[2.5rem] border border-white/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] transition-all duration-500 hover:bg-white/[0.1] hover:border-white/30 px-8 py-10 sm:px-12 sm:py-14"
+            >
+                <slot />
+            </div>
         </div>
     </div>
 </template>
