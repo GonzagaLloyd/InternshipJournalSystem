@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\JournalController;
 
 // ============================================================================
 // PUBLIC ROUTES
@@ -18,10 +19,8 @@ Route::get('/', function () {
 // AUTHENTICATED ROUTES
 // ============================================================================
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::get('/dashboard', [JournalController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/journal', [JournalController::class, 'store'])->middleware(['auth'])->name('journal.store');
 
 
 // ============================================================================
