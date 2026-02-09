@@ -17,7 +17,7 @@ let intervalId = null;
 onMounted(() => {
     intervalId = setInterval(() => {
         currentBg.value = (currentBg.value + 1) % backgrounds.length;
-    }, 30000); // 30 seconds cycle
+    }, 15000); // 15 seconds cycle
 });
 
 onUnmounted(() => {
