@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased bg-[#161412] text-[#d9c5a3];
+        background-color: #161412;
+        background-image:
+            radial-gradient(circle at 50% 50%, rgba(37, 33, 30, 0.4) 0%, transparent 100%);
+        background-attachment: fixed;
+    }
+}
+
+@layer components {
+    .glass-sidebar {
+        @apply bg-[#1c1a18] border-r border-[#3d352e] shadow-2xl;
+    }
+
+    .glass-card {
+        @apply bg-[#25211e] border border-[#3d352e] rounded-2xl shadow-2xl transition-all duration-500 hover:border-[#5c4d44];
+    }
+
+    .glass-input {
+        @apply bg-[#1a1715] border border-[#3d352e] focus:border-[#8b2635]/50 focus:ring-4 focus:ring-[#8b2635]/10 transition-all duration-300 rounded-xl text-[#d9c5a3];
+    }
+}
+
+/* Custom scrollbar to keep it clean */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
