@@ -55,23 +55,23 @@ const submit = () => {
                 />
                 
                 <!-- Notched Border -->
-                <fieldset class="absolute inset-0 border border-white/20 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/30 z-10">
+                <fieldset class="absolute inset-0 border border-white/30 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/50 z-10">
                     <legend class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap
                                    peer-focus:px-2 peer-focus:max-w-full
                                    [:not(:placeholder-shown)]:px-2 [:not(:placeholder-shown)]:max-w-full">
-                        <span class="text-xs px-2 opacity-0 select-none">Email Address</span>
+                        <span class="text-[10px] px-2 opacity-0 select-none">Email Address</span>
                     </legend>
                 </fieldset>
 
                 <label 
                     for="email" 
-                    class="absolute left-10 top-1/2 -translate-y-[52%] text-gray-500 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-base
-                           peer-focus:-top-[1px] peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-indigo-400 peer-focus:font-bold peer-focus:tracking-wider
-                           [:not(:placeholder-shown)]:-top-[1px] [:not(:placeholder-shown)]:translate-y-0 [:not(:placeholder-shown)]:text-xs [:not(:placeholder-shown)]:text-indigo-400 [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-wider"
+                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/70 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-sm
+                           peer-focus:-top-2 peer-focus:text-xs peer-focus:text-indigo-400 peer-focus:font-bold peer-focus:tracking-wider
+                           [:not(:placeholder-shown)]:-top-2 [:not(:placeholder-shown)]:text-xs [:not(:placeholder-shown)]:text-indigo-400 [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-wider"
                 >
                     Email Address
                 </label>
-                <InputError class="mt-2 text-red-100/80 text-xs" :message="form.errors.email" />
+                <InputError class="mt-2 text-red-100/90 text-xs font-semibold drop-shadow-sm" :message="form.errors.email" />
             </div>
 
             <!-- Password Input -->
@@ -88,19 +88,19 @@ const submit = () => {
                     />
 
                     <!-- Notched Border -->
-                    <fieldset class="absolute inset-0 border border-white/20 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/30 z-10">
+                    <fieldset class="absolute inset-0 border border-white/30 rounded-2xl pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/50 z-10">
                         <legend class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap
                                        peer-focus:px-2 peer-focus:max-w-full
                                        [:not(:placeholder-shown)]:px-2 [:not(:placeholder-shown)]:max-w-full">
-                            <span class="text-xs px-2 opacity-0 select-none">Password</span>
+                            <span class="text-[10px] px-2 opacity-0 select-none">Password</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="password" 
-                        class="absolute left-10 top-1/2 -translate-y-[52%] text-gray-500 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-base
-                               peer-focus:-top-[1px] peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-indigo-400 peer-focus:font-bold peer-focus:tracking-wider
-                               [:not(:placeholder-shown)]:-top-[1px] [:not(:placeholder-shown)]:translate-y-0 [:not(:placeholder-shown)]:text-xs [:not(:placeholder-shown)]:text-indigo-400 [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-wider"
+                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/70 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-sm
+                               peer-focus:-top-2 peer-focus:text-xs peer-focus:text-indigo-400 peer-focus:font-bold peer-focus:tracking-wider
+                               [:not(:placeholder-shown)]:-top-2 [:not(:placeholder-shown)]:text-xs [:not(:placeholder-shown)]:text-indigo-400 [:not(:placeholder-shown)]:font-bold [:not(:placeholder-shown)]:tracking-wider"
                     >
                         Password
                     </label>
