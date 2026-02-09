@@ -1,15 +1,33 @@
 <script setup>
+import { onBeforeUnmount, ref } from 'vue';
+
 const props = defineProps({
     form: Object,
     formattedDate: String
 });
 
-const getPreviewUrl = (file) => {
-    if (!file || !(file instanceof File || file instanceof Blob)) return '';
-    return window.URL.createObjectURL(file);
+defineEmits(['submit']);
+
+const previewUrls = ref({});
+
+const getPreviewUrl = (file, key) => {
+    if (!file || !(file instanceof File || file instanceof Blob)) {
+        return '';
+    }
+    
+    // Revoke old URL if it exists to prevent memory leaks
+    if (previewUrls.value[key]) {
+        window.URL.revokeObjectURL(previewUrls.value[key]);
+    }
+    
+    const url = window.URL.createObjectURL(file);
+    previewUrls.value[key] = url;
+    return url;
 };
 
-defineEmits(['submit']);
+onBeforeUnmount(() => {
+    Object.values(previewUrls.value).forEach(url => window.URL.revokeObjectURL(url));
+});
 </script>
 
 <template>
@@ -57,7 +75,7 @@ defineEmits(['submit']);
                 {{ form.errors.content }}
             </div>
 
-            <!-- Media Preview Area (Conditional) -->
+            <!-- Media Preview Area -->
             <div v-if="form.image || form.video || form.audio || form.file" class="mt-8 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div class="flex items-center gap-4 mb-4 opacity-40">
                     <span class="text-[9px] uppercase tracking-[0.4em] text-[#8c7e6a] font-black whitespace-nowrap">Manuscript Attachments</span>
@@ -67,8 +85,8 @@ defineEmits(['submit']);
                 <div class="flex flex-wrap gap-4">
                     <!-- Image Preview -->
                     <div v-if="form.image" class="relative group h-24 w-24 bg-black/40 border border-[#3d352e] rounded-xl overflow-hidden shadow-xl shadow-black/40">
-                        <img :src="getPreviewUrl(form.image)" class="w-full h-full object-cover opacity-60" />
-                        <button @click="form.image = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <img :src="getPreviewUrl(form.image, 'image')" class="w-full h-full object-cover opacity-60" />
+                        <button type="button" @click="form.image = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <span class="text-[9px] text-white font-black uppercase tracking-widest">Remove</span>
                         </button>
                     </div>
@@ -76,8 +94,8 @@ defineEmits(['submit']);
                     <!-- Video Preview -->
                     <div v-if="form.video" class="relative group h-24 w-32 bg-black/40 border border-[#b14c5c]/40 rounded-xl flex flex-col items-center justify-center px-2 shadow-xl shadow-black/40">
                         <svg class="w-6 h-6 text-[#8b2635] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.video.name }}</span>
-                        <button @click="form.video = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.video.name || 'Video selected' }}</span>
+                        <button type="button" @click="form.video = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
                             <span class="text-[9px] text-white font-black uppercase tracking-widest">Remove</span>
                         </button>
                     </div>
@@ -85,8 +103,8 @@ defineEmits(['submit']);
                     <!-- Audio Preview -->
                     <div v-if="form.audio" class="relative group h-24 w-32 bg-black/40 border border-[#d9c5a3]/20 rounded-xl flex flex-col items-center justify-center px-2 shadow-xl shadow-black/40">
                         <svg class="w-6 h-6 text-[#d9c5a3] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.audio.name }}</span>
-                        <button @click="form.audio = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.audio.name || 'Audio selected' }}</span>
+                        <button type="button" @click="form.audio = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
                             <span class="text-[9px] text-white font-black uppercase tracking-widest">Remove</span>
                         </button>
                     </div>
@@ -94,8 +112,8 @@ defineEmits(['submit']);
                     <!-- File Preview -->
                     <div v-if="form.file" class="relative group h-24 w-32 bg-black/40 border border-[#3d352e] rounded-xl flex flex-col items-center justify-center px-2 shadow-xl shadow-black/40">
                         <svg class="w-6 h-6 text-[#8c7e6a] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.file.name }}</span>
-                        <button @click="form.file = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                        <span class="text-[8px] text-[#8c7e6a] font-bold text-center truncate w-full">{{ form.file.name || 'File selected' }}</span>
+                        <button type="button" @click="form.file = null" class="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
                             <span class="text-[9px] text-white font-black uppercase tracking-widest">Remove</span>
                         </button>
                     </div>
