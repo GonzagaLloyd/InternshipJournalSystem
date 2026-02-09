@@ -20,6 +20,7 @@ Route::get('/', function () {
 // ============================================================================
 
 Route::get('/dashboard', [JournalController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/entries', [JournalController::class, 'entries'])->middleware(['auth'])->name('journal.index');
 Route::post('/journal', [JournalController::class, 'store'])->middleware(['auth'])->name('journal.store');
 
 

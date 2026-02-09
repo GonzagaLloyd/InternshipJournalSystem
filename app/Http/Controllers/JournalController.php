@@ -10,9 +10,15 @@ class JournalController extends Controller
 {
     public function index()
     {
-        $entries = JournalEntry::where('user_id', auth()->id())->latest()->get();
         return Inertia::render('Dashboard', [
-            'entries' => $entries,
+            'entryCount' => JournalEntry::where('user_id', auth()->id())->count(),
+        ]);
+    }
+
+    public function entries()
+    {
+        return Inertia::render('Entries/Index', [
+            'entries' => JournalEntry::where('user_id', auth()->id())->latest()->get(),
         ]);
     }
 

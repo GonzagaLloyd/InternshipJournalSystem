@@ -11,10 +11,10 @@ const user = usePage().props.auth.user;
 const emit = defineEmits(['close']);
 
 const menuItems = [
-    { name: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', route: 'dashboard', current: true },
-    { name: 'Entries', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', count: null },
-    { name: 'Tasks', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', count: null },
-    { name: 'Calendar', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { name: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', routeName: 'dashboard' },
+    { name: 'Entries', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', routeName: 'journal.index' },
+    { name: 'Tasks', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', routeName: '#' },
+    { name: 'Calendar', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', routeName: '#' },
 ];
 
 const managementItems = [
@@ -47,9 +47,9 @@ const managementItems = [
                 <Link 
                     v-for="item in menuItems"
                     :key="item.name"
-                    href="#"
+                    :href="item.routeName === '#' ? '#' : route(item.routeName)"
                     :class="[
-                        item.current ? 'bg-[#3d352e] text-white shadow-xl' : 'text-[#8c7e6a] hover:bg-[#2d2a27] hover:text-[#d9c5a3]',
+                        route().current(item.routeName) ? 'bg-[#3d352e] text-white shadow-xl' : 'text-[#8c7e6a] hover:bg-[#2d2a27] hover:text-[#d9c5a3]',
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
                         'flex items-center transition-all duration-300 group relative'
                     ]"
@@ -60,7 +60,6 @@ const managementItems = [
                         </svg>
                     </div>
                     <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif">{{ item.name }}</span>
-                    <span v-if="!isCollapsed && item.count" class="ml-auto text-[10px] bg-[#8b2635] px-2 py-0.5 rounded-full text-[#f4e4bc] font-black shadow-lg shadow-[#8b2635]/20">{{ item.count }}</span>
                 </Link>
             </div>
 

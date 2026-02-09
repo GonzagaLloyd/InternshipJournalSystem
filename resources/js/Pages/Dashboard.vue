@@ -14,7 +14,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 }).format(new Date());
 
 defineProps({
-    entries: Array,
+    entryCount: Number,
 })
 
 const form = useForm({
