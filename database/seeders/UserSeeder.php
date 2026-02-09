@@ -1,0 +1,22 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class UserSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        User::create([
+            'name' => 'Lloyd S. Gonzaga',
+            'email' => 'lloyd.gonzaga@msunaawan.edu.ph',
+            'password' => Hash::make('101GONZAGA9919'),
+        ]);
+    }
+}
