@@ -40,45 +40,57 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="space-y-10">
+        <form @submit.prevent="submit" class="space-y-12">
             <!-- Email Input -->
-            <div class="relative group h-[72px]">
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                    placeholder=" "
-                />
-                
-                <!-- Notched Border -->
-                <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/40 z-10">
-                    <legend 
-                        class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
-                        :class="{ 'floating-notch': form.email }"
+            <div class="relative group">
+                <div class="relative h-[72px]">
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
+                        v-model="form.email"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder=" "
+                    />
+                    
+                    <!-- Notched Border -->
+                    <fieldset 
+                        class="absolute inset-0 border rounded-[1.25rem] pointer-events-none transition-all duration-300 z-10"
+                        :class="[
+                            form.errors.email 
+                                ? 'border-red-500/50 group-hover:border-red-500/80 peer-focus:border-red-500' 
+                                : 'border-white/20 group-hover:border-white/40 peer-focus:border-indigo-400'
+                        ]"
                     >
-                        <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
-                    </legend>
-                </fieldset>
+                        <legend 
+                            class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
+                            :class="{ 'floating-notch': form.email || form.errors.email }"
+                        >
+                            <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
+                        </legend>
+                    </fieldset>
 
-                <label 
-                    for="email" 
-                    class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
-                    :class="{ 'floating-label': form.email }"
-                >
-                    Email Address
-                </label>
-                <div class="absolute -bottom-6 left-2">
-                    <InputError class="text-red-400 text-[11px] font-semibold drop-shadow-sm" :message="form.errors.email" />
+                    <label 
+                        for="email" 
+                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                        :class="[
+                            form.email || form.errors.email ? 'floating-label' : '',
+                            form.errors.email ? '!text-red-400' : ''
+                        ]"
+                    >
+                        Email Address
+                    </label>
+                </div>
+                <div class="min-h-[24px]">
+                    <InputError :message="form.errors.email" />
                 </div>
             </div>
 
             <!-- Password Input -->
-            <div class="relative group h-[72px]">
-                <div class="relative h-full">
+            <div class="relative group">
+                <div class="relative h-[72px]">
                     <TextInput
                         id="password"
                         :type="showPassword ? 'text' : 'password'"
@@ -90,10 +102,17 @@ const submit = () => {
                     />
 
                     <!-- Notched Border -->
-                    <fieldset class="absolute inset-0 border border-white/20 rounded-[1.25rem] pointer-events-none transition-all duration-300 peer-focus:border-indigo-400 group-hover:border-white/40 z-10">
+                    <fieldset 
+                        class="absolute inset-0 border rounded-[1.25rem] pointer-events-none transition-all duration-300 z-10"
+                        :class="[
+                            form.errors.password
+                                ? 'border-red-500/50 group-hover:border-red-500/80 peer-focus:border-red-500' 
+                                : 'border-white/20 group-hover:border-white/40 peer-focus:border-indigo-400'
+                        ]"
+                    >
                         <legend 
                             class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
-                            :class="{ 'floating-notch': form.password }"
+                            :class="{ 'floating-notch': form.password || form.errors.password }"
                         >
                             <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Password</span>
                         </legend>
@@ -102,7 +121,10 @@ const submit = () => {
                     <label 
                         for="password" 
                         class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
-                        :class="{ 'floating-label': form.password }"
+                        :class="[
+                            form.password || form.errors.password ? 'floating-label' : '',
+                            form.errors.password ? '!text-red-400' : ''
+                        ]"
                     >
                         Password
                     </label>
@@ -121,12 +143,12 @@ const submit = () => {
                         </svg>
                     </button>
                 </div>
-                <div class="absolute -bottom-6 left-2">
-                    <InputError class="text-red-400 text-[11px] font-semibold drop-shadow-sm" :message="form.errors.password" />
+                <div class="min-h-[24px]">
+                    <InputError :message="form.errors.password" />
                 </div>
             </div>
 
-            <div class="mt-8 flex items-center justify-between px-2">
+            <div class="flex items-center justify-between px-2">
                 <label class="flex items-center cursor-pointer group">
                     <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-indigo-400 transition-all shadow-sm" />
                     <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors"
