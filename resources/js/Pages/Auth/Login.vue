@@ -7,6 +7,9 @@ import InputLabel from '@/Components/Form/InputLabel.vue';
 import PrimaryButton from '@/Components/UI/PrimaryButton.vue';
 import TextInput from '@/Components/Form/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import TomeLoader from '@/Components/UI/TomeLoader.vue';
+
+const isLoggingIn = ref(false);
 
 defineProps({
     canResetPassword: {
@@ -26,16 +29,28 @@ const form = useForm({
 const showPassword = ref(false);
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+    isLoggingIn.value = true;
+    
+    // Explicit 1.5s delay for the transition
+    setTimeout(() => {
+        form.post(route('login'), {
+            onFinish: () => {
+                form.reset('password');
+                if (Object.keys(form.errors).length > 0) {
+                    isLoggingIn.value = false;
+                }
+            },
+            onError: () => isLoggingIn.value = false
+        });
+    }, 1500);
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
+    <Head title="Log in" />
+    <TomeLoader :show="isLoggingIn" message="Consulting the Custodian..." />
 
+    <GuestLayout>
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>

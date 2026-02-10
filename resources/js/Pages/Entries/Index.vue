@@ -1,14 +1,16 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import JournalCard from '@/Components/Journal/JournalCard.vue';
+import TomeLoader from '@/Components/UI/TomeLoader.vue';
 
 const props = defineProps({
     entries: Array
 });
 
 const searchQuery = ref('');
+const isNavigating = ref(false);
 
 const filteredEntries = computed(() => {
     if (!searchQuery.value) return props.entries;
@@ -17,6 +19,13 @@ const filteredEntries = computed(() => {
         entry.content.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
+
+const handleEntryClick = (id) => {
+    isNavigating.value = true;
+    setTimeout(() => {
+        router.visit(route('journal.show', id));
+    }, 1500);
+};
 
 
 </script>
@@ -70,6 +79,7 @@ const filteredEntries = computed(() => {
                         v-for="entry in filteredEntries" 
                         :key="entry.id"
                         :entry="entry"
+                        @click="handleEntryClick(entry.id)"
                     />
                 </div>
 
@@ -93,6 +103,7 @@ const filteredEntries = computed(() => {
             </div>
         </div>
     </AuthenticatedLayout>
+    <TomeLoader :show="isNavigating" message="Consulting the Archives..." />
 </template>
 
 <style scoped>

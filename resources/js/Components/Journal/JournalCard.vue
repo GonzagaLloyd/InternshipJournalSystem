@@ -16,7 +16,7 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-    <Link :href="route('journal.show', entry.id)" class="group relative flex flex-col items-center text-center justify-center min-h-[350px] p-10 transition-all duration-1000 cursor-pointer block">
+    <div class="group relative flex flex-col items-center text-center justify-center min-h-[350px] p-10 transition-all duration-1000 cursor-pointer block">
         <!-- Warm Ambient Background (Transparent as requested) -->
         <div class="absolute inset-0 bg-transparent transition-colors duration-700"></div>
 
@@ -83,7 +83,7 @@ const formatDate = (dateString) => {
         <div class="relative z-10 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-1 group-hover:translate-y-0">
             <span class="text-[9px] font-serif tracking-[0.25em] text-[#f4e4bc] uppercase border-b border-[#f4e4bc]/20 pb-0.5 hover:border-[#f4e4bc] transition-all">Read Entry</span>
         </div>
-    </Link>
+    </div>
 </template>
 
 <style scoped>

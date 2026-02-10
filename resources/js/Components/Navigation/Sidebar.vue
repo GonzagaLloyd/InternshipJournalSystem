@@ -1,6 +1,28 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import { ref } from 'vue';
+
+const isLoggingOut = ref(false);
+const isNavigating = ref(false);
+
+const handleLogout = () => {
+    isLoggingOut.value = true;
+    setTimeout(() => {
+        router.post(route('logout'), {}, {
+            onFinish: () => isLoggingOut.value = false
+        });
+    }, 1500);
+};
+
+const navigateWithLoader = (routeName) => {
+    if (routeName === '#' || route().current(routeName)) return;
+    isNavigating.value = true;
+    setTimeout(() => {
+        router.visit(route(routeName));
+    }, 1500);
+};
 
 defineProps({
     showingMobileMenu: Boolean,
@@ -95,15 +117,13 @@ const managementItems = [
                     <p class="text-[13px] font-black text-white truncate tracking-tight font-serif">{{ user.name }}</p>
                     <p class="text-[10px] font-bold text-[#8c7e6a] truncate group-hover:text-[#d9c5a3] transition-colors uppercase tracking-widest">Scribe Active</p>
                 </div>
-                <Link 
+                <button 
                     v-if="!isCollapsed"
-                    :href="route('logout')" 
-                    method="post" 
-                    as="button"
+                    @click="handleLogout"
                     class="ml-2 p-2 text-[#8c7e6a] hover:text-[#8b2635] transition-colors"
                 >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                </Link>
+                </button>
             </div>
         </div>
     </aside>
@@ -135,6 +155,8 @@ const managementItems = [
             </nav>
         </aside>
     </transition>
+
+    <TomeLoader :show="isLoggingOut" message="Retiring to Chambers..." />
 </template>
 
 
