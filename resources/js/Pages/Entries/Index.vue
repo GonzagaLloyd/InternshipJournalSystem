@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import JournalCard from '@/Components/Journal/JournalCard.vue';
 
 const props = defineProps({
     entries: Array
@@ -17,13 +18,7 @@ const filteredEntries = computed(() => {
     );
 });
 
-const formatDate = (dateString) => {
-    return new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric'
-    }).format(new Date(dateString));
-};
+
 </script>
 
 <template>
@@ -71,105 +66,11 @@ const formatDate = (dateString) => {
             <!-- Entries Grid -->
             <div class="flex-1 overflow-y-auto pr-2 scrollbar-hide relative z-10">
                 <div v-if="filteredEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 pb-20">
-                    <div 
+                    <JournalCard 
                         v-for="entry in filteredEntries" 
                         :key="entry.id"
-                        class="group relative flex flex-col min-h-[400px] p-10 transition-all duration-1000"
-                    >
-                        <!-- Ethereal Glow Behind (Softer) -->
-                        <div class="absolute -inset-1 bg-[#8b2635]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 blur-2xl"></div>
-
-                        <!-- Ancient Card Base -->
-                        <div class="absolute inset-0 bg-[#1e1b19] border border-[#3d352e]/40 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-700 group-hover:border-[#f4e4bc]/30"></div>
-                        
-                        <!-- Lightning Border Effect -->
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none overflow-hidden">
-                            <div class="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#f4e4bc] to-transparent animate-lightning-x"></div>
-                            <div class="absolute bottom-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#f4e4bc] to-transparent animate-lightning-x-rev"></div>
-                            <div class="absolute top-0 left-0 h-full w-[1.5px] bg-gradient-to-b from-transparent via-[#f4e4bc] to-transparent animate-lightning-y"></div>
-                            <div class="absolute top-0 right-0 h-full w-[1.5px] bg-gradient-to-b from-transparent via-[#f4e4bc] to-transparent animate-lightning-y-rev"></div>
-                            
-                            <!-- Outer Glow -->
-                            <div class="absolute inset-x-0 top-0 h-4 bg-[#f4e4bc]/5 blur-md animate-lightning-flicker"></div>
-                            <div class="absolute inset-x-0 bottom-0 h-4 bg-[#f4e4bc]/5 blur-md animate-lightning-flicker"></div>
-                        </div>
-
-                        <!-- Ornamental Corners (Clean & Simple) -->
-                        <div class="absolute top-0 left-0 w-12 h-12">
-                            <div class="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#3d352e] group-hover:border-[#8b2635]/50 transition-colors duration-700"></div>
-                            <div class="absolute top-3 left-3 w-1.5 h-1.5 border-t border-l border-[#8b2635]/40"></div>
-                        </div>
-                        <div class="absolute top-0 right-0 w-12 h-12 rotate-90">
-                            <div class="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#3d352e] group-hover:border-[#8b2635]/50 transition-colors duration-700"></div>
-                            <div class="absolute top-3 left-3 w-1.5 h-1.5 border-t border-l border-[#8b2635]/40"></div>
-                        </div>
-                        <div class="absolute bottom-0 left-0 w-12 h-12 -rotate-90">
-                            <div class="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#3d352e] group-hover:border-[#8b2635]/50 transition-colors duration-700"></div>
-                            <div class="absolute top-3 left-3 w-1.5 h-1.5 border-t border-l border-[#8b2635]/40"></div>
-                        </div>
-                        <div class="absolute bottom-0 right-0 w-12 h-12 rotate-180">
-                            <div class="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#3d352e] group-hover:border-[#8b2635]/50 transition-colors duration-700"></div>
-                            <div class="absolute top-3 left-3 w-1.5 h-1.5 border-t border-l border-[#8b2635]/40"></div>
-                        </div>
-
-                        <!-- Manuscript Texture Overlay -->
-                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/leather.png')] group-hover:opacity-[0.05] transition-opacity duration-700"></div>
-                        
-                        <!-- Header with Date and Breathing Seal -->
-                        <div class="flex justify-between items-start mb-10 relative z-10">
-                            <div class="flex flex-col">
-                                <span class="text-[10px] font-sans uppercase tracking-[0.4em] text-[#8b2635] font-black opacity-90 mb-2">{{ formatDate(entry.entry_date) }}</span>
-                                <div class="h-[1px] w-16 bg-gradient-to-r from-[#8b2635] via-[#8b2635]/10 to-transparent"></div>
-                            </div>
-                            
-                            <!-- Relic-style Seal -->
-                            <div class="relative group/seal">
-                                <div class="w-10 h-10 flex items-center justify-center relative">
-                                    <svg class="absolute inset-0 text-[#8b2635]/10 group-hover:text-[#8b2635]/20 transition-all duration-700 animate-breath" viewBox="0 0 100 100">
-                                        <path d="M50 5 Q75 5 95 30 T85 70 T50 95 T10 75 T5 40 T30 5 Z" fill="currentColor" />
-                                    </svg>
-                                    <div v-if="entry.image || entry.audio" class="relative z-10">
-                                        <svg class="w-4 h-4 text-[#8b2635]/80 group-hover:text-[#8b2635]" fill="currentColor" viewBox="0 0 24 24">
-                                            <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1" />
-                                            <circle cx="12" cy="12" r="2.5" />
-                                        </svg>
-                                    </div>
-                                    <div v-else class="w-1.5 h-1.5 rounded-full bg-[#3d352e] group-hover:bg-[#8b2635]/60 transition-colors"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Title -->
-                        <h3 class="text-3xl font-bold text-[#f4e4bc] font-cinzel italic mb-6 line-clamp-1 group-hover:text-white transition-all duration-500 leading-tight tracking-wide relative z-10">
-                            {{ entry.title }}
-                        </h3>
-
-                        <!-- Excerpt -->
-                        <div class="flex-1 relative z-10 mb-10">
-                            <p class="text-[#8c7e6a] text-xl leading-relaxed line-clamp-4 opacity-80 group-hover:opacity-100 transition-opacity duration-700 font-medium italic">
-                                "{{ entry.content }}"
-                            </p>
-                        </div>
-
-                        <!-- Clean Epic Footer -->
-                        <div class="flex items-center justify-between pt-8 border-t border-[#3d352e]/20 relative z-10">
-                            <div class="flex gap-4">
-                                <div v-if="entry.image" class="text-[#8c7e6a]/50 hover:text-[#f4e4bc] transition-all">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                </div>
-                                <div v-if="entry.audio" class="text-[#8c7e6a]/50 hover:text-[#f4e4bc] transition-all">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                                </div>
-                            </div>
-                            
-                            <button class="group/btn relative flex items-center gap-3 py-1 ring-0 outline-none">
-                                <span class="text-[10px] uppercase tracking-[0.5em] font-black text-[#8b2635] group-hover/btn:text-[#f4e4bc] transition-all duration-700 font-sans">Examine Legend</span>
-                                <div class="w-8 h-[1px] bg-[#8b2635]/30 relative overflow-hidden">
-                                    <div class="absolute inset-0 bg-[#f4e4bc]/60 -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-700"></div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
+                        :entry="entry"
+                    />
                 </div>
 
                 <!-- Empty State -->
@@ -203,13 +104,7 @@ const formatDate = (dateString) => {
     scrollbar-width: none;
 }
 
-@keyframes breath {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.05); opacity: 1; }
-}
-.animate-breath {
-    animation: breath 4s ease-in-out infinite;
-}
+
 
 @keyframes pulse-slow {
     0%, 100% { opacity: 0.02; transform: scale(1); }
@@ -239,29 +134,4 @@ const formatDate = (dateString) => {
     from { transform: translateY(0); }
     to { transform: translateY(-200px); }
 }
-@keyframes lightning-x {
-    0% { transform: translateX(-100%); opacity: 0; }
-    10%, 20% { opacity: 1; }
-    30% { opacity: 0.3; }
-    40% { opacity: 1; }
-    100% { transform: translateX(100%); opacity: 0; }
-}
-@keyframes lightning-y {
-    0% { transform: translateY(-100%); opacity: 0; }
-    15%, 25% { opacity: 1; }
-    35% { opacity: 0.2; }
-    45% { opacity: 1; }
-    100% { transform: translateY(100%); opacity: 0; }
-}
-@keyframes lightning-flicker {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-    55% { opacity: 0.4; }
-    60% { opacity: 0.9; }
-}
-.animate-lightning-x { animation: lightning-x 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-.animate-lightning-x-rev { animation: lightning-x 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; }
-.animate-lightning-y { animation: lightning-y 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-.animate-lightning-y-rev { animation: lightning-y 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse; }
-.animate-lightning-flicker { animation: lightning-flicker 2s step-end infinite; }
 </style>

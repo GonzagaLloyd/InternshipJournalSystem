@@ -57,4 +57,12 @@ class JournalController extends Controller
 
         return back();
     }
+    public function show($id)
+    {
+        $entry = JournalEntry::where('user_id', auth()->id())->findOrFail($id);
+        
+        return Inertia::render('Entries/Show', [
+            'entry' => $entry,
+        ]);
+    }
 }
