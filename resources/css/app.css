@@ -4,35 +4,37 @@
 
 @layer base {
     body {
-        @apply antialiased bg-[#161412] text-[#d9c5a3];
-        background-color: #161412;
-        background-image:
-            radial-gradient(circle at 50% 50%, rgba(37, 33, 30, 0.4) 0%, transparent 100%);
+        @apply antialiased bg-[#0d0c0b] text-[#d9c5a3];
+        background-color: #0d0c0b;
+        background-image: 
+            radial-gradient(circle at 50% 50%, rgba(139, 38, 53, 0.03) 0%, transparent 100%),
+            radial-gradient(circle at 10% 20%, rgba(217, 197, 163, 0.02) 0%, transparent 100%);
         background-attachment: fixed;
+    }
+
+    ::selection {
+        @apply bg-[#8b2635]/30 text-[#f4e4bc];
     }
 }
 
 @layer components {
     .glass-sidebar {
-        @apply bg-[#1c1a18] border-r border-[#3d352e] shadow-2xl;
+        @apply bg-[#141210]/95 border-r border-white/[0.05] shadow-2xl backdrop-blur-xl;
     }
 
     .glass-card {
-        @apply bg-[#25211e] border border-[#3d352e] rounded-2xl shadow-2xl transition-all duration-500 hover:border-[#5c4d44];
+        @apply bg-[#1a1715]/40 border border-white/[0.05] rounded-[2rem] shadow-2xl transition-all duration-700 hover:border-[#8b2635]/20 backdrop-blur-sm;
     }
 
     .glass-input {
-        @apply bg-[#1a1715] border border-[#3d352e] focus:border-[#8b2635]/50 focus:ring-4 focus:ring-[#8b2635]/10 transition-all duration-300 rounded-xl text-[#d9c5a3];
+        @apply bg-black/20 border border-white/10 focus:border-[#8b2635]/40 focus:ring-0 transition-all duration-500 rounded-2xl text-[#f4e4bc];
     }
 }
 
-/* Custom scrollbar to keep it clean */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
+/* Custom Thematic Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
+    height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -40,10 +42,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    background: rgba(139, 38, 53, 0.1);
+    border-radius: 20px;
+    transition: all 0.5s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(139, 38, 53, 0.3);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

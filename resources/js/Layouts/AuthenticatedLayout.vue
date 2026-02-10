@@ -4,6 +4,7 @@ import Sidebar from '@/Components/Navigation/Sidebar.vue';
 import Dropdown from '@/Components/Navigation/Dropdown.vue';
 import DropdownLink from '@/Components/Navigation/DropdownLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Toast from '@/Components/UI/Toast.vue';
 
 const showingMobileMenu = ref(false);
 const isCollapsed = ref(false);
@@ -71,6 +72,8 @@ const toggleSidebar = () => {
             <main class="flex-1 overflow-hidden">
                 <slot />
             </main>
+
+            <Toast />
         </div>
     </div>
 </template>

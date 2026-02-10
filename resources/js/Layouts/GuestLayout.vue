@@ -2,6 +2,7 @@
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
+import Toast from '@/Components/UI/Toast.vue';
 
 const backgrounds = [
     'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop',
@@ -17,7 +18,7 @@ let intervalId = null;
 onMounted(() => {
     intervalId = setInterval(() => {
         currentBg.value = (currentBg.value + 1) % backgrounds.length;
-    }, 5000); // 15 seconds cycle
+    }, 8000); // 15 seconds cycle
 });
 
 onUnmounted(() => {
@@ -55,6 +56,8 @@ onUnmounted(() => {
                 <slot />
             </div>
         </div>
+
+        <Toast />
     </div>
 </template>
 

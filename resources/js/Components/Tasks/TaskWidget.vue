@@ -1,51 +1,77 @@
 <script setup>
+import { router } from '@inertiajs/vue3';
+
 defineProps({
     tasks: Array
 });
+
+const toggleTask = (task) => {
+    // Use task.id (which we aliased to _id in the model)
+    const id = task.id || task._id;
+    router.patch(route('tasks.toggle', id), {}, {
+        preserveScroll: true
+    });
+};
 </script>
 
 <template>
-    <div class="w-full lg:w-[22rem] flex flex-col shrink-0 order-2 lg:order-none">
-        <div class="flex-1 bg-[#25211e] border border-[#3d352e] rounded-[1.5rem] lg:rounded-[2rem] p-6 lg:p-10 flex flex-col shadow-2xl relative overflow-hidden group">
-            <div class="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/parchment.png')]"></div>
-            
-            <div class="mb-8 lg:mb-10 relative z-10">
-                <h3 class="text-[10px] uppercase tracking-[0.4em] text-[#8c7e6a] font-black flex items-center gap-3">
-                    Scriptorium
-                    <span class="h-1 w-1 rounded-full bg-[#8b2635]"></span>
-                </h3>
+    <div class="w-full h-full flex flex-col group">
+        <div class="flex-1 flex flex-col relative overflow-hidden">
+            <!-- Header -->
+            <div class="mb-10 relative z-10">
+                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8b2635] font-black mb-2 opacity-60">Status</p>
+                <h3 class="text-3xl font-cinzel text-[#f4e4bc] tracking-tight">Active Tasks</h3>
             </div>
 
-            <div class="flex-1 overflow-y-auto pr-2 lg:pr-4 scrollbar-hide space-y-6 lg:space-y-8 relative z-10">
+            <!-- Task List -->
+            <div class="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-6 relative z-10 pb-6">
                 <div 
                     v-for="task in tasks" 
-                    :key="task.id" 
-                    class="group/item flex items-start gap-4 lg:gap-5 cursor-pointer" 
-                    @click="task.completed = !task.completed"
+                    :key="task.id || task._id" 
+                    class="group/item flex items-center gap-5 cursor-pointer select-none transition-all duration-300" 
+                    @click="toggleTask(task)"
                 >
+                    <!-- Simple Checkbox -->
                     <div 
-                        :class="task.completed ? 'bg-[#8b2635] border-[#8b2635]' : 'border-[#3d352e] bg-black/40'"
-                        class="h-5 w-5 rounded-lg border-2 mt-1 shrink-0 flex items-center justify-center transition-all group-hover/item:border-[#8b2635] shadow-lg shadow-black/20"
+                        :class="task.completed 
+                            ? 'bg-[#8b2635] border-[#8b2635]' 
+                            : 'border-white/10 bg-white/[0.02] group-hover/item:border-[#d9c5a3]/40'"
+                        class="h-5 w-5 rounded-full border shrink-0 flex items-center justify-center transition-all duration-500"
                     >
-                        <svg v-if="task.completed" class="h-3 w-3 text-[#f4e4bc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                        <div v-if="task.completed" class="h-1.5 w-1.5 rounded-full bg-[#f4e4bc]"></div>
                     </div>
+
+                    <!-- Text -->
                     <span 
-                        :class="task.completed ? 'line-through text-[#5c4d44]' : 'text-[#d9c5a3] group-hover/item:text-white'" 
-                        class="text-[14px] lg:text-[15px] font-medium leading-relaxed transition-all"
+                        :class="[
+                            task.completed 
+                                ? 'text-[#8c7e6a]/40 line-through italic' 
+                                : 'text-[#d9c5a3] group-hover/item:text-[#f4e4bc]',
+                            'text-base font-medium leading-relaxed transition-all duration-300'
+                        ]"
                     >
                         {{ task.name }}
                     </span>
                 </div>
+
+                <!-- Empty State -->
+                <div v-if="tasks && tasks.length === 0" class="flex flex-col items-center justify-center py-12 opacity-20">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-black text-[#8c7e6a]">Quiet in the Scriptorium</span>
+                </div>
             </div>
 
-            <!-- Simple Add Task -->
-            <button class="mt-8 lg:mt-10 flex items-center gap-4 text-[#8c7e6a] hover:text-[#f4e4bc] transition-all group/add relative z-10 pt-6 lg:pt-8 border-t border-[#3d352e]">
-                <div class="h-8 w-8 rounded-full border border-dashed border-[#8c7e6a] flex items-center justify-center text-xl group-hover/add:border-[#8b2635] group-hover/add:text-[#8b2635] transition-all">
-                    +
+            <!-- Minimal Button -->
+            <button 
+                @click="router.visit(route('tasks.index'))"
+                class="mt-auto group/btn flex items-center gap-4 py-6 border-t border-white/[0.05] text-[#8c7e6a] hover:text-[#d9c5a3] transition-all"
+            >
+                <div class="h-10 w-10 rounded-xl border border-white/[0.1] flex items-center justify-center group-hover/btn:border-[#d9c5a3]/30 transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </div>
-                <span class="text-[10px] uppercase tracking-[0.2em] font-black">Append Task</span>
+                <div class="text-left">
+                    <span class="text-[9px] uppercase tracking-[0.3em] font-black">Open Ledger</span>
+                    <p class="text-[7px] uppercase tracking-[0.1em] text-[#3d352e] mt-0.5">View all history</p>
+                </div>
             </button>
         </div>
     </div>

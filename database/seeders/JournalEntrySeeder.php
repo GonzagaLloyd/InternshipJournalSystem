@@ -24,6 +24,18 @@ class JournalEntrySeeder extends Seeder
             'audio' => 'audio1.mp3',
             'file' => 'file1.pdf',
             'entry_date' => '2026-02-05',
-        ]);            
+        ]);   
+        
+        $user = User::first();
+        JournalEntry::create([
+            'user_id' => $user->id,
+            'title' => 'Day 2: Continuing with the Learning and doing some CRUD Project',
+            'content' => 'Weather Condition: Good typhoon Basyang is now gone. Morning Activities: Upon arriving at iTech Media Logic, the morning began with the checkin then after we go up in the second floor. We continue with the learning of the tech stack and doing some CRUD project all day until checkout.',
+            'image' => 'image1.jpg',
+            'video' => 'video1.mp4',
+            'audio' => 'audio1.mp3',
+            'file' => 'file1.pdf',
+            'entry_date' => '2026-02-09',
+        ]); 
     }
 }

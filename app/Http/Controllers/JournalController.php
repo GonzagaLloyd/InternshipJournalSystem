@@ -12,6 +12,7 @@ class JournalController extends Controller
     {
         return Inertia::render('Dashboard', [
             'entryCount' => JournalEntry::where('user_id', auth()->id())->count(),
+            'tasks' => \App\Models\Task::where('user_id', auth()->id())->latest()->get(),
         ]);
     }
 
