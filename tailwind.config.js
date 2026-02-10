@@ -13,7 +13,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                cinzel: ['Cinzel', 'serif'],
+                cormorant: ['Cormorant Garamond', 'serif'],
             },
         },
     },
