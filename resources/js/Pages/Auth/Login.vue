@@ -55,14 +55,14 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="space-y-12">
+        <form @submit.prevent="submit" class="space-y-8 sm:space-y-12">
             <!-- Email Input -->
             <div class="relative group">
-                <div class="relative h-[72px]">
+                <div class="relative h-[64px] sm:h-[72px]">
                     <TextInput
                         id="email"
                         type="email"
-                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
+                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-6 sm:px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[16px] sm:text-[18px]"
                         v-model="form.email"
                         required
                         autofocus
@@ -80,16 +80,16 @@ const submit = () => {
                         ]"
                     >
                         <legend 
-                            class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
+                            class="ml-6 sm:ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                             :class="{ 'floating-notch': form.email || form.errors.email }"
                         >
-                            <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
+                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="email" 
-                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px]"
                         :class="[
                             form.email || form.errors.email ? 'floating-label' : '',
                             form.errors.email ? '!text-red-400' : ''
@@ -98,18 +98,18 @@ const submit = () => {
                         Email Address
                     </label>
                 </div>
-                <div class="min-h-[24px]">
+                <div class="min-h-[20px] sm:min-h-[24px]">
                     <InputError :message="form.errors.email" />
                 </div>
             </div>
 
             <!-- Password Input -->
             <div class="relative group">
-                <div class="relative h-[72px]">
+                <div class="relative h-[64px] sm:h-[72px]">
                     <TextInput
                         id="password"
                         :type="showPassword ? 'text' : 'password'"
-                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[18px]"
+                        class="peer block w-full h-full bg-transparent !border-none !ring-0 !shadow-none px-6 sm:px-8 transition-all duration-300 rounded-[1.25rem] outline-none text-white z-20 text-[16px] sm:text-[18px]"
                         v-model="form.password"
                         required
                         autocomplete="current-password"
@@ -126,16 +126,16 @@ const submit = () => {
                         ]"
                     >
                         <legend 
-                            class="ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
+                            class="ml-6 sm:ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                             :class="{ 'floating-notch': form.password || form.errors.password }"
                         >
-                            <span class="text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Password</span>
+                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Password</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="password" 
-                        class="absolute left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[18px]"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px]"
                         :class="[
                             form.password || form.errors.password ? 'floating-label' : '',
                             form.errors.password ? '!text-red-400' : ''
@@ -147,26 +147,26 @@ const submit = () => {
                         v-if="form.password"
                         type="button" 
                         @click="showPassword = !showPassword"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors focus:outline-none p-2 rounded-full hover:bg-white/10 z-30"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors focus:outline-none p-2 rounded-full hover:bg-white/10 z-30 text-xs sm:text-base"
                     >
-                        <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 sm:w-6 sm:h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
                         </svg>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 sm:w-6 sm:h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </button>
                 </div>
-                <div class="min-h-[24px]">
+                <div class="min-h-[20px] sm:min-h-[24px]">
                     <InputError :message="form.errors.password" />
                 </div>
             </div>
 
-            <div class="flex items-center justify-between px-2">
-                <label class="flex items-center cursor-pointer group">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+                <label class="flex items-center cursor-pointer group w-full sm:w-auto">
                     <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-indigo-400 transition-all shadow-sm" />
-                    <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors"
+                    <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors whitespace-nowrap"
                         >Stay logged in</span
                     >
                 </label>
@@ -180,14 +180,14 @@ const submit = () => {
                 </Link>
             </div>
 
-            <div class="mt-12">
+            <div class="mt-8 sm:mt-12">
                 <PrimaryButton
-                    class="w-full justify-center py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(79,70,229,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
-                    :class="{ 'opacity-50 pointer-events-none': form.processing }"
-                    :disabled="form.processing"
+                    class="w-full justify-center py-4 sm:py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base sm:text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(79,70,229,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
+                    :class="{ 'opacity-50 pointer-events-none': form.processing || isLoggingIn }"
+                    :disabled="form.processing || isLoggingIn"
                 >
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    <span v-if="form.processing" class="mr-3 h-5 w-5 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
+                    <span v-if="form.processing || isLoggingIn" class="mr-3 h-5 w-5 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
                     LOG IN
                 </PrimaryButton>
             </div>

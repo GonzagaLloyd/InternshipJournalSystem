@@ -145,14 +145,39 @@ const managementItems = [
                 </button>
             </div>
             
-            <nav class="flex-1 space-y-2">
-                <Link v-for="item in menuItems" :key="item.name" href="#" class="flex items-center p-5 rounded-2xl bg-black/20 border border-[#3d352e] hover:bg-[#2d2a27] transition-all group">
+            <nav class="flex-1 space-y-2 overflow-y-auto pr-2 scrollbar-hide">
+                <Link 
+                    v-for="item in menuItems" 
+                    :key="item.name" 
+                    :href="item.routeName === '#' ? '#' : route(item.routeName)" 
+                    class="flex items-center p-5 rounded-2xl bg-black/20 border border-[#3d352e] hover:bg-[#2d2a27] transition-all group"
+                    @click="$emit('close')"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-6 text-[#8c7e6a] group-hover:text-[#8b2635] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                     </svg>
                     <span class="font-bold text-[#d9c5a3] font-serif">{{ item.name }}</span>
                 </Link>
             </nav>
+
+            <!-- Mobile Footer / User Profile -->
+            <div class="mt-8 border-t border-[#3d352e] pt-8">
+                <div class="flex items-center p-4 rounded-2xl bg-black/20 border border-[#3d352e] relative overflow-hidden">
+                    <div class="h-12 w-12 bg-[#8b2635] rounded-xl flex-shrink-0 flex items-center justify-center text-[#f4e4bc] font-black text-sm shadow-lg">
+                        {{ user.name.charAt(0) }}
+                    </div>
+                    <div class="ml-4 flex-1 min-w-0">
+                        <p class="text-sm font-black text-white truncate font-serif">{{ user.name }}</p>
+                        <p class="text-[10px] font-bold text-[#8c7e6a] uppercase tracking-widest">Scribe Active</p>
+                    </div>
+                    <button 
+                        @click="handleLogout"
+                        class="p-2 text-[#8c7e6a] hover:text-[#8b2635] transition-colors"
+                    >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                </div>
+            </div>
         </aside>
     </transition>
 

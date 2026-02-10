@@ -44,17 +44,17 @@ const handleEntryClick = (id) => {
             <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/black-paper.png')]"></div>
 
             <!-- Header Section -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16 relative z-10">
-                <div class="relative group">
-                    <h1 class="text-6xl font-bold font-cinzel tracking-tight mb-3 transition-transform duration-700 group-hover:scale-[1.01]">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 lg:mb-16 relative z-10">
+                <div class="relative group w-full md:w-auto text-center md:text-left">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold font-cinzel tracking-tight mb-3 transition-transform duration-700 group-hover:scale-[1.01]">
                         <span class="bg-gradient-to-b from-[#f4e4bc] via-[#d9c5a3] to-[#a8967a] bg-clip-text text-transparent drop-shadow-md">
                             Chronicler's Ledger
                         </span>
                     </h1>
-                    <div class="flex items-center gap-4">
-                        <div class="h-[1px] flex-1 min-w-[40px] bg-gradient-to-r from-transparent via-[#8b2635]/60 to-transparent"></div>
-                        <p class="text-[10px] uppercase tracking-[0.6em] text-[#8b2635] font-black font-sans opacity-95">Lore of Your Journeys</p>
-                        <div class="h-[1px] flex-1 min-w-[40px] bg-gradient-to-r from-transparent via-[#8b2635]/60 to-transparent"></div>
+                    <div class="flex items-center gap-4 justify-center md:justify-start">
+                        <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8b2635]/60 to-transparent"></div>
+                        <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.4em] sm:tracking-[0.6em] text-[#8b2635] font-black font-sans opacity-95">Lore of Your Journeys</p>
+                        <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8b2635]/60 to-transparent"></div>
                     </div>
                 </div>
 
@@ -73,8 +73,8 @@ const handleEntryClick = (id) => {
             </div>
 
             <!-- Entries Grid -->
-            <div class="flex-1 overflow-y-auto pr-2 scrollbar-hide relative z-10">
-                <div v-if="filteredEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 pb-20">
+            <div class="flex-1 overflow-y-auto pr-0 md:pr-2 scrollbar-hide relative z-10">
+                <div v-if="filteredEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 pb-20">
                     <JournalCard 
                         v-for="entry in filteredEntries" 
                         :key="entry.id"

@@ -30,7 +30,7 @@ const toggleSidebar = () => {
             ]"
         >
             <!-- Minimal Topbar (Transparent) -->
-            <header class="h-16 flex items-center justify-between px-8 z-30 shrink-0">
+            <header class="h-16 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0">
                 <div class="flex items-center">
                     <button 
                         @click="showingMobileMenu = true" 
