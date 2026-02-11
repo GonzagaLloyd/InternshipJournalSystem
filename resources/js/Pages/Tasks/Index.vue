@@ -12,6 +12,7 @@ const props = defineProps({
 
 const isNavigating = ref(false);
 const showCreateModal = ref(false);
+const processingTaskId = ref(null);
 
 const toggleTask = (task) => {
     console.log('Task object:', task);
@@ -22,8 +23,13 @@ const toggleTask = (task) => {
         return;
     }
     
+    processingTaskId.value = task.id;
+    
     router.patch(route('tasks.toggle', { task: task.id }), {}, {
-        preserveScroll: true
+        preserveScroll: true,
+        onFinish: () => {
+            processingTaskId.value = null;
+        }
     });
 };
 
@@ -86,14 +92,40 @@ const sortedTasks = computed(() => {
 
                 <!-- Task List -->
                 <div class="flex-1 overflow-y-auto scrollbar-hide pr-2">
-                    <div class="divide-y divide-[#3d352e]/10">
-                        <TaskItem 
-                            v-for="task in sortedTasks" 
-                            :key="task.id"
-                            :task="task"
-                            @toggle="toggleTask"
-                            @delete="deleteTask"
-                        />
+                    <!-- Outstanding Decrees (Active) -->
+                    <div v-if="sortedTasks.some(t => !t.completed)" class="mb-12">
+                        <div class="px-8 mb-6 flex items-center gap-4">
+                            <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Outstanding Decrees</span>
+                            <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
+                        </div>
+                        <div class="divide-y divide-[#3d352e]/10 bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden">
+                            <TaskItem 
+                                v-for="task in sortedTasks.filter(t => !t.completed)" 
+                                :key="task.id"
+                                :task="task"
+                                :processing="processingTaskId === task.id"
+                                @toggle="toggleTask"
+                                @delete="deleteTask"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Fulfilled Records (Completed) -->
+                    <div v-if="sortedTasks.some(t => t.completed)" class="opacity-50">
+                        <div class="px-8 mb-6 flex items-center gap-4">
+                            <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A]/40 font-black">Fulfilled Records</span>
+                            <div class="h-[1px] flex-1 bg-[#8C6A4A]/5"></div>
+                        </div>
+                        <div class="divide-y divide-[#3d352e]/5">
+                            <TaskItem 
+                                v-for="task in sortedTasks.filter(t => t.completed)" 
+                                :key="task.id"
+                                :task="task"
+                                :processing="processingTaskId === task.id"
+                                @toggle="toggleTask"
+                                @delete="deleteTask"
+                            />
+                        </div>
                     </div>
 
                     <!-- Empty State -->
