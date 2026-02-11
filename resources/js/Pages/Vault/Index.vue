@@ -67,7 +67,10 @@ const handlePermanentDelete = () => {
 <template>
     <Head title="The Sunken Vault" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout 
+        title="The <span class='text-[#8C6A4A]'>Sunken</span> Vault"
+        subtitle="The Forgotten Depths"
+    >
         <div class="p-4 md:p-8 lg:p-12 min-h-full flex flex-col font-serif relative overflow-hidden">
             
             <!-- Vault Atmosphere -->
@@ -76,21 +79,13 @@ const handlePermanentDelete = () => {
                 <div class="absolute top-[20%] right-[10%] w-[50rem] h-[50rem] bg-[#8C6A4A]/5 blur-[150px] rounded-full"></div>
             </div>
 
-            <!-- Header -->
+            <!-- Vault Intro (Subtle) -->
             <div class="relative z-10 mb-12">
-                <div class="flex items-center gap-6 mb-4">
-                    <div class="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#8C6A4A]/60"></div>
-                    <span class="text-[10px] uppercase tracking-[0.6em] text-[#8C6A4A] font-black">The Forgotten Depths</span>
-                    <div class="h-[1px] flex-1 bg-gradient-to-r from-[#8C6A4A]/60 to-transparent"></div>
-                </div>
-                
-                <h1 class="text-4xl md:text-6xl font-cinzel font-bold text-[#C9B79C] tracking-tight mb-4">
-                    The <span class="text-[#8C6A4A]/80 italic">Sunken</span> Vault
-                </h1>
                 <p class="text-[#8C6A4A]/60 max-w-2xl text-sm md:text-base italic leading-relaxed">
                     Echoes of shattered decrees and stricken lore. Here lies what was deemed worthy of the pyre, 
                     waiting for a final judgment or a chance to rise from the ashes.
                 </p>
+                <div class="h-[1px] w-24 bg-gradient-to-r from-[#8C6A4A]/40 to-transparent mt-6"></div>
             </div>
 
             <!-- Navigation Tabs -->

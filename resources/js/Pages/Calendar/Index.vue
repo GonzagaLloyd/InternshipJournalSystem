@@ -11,7 +11,10 @@ const props = defineProps({
 <template>
     <Head title="Celestial Horologium" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout 
+        title="Celestial <span class='text-[#8C6A4A]'>Horologium</span>"
+        subtitle="The Tapestry of Time"
+    >
         <div class="fixed inset-0 lg:left-72 flex flex-col">
             <div class="p-4 md:p-8 lg:p-12 h-full flex flex-col font-serif relative overflow-hidden">
                 <!-- Atmospheric Background -->

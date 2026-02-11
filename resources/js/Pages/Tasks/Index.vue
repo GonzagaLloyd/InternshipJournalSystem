@@ -67,27 +67,17 @@ const sortedTasks = computed(() => {
 <template>
     <Head title="Scriptorium - Tasks" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout 
+        title="Active <span class='text-[#8C6A4A]'>Decrees</span>"
+        subtitle="The Scriptorium's Mandate"
+    >
         <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
             <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col relative z-20">
-                <!-- Header Section -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 lg:mb-16 relative z-10">
-                    <div class="relative group w-full md:w-auto text-center md:text-left">
-                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold font-cinzel tracking-tight mb-3 transition-transform duration-700 group-hover:scale-[1.01]">
-                            <span class="text-[#C9B79C] drop-shadow-md whitespace-nowrap">
-                                Active Decrees
-                            </span>
-                        </h1>
-                        <div class="flex items-center gap-4 justify-center md:justify-start">
-                            <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8C6A4A]/60 to-transparent"></div>
-                            <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.4em] sm:tracking-[0.6em] text-[#8C6A4A] font-black font-serif opacity-95">The Scriptorium's Mandate</p>
-                            <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8C6A4A]/60 to-transparent"></div>
-                        </div>
-                    </div>
-
+                <!-- Action Bar (Sticky or at top) -->
+                <div class="flex justify-end mb-12 relative z-10">
                     <button 
                         @click="showCreateModal = true"
-                        class="w-full md:w-auto group flex items-center justify-center gap-4 px-10 py-4 bg-[#8C6A4A]/10 border border-[#8C6A4A]/30 rounded-2xl text-[#C9B79C] hover:bg-[#8C6A4A] transition-all duration-500 shadow-lg hover:shadow-[#8C6A4A]/20"
+                        class="w-full md:w-auto group flex items-center justify-center gap-4 px-10 py-4 bg-[#8C6A4A]/10 border border-[#8C6A4A]/30 rounded-sm text-[#C9B79C] hover:bg-[#8C6A4A] transition-all duration-500 shadow-lg hover:shadow-[#8C6A4A]/20"
                     >
                         <span class="text-[10px] font-black uppercase tracking-[0.3em] font-serif">Append Decree</span>
                         <div class="h-6 w-6 rounded-full border border-[#C9B79C]/30 flex items-center justify-center group-hover:border-[#C9B79C] transition-colors">

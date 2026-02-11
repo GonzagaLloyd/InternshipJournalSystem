@@ -52,34 +52,26 @@ const deleteEntry = () => {
 <template>
     <Head title="Journal Entries" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout 
+        title="The <span class='text-[#8C6A4A]'>Chronicler's</span> Ledger"
+        subtitle="Lore of your journeys"
+    >
         <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
-            <!-- Header Section -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 lg:mb-16 relative z-10">
-                <div class="relative group w-full md:w-auto text-center md:text-left">
-                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold font-cinzel tracking-tight mb-3 transition-transform duration-700 group-hover:scale-[1.01]">
-                        <span class="text-[#C9B79C] drop-shadow-md">
-                            Chronicler's Ledger
-                        </span>
-                    </h1>
-                    <div class="flex items-center gap-4 justify-center md:justify-start">
-                        <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8C6A4A]/60 to-transparent"></div>
-                        <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.4em] sm:tracking-[0.6em] text-[#8C6A4A] font-black font-serif opacity-95">Lore of Your Journeys</p>
-                        <div class="h-[1px] flex-1 md:flex-none md:w-16 bg-gradient-to-r from-transparent via-[#8C6A4A]/60 to-transparent"></div>
-                    </div>
-                </div>
-
-                <!-- Search Bar -->
-                <div class="w-full md:w-96 relative group">
+            <!-- Search & Count Bar (Fixed at top of content) -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 relative z-10">
+                <div class="relative w-full max-w-md group">
                     <input 
                         v-model="searchQuery"
                         type="search" 
                         placeholder="Seek through the echoes..."
-                        class="w-full bg-[#2D2D2D] border border-white/5 rounded-sm px-6 py-4 text-[#C9B79C] font-serif text-xl focus:ring-0 focus:border-[#8C6A4A]/60 transition-all placeholder:text-[#8C6A4A]/40 italic relative z-10"
-                    />
-                    <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8C6A4A]/40 group-focus-within:text-[#8C6A4A] transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+                        class="w-full bg-[#1B1B1B]/40 border border-[#8C6A4A]/20 rounded-sm px-10 py-3 text-[#C9B79C] placeholder-[#8C6A4A]/40 focus:border-[#8C6A4A]/60 focus:ring-0 transition-all font-serif italic"
+                    >
+                    <svg class="absolute left-3 top-3.5 h-4 w-4 text-[#8C6A4A]/40 group-focus-within:text-[#8C6A4A] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <div class="flex items-center gap-4 text-[#8C6A4A]">
+                    <span class="text-[10px] uppercase font-black tracking-widest">{{ filteredEntries.length }} Chronicles Found</span>
+                    <div class="h-4 w-[1px] bg-[#8C6A4A]/20"></div>
                 </div>
             </div>
 

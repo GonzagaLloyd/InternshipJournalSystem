@@ -36,28 +36,17 @@ const submitEntry = () => {
 <template>
     <Head title="Home - Scriptorium" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout 
+        title="The <span class='text-[#8C6A4A]'>Chronicler's</span> Desk"
+        :subtitle="formattedDate"
+    >
         <!-- Page-Local Fixed Height Logic -->
         <div class="md:h-screen md:overflow-hidden flex flex-col relative font-serif">
             <main class="flex-1 flex flex-col relative z-20 px-6 md:px-16 lg:px-24 pt-8 pb-16 md:pt-12 md:pb-24 md:min-h-0">
                 <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col md:min-h-0">
                     
-                    <!-- Clean Header (Fixed) -->
-                    <header class="mb-8 md:mb-12 flex flex-col md:flex-row items-end justify-between gap-6 shrink-0">
-                        <div>
-                            <h1 class="text-3xl md:text-5xl font-bold font-cinzel text-[#C9B79C] tracking-tight">
-                                The <span class="text-[#8C6A4A]">Chronicler's</span> Desk
-                            </h1>
-                            <p class="mt-3 text-[#C9B79C]/40 text-lg italic">{{ formattedDate }}</p>
-                        </div>
-
-                        <div class="hidden md:flex items-center gap-10 pb-2 border-b border-white/[0.03]">
-                            <div class="text-right">
-                                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Memory Bloom</p>
-                                <p class="text-xl font-cinzel text-[#C9B79C]">{{ entryCount || 0 }} Entries</p>
-                            </div>
-                        </div>
-                    </header>
+                    <!-- Clean Spacer (since header is now in topbar) -->
+                    <div class="mb-4"></div>
 
                     <!-- Professional Dual-Scrolling Layout -->
                     <div class="flex-1 flex flex-col md:flex-row gap-8 md:gap-16 relative md:min-h-0">
