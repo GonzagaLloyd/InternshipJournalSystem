@@ -34,7 +34,7 @@ onBeforeUnmount(() => {
 <template>
     <div 
         :class="isFocused ? 'bg-[#2D2D2D]/60 shadow-[0_60px_100px_-20px_rgba(0,0,0,0.6)] scale-[1.005]' : 'bg-black/10 border-white/[0.02]'"
-        class="flex-1 flex flex-col border rounded-[2rem] relative overflow-hidden transition-all duration-1000 ease-out group/editor backdrop-blur-3xl"
+        class="flex-1 flex flex-col border rounded-[2rem] relative overflow-hidden transition-all duration-1000 ease-out group/editor backdrop-blur-3xl mb-10"
     >
         <!-- Minimal Depth -->
         <div 
@@ -43,10 +43,10 @@ onBeforeUnmount(() => {
         ></div>
         
         <!-- Header -->
-        <div class="px-8 lg:px-12 pt-8 pb-4 flex flex-col sm:flex-row justify-between items-end gap-6 relative z-20">
+        <div class="px-8 lg:px-12 pt-6 pb-2 flex flex-col sm:flex-row justify-between items-end gap-6 relative z-20">
             <div class="text-left">
-                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-2 opacity-60">Codex Entry</p>
-                <h2 class="text-2xl lg:text-3xl font-bold text-[#C9B79C] font-cinzel tracking-tight italic">{{ formattedDate }}</h2>
+                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-1 opacity-60">Codex Entry</p>
+                <h2 class="text-xl lg:text-2xl font-bold text-[#C9B79C] font-cinzel tracking-tight italic">{{ formattedDate }}</h2>
             </div>
             
             <button 
@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
             <!-- Asset Palette -->
             <div 
                 :class="isFocused ? 'border-white/5 bg-black/5' : 'border-transparent'"
-                class="mt-auto flex items-center justify-center gap-4 py-10 border-t transition-all duration-1000 ease-in-out"
+                class="mt-auto flex items-center justify-center gap-4 py-6 border-t transition-all duration-1000 ease-in-out"
             >
                 <!-- Inputs -->
                 <label v-for="type in ['image', 'video', 'file', 'audio']" :key="type" 

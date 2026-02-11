@@ -52,9 +52,15 @@ class TaskController extends Controller
             abort(403);
         }
 
-        $task->update($request->only(['name', 'completed', 'due_date', 'priority']));
+        $validate = $request->validate([
+            'name' => 'required|string|max:255',
+            'due_date' => 'nullable|date',
+            'priority' => 'nullable|string|in:low,medium,high',
+        ]);
 
-        return back();
+        $task->update($validate);
+
+        return back()->with('success', 'Decree successfully sealed in the ledger.');
     }
 
     /**
@@ -69,7 +75,7 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return back()->with('success', 'Decree has been stricken from the records.');
+        return back()->with('success', 'The decree has been banished to the Sunken Vault.');
     }
 
     /**

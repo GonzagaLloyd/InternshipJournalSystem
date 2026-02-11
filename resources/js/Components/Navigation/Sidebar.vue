@@ -36,12 +36,12 @@ const menuItems = [
     { name: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', routeName: 'dashboard' },
     { name: 'Entries', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', routeName: 'journal.index' },
     { name: 'Tasks', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', routeName: 'tasks.index' },
-    { name: 'Calendar', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', routeName: '#' },
+    { name: 'Calendar', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', routeName: 'calendar.index' },
 ];
 
 const managementItems = [
-    { name: 'Reports', icon: 'M9 17v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM9 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2z' },
-    { name: 'Vault', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' },
+    { name: 'Reports', icon: 'M9 17v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM9 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2z', routeName: '#' },
+    { name: 'Vault', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', routeName: 'vault.index' },
 ];
 </script>
 
@@ -91,10 +91,11 @@ const managementItems = [
                 <Link 
                     v-for="sub in managementItems"
                     :key="sub.name"
-                    href="#"
+                    :href="sub.routeName === '#' ? '#' : route(sub.routeName)"
                     :class="[
+                        route().current(sub.routeName) ? 'bg-[#3d3d3d] text-[#C9B79C] shadow-xl border border-white/5' : 'text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C]',
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
-                        'flex items-center text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C] transition-all duration-300'
+                        'flex items-center transition-all duration-300 group'
                     ]"
                 >
                     <div :class="[isCollapsed ? '' : 'mr-5']">

@@ -6,6 +6,8 @@ const props = defineProps({
     entry: Object
 });
 
+const emit = defineEmits(['delete']);
+
 const formatDate = (dateString) => {
     return new Intl.DateTimeFormat('en-US', {
         month: 'short',
@@ -22,6 +24,17 @@ const formatDate = (dateString) => {
 
         <!-- Ethereal Ancient Mist (Subtle Brass/Sepia) -->
         <div class="absolute inset-0 bg-[#8C6A4A]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 blur-3xl"></div>
+
+        <!-- Strike Record Button (Delete) -->
+        <button 
+            @click.stop="$emit('delete', entry.id)"
+            class="absolute top-8 right-8 z-40 p-2 text-red-500/20 hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100"
+            title="Strike from Ledger"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+        </button>
 
 
         <!-- Ancient Border Frame -->

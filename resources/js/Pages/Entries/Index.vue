@@ -4,6 +4,7 @@ import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import JournalCard from '@/Components/Journal/JournalCard.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 
 const props = defineProps({
     entries: Array
@@ -11,6 +12,8 @@ const props = defineProps({
 
 const searchQuery = ref('');
 const isNavigating = ref(false);
+const showDeleteModal = ref(false);
+const entryToDelete = ref(null);
 
 const filteredEntries = computed(() => {
     if (!searchQuery.value) return props.entries;
@@ -27,6 +30,22 @@ const handleEntryClick = (id) => {
     }, 1500);
 };
 
+const confirmDelete = (id) => {
+    entryToDelete.value = id;
+    showDeleteModal.value = true;
+};
+
+const deleteEntry = () => {
+    if (entryToDelete.value) {
+        router.delete(route('journal.destroy', entryToDelete.value), {
+            onSuccess: () => {
+                showDeleteModal.value = false;
+                entryToDelete.value = null;
+            },
+        });
+    }
+};
+
 
 </script>
 
@@ -34,7 +53,7 @@ const handleEntryClick = (id) => {
     <Head title="Journal Entries" />
 
     <AuthenticatedLayout>
-        <div class="h-full p-4 md:p-6 lg:p-8 flex flex-col font-serif min-h-[calc(100vh-64px)] overflow-hidden relative">
+        <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 lg:mb-16 relative z-10">
                 <div class="relative group w-full md:w-auto text-center md:text-left">
@@ -72,6 +91,7 @@ const handleEntryClick = (id) => {
                         :key="entry.id"
                         :entry="entry"
                         @click="handleEntryClick(entry.id)"
+                        @delete="confirmDelete"
                     />
                 </div>
 
@@ -96,6 +116,18 @@ const handleEntryClick = (id) => {
         </div>
     </AuthenticatedLayout>
     <TomeLoader :show="isNavigating" message="Consulting the Archives..." />
+
+    <!-- Confirmation Modal for Deletion -->
+    <ConfirmationModal 
+        :show="showDeleteModal"
+        title="Banish to Vault?"
+        message="This lore will be moved to the Sunken Vault. It will be hidden from the ledger but can be recovered from the forgotten depths."
+        confirm-text="Banish Record"
+        cancel-text="Preserve"
+        type="danger"
+        @close="showDeleteModal = false"
+        @confirm="deleteEntry"
+    />
 </template>
 
 <style scoped>

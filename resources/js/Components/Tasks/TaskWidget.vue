@@ -50,12 +50,12 @@ const toggleTask = (task) => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col group">
+    <div class="w-full lg:h-full flex flex-col group mb-10">
         <div class="flex-1 flex flex-col relative overflow-hidden">
             <!-- Header -->
-            <div class="mb-10 relative z-10">
-                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-2 opacity-80">Status</p>
-                <h3 class="text-3xl font-cinzel text-[#C9B79C] tracking-tight">Active Tasks</h3>
+            <div class="mb-6 relative z-10">
+                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-1 opacity-80">Status</p>
+                <h3 class="text-2xl font-cinzel text-[#C9B79C] tracking-tight">Active Tasks</h3>
             </div>
 
             <!-- Task List with Lineage -->
@@ -140,14 +140,14 @@ const toggleTask = (task) => {
             <!-- Refined Button -->
             <button 
                 @click="router.visit(route('tasks.index'))"
-                class="mt-auto group/btn flex items-center gap-5 py-8 border-t border-white/[0.03] text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-all"
+                class="mt-auto group/btn flex items-center gap-5 py-6 border-t border-white/[0.03] text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-all"
             >
-                <div class="h-11 w-11 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center group-hover/btn:border-[#8C6A4A]/60 group-hover/btn:bg-[#8C6A4A]/5 transition-all">
+                <div class="h-10 w-10 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center group-hover/btn:border-[#8C6A4A]/60 group-hover/btn:bg-[#8C6A4A]/5 transition-all">
                     <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </div>
                 <div class="text-left">
-                    <span class="text-[10px] font-cinzel tracking-[0.3em] uppercase text-[#8C6A4A] group-hover/btn:text-[#C9B79C] transition-colors">Open Ledger</span>
-                    <p class="text-[8px] font-serif italic text-white/10 group-hover/btn:text-white/20 mt-1 transition-colors">View all divine decrees</p>
+                    <span class="text-[9px] font-cinzel tracking-[0.3em] uppercase text-[#8C6A4A] group-hover/btn:text-[#C9B79C] transition-colors">Open Ledger</span>
+                    <p class="text-[8px] font-serif italic text-white/10 group-hover/btn:text-white/20 mt-0.5 transition-colors">View all divine decrees</p>
                 </div>
             </button>
         </div>

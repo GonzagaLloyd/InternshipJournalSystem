@@ -5,6 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import TaskItem from '@/Components/Tasks/TaskItem.vue';
 import TaskCreateModal from '@/Components/Tasks/TaskCreateModal.vue';
+import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 
 const props = defineProps({
     tasks: Array
@@ -12,6 +13,8 @@ const props = defineProps({
 
 const isNavigating = ref(false);
 const showCreateModal = ref(false);
+const showDeleteConfirm = ref(false);
+const taskToDelete = ref(null);
 const processingTaskId = ref(null);
 
 const toggleTask = (task) => {
@@ -34,16 +37,21 @@ const toggleTask = (task) => {
 };
 
 const deleteTask = (task) => {
-    if (confirm('Are you sure you want to strike this task from the records?')) {
-        if (!task.id) {
-            console.error('Task ID is missing!', task);
-            return;
+    taskToDelete.value = task;
+    showDeleteConfirm.value = true;
+};
+
+const confirmDeletion = () => {
+    const task = taskToDelete.value;
+    if (!task || !task.id) return;
+
+    router.delete(route('tasks.destroy', { task: task.id }), {
+        preserveScroll: true,
+        onSuccess: () => {
+            showDeleteConfirm.value = false;
+            taskToDelete.value = null;
         }
-        
-        router.delete(route('tasks.destroy', { task: task.id }), {
-            preserveScroll: true
-        });
-    }
+    });
 };
 
 const sortedTasks = computed(() => {
@@ -60,7 +68,7 @@ const sortedTasks = computed(() => {
     <Head title="Scriptorium - Tasks" />
 
     <AuthenticatedLayout>
-        <div class="h-full p-4 md:p-6 lg:p-8 flex flex-col font-serif min-h-[calc(100vh-64px)] overflow-hidden relative">
+        <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
             <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col relative z-20">
                 <!-- Header Section -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 lg:mb-16 relative z-10">
@@ -145,6 +153,18 @@ const sortedTasks = computed(() => {
 
         <!-- Create Modal Component -->
         <TaskCreateModal :show="showCreateModal" @close="showCreateModal = false" />
+
+        <!-- Delete Confirmation Modal -->
+        <ConfirmationModal 
+            :show="showDeleteConfirm"
+            title="Banish Decree?"
+            message="Are you sure you want to banish this decree to the Sunken Vault? It can be retrieved later from the forgotten archives."
+            confirm-text="Banish Records"
+            cancel-text="Keep Decree"
+            type="danger"
+            @close="showDeleteConfirm = false"
+            @confirm="confirmDeletion"
+        />
 
         <TomeLoader :show="isNavigating" message="Consulting the Scriptorium..." />
     </AuthenticatedLayout>
