@@ -71,7 +71,7 @@ const handlePermanentDelete = () => {
         title="The <span class='text-[#8C6A4A]'>Sunken</span> Vault"
         subtitle="The Forgotten Depths"
     >
-        <div class="p-4 md:p-8 lg:p-12 min-h-full flex flex-col font-serif relative overflow-hidden">
+        <div class="p-4 pt-12 md:p-8 md:pt-16 lg:p-12 lg:pt-20 min-h-full flex flex-col font-serif relative overflow-hidden">
             
             <!-- Vault Atmosphere -->
             <div class="fixed inset-0 pointer-events-none z-0">

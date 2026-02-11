@@ -17,7 +17,7 @@ const formatDate = (dateString) => {
             <div class="relative z-10 flex flex-col h-full overflow-hidden">
                 <!-- Selected Header -->
                 <div v-if="selectedDay" class="mb-12 shrink-0">
-                    <span class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black font-serif opacity-60">Daily Record</span>
+                    <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black font-serif">Daily Record</span>
                     <h2 class="text-3xl font-cinzel font-bold text-[#C9B79C] tracking-tight mt-2">
                         {{ formatDate(selectedDay.fullDate) }}
                     </h2>
@@ -45,27 +45,27 @@ const formatDate = (dateString) => {
                         <!-- Vertical Line Aura -->
                         <div class="absolute -left-6 top-1 bottom-1 w-[2px] bg-[#8C6A4A]/10 group-hover/item:bg-[#8C6A4A]/60 transition-all duration-500"></div>
                         
-                        <div class="flex items-center gap-4 mb-2 opacity-40 group-hover/item:opacity-100 transition-opacity">
-                            <span class="text-[8px] uppercase tracking-[0.3em] text-[#8C6A4A] font-black font-serif">
+                        <div class="flex items-center gap-4 mb-2 opacity-80 group-hover/item:opacity-100 transition-opacity">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-[#8C6A4A] font-black font-serif">
                                 {{ item.type === 'entry' ? 'Lore Entry' : 'Decree Task' }}
                             </span>
                         </div>
                         
-                        <h4 class="text-[#C9B79C]/70 font-serif text-[18px] leading-snug group-hover/item:text-[#C9B79C] group-hover/item:translate-x-1 transition-all duration-500">
+                        <h4 class="text-[#C9B79C] font-serif text-[20px] leading-snug group-hover:translate-x-1 transition-all duration-500">
                             {{ item.title }}
                         </h4>
                         
-                        <div v-if="item.completed" class="mt-2 flex items-center gap-2 text-[#8C6A4A]/40 group-hover/item:text-[#8C6A4A]/80 transition-colors">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            <span class="text-[8px] uppercase font-black tracking-widest">Fulfilled</span>
+                        <div v-if="item.completed" class="mt-2 flex items-center gap-2 text-[#8C6A4A] transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            <span class="text-[10px] uppercase font-black tracking-widest">Fulfilled</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Footer Stats (Selected) -->
-                <div v-if="selectedDay" class="mt-auto pt-8 border-t border-white/5 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.3em] text-[#8C6A4A]/30 shrink-0">
+                <div v-if="selectedDay" class="mt-auto pt-8 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.3em] text-[#8C6A4A]/60 shrink-0">
                     <span>{{ selectedDay.items.length }} Chronicles</span>
-                    <span class="group-hover:text-[#8C6A4A] cursor-pointer transition-colors" @click="emit('clear')">Collapse</span>
+                    <span class="hover:text-[#C9B79C] cursor-pointer transition-colors" @click="emit('clear')">Collapse</span>
                 </div>
             </div>
         </div>

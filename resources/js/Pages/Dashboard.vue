@@ -42,7 +42,7 @@ const submitEntry = () => {
     >
         <!-- Page-Local Fixed Height Logic -->
         <div class="md:h-screen md:overflow-hidden flex flex-col relative font-serif">
-            <main class="flex-1 flex flex-col relative z-20 px-6 md:px-16 lg:px-24 pt-8 pb-16 md:pt-12 md:pb-24 md:min-h-0">
+            <main class="flex-1 flex flex-col relative z-20 px-6 md:px-16 lg:px-24 pt-12 pb-16 md:pt-16 md:pb-24 md:min-h-0">
                 <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col md:min-h-0">
                     
                     <!-- Clean Spacer (since header is now in topbar) -->

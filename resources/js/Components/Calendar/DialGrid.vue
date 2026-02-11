@@ -15,7 +15,7 @@ const emit = defineEmits(['selectDay']);
         <!-- Weekday Headers (Fixed) -->
         <div class="grid grid-cols-7 mb-6 border-b border-[#3d3d3d]/40 pb-4 shrink-0">
             <div v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="day" class="text-center">
-                <span class="text-[9px] font-cinzel uppercase tracking-[0.4em] text-[#8C6A4A] font-black">{{ day }}</span>
+                <span class="text-[10px] font-cinzel uppercase tracking-[0.4em] text-[#8C6A4A] font-black opacity-90">{{ day }}</span>
             </div>
         </div>
 
@@ -36,9 +36,9 @@ const emit = defineEmits(['selectDay']);
                     <div class="flex justify-between w-full items-start">
                         <span 
                             :class="[
-                                day.month === 'current' ? 'text-[#C9B79C]/80' : 'text-[#8C6A4A]/40',
+                                day.month === 'current' ? 'text-[#C9B79C]' : 'text-[#8C6A4A]/40',
                                 day.fullDate === todayDate ? 'text-white' : '',
-                                'text-xs md:text-sm font-cinzel font-bold z-10'
+                                'text-sm md:text-base font-cinzel font-bold z-10'
                             ]"
                         >{{ day.day }}</span>
                         <div v-if="day.items?.length > 0" class="flex gap-1 pt-1">
@@ -51,15 +51,15 @@ const emit = defineEmits(['selectDay']);
                     </div>
 
                     <!-- Tiny Preview -->
-                    <div class="hidden md:flex flex-col gap-0.5 w-full mt-1">
+                    <div class="hidden md:flex flex-col gap-1 w-full mt-1.5">
                         <div 
                             v-for="item in day.items?.slice(0, 2)" 
                             :key="item.id"
-                            class="text-[7.5px] uppercase tracking-wider font-serif truncate text-[#8C6A4A]/60 group-hover/cell:text-[#C9B79C]/80 transition-colors"
+                            class="text-[9px] uppercase tracking-wider font-serif truncate text-[#C9B79C]/70 group-hover/cell:text-[#C9B79C] transition-colors"
                         >
                             {{ item.title }}
                         </div>
-                        <div v-if="day.items?.length > 2" class="text-[6.5px] text-[#8C6A4A]/40 italic">+{{ day.items.length - 2 }}</div>
+                        <div v-if="day.items?.length > 2" class="text-[8px] text-[#8C6A4A] italic font-bold">+{{ day.items.length - 2 }} more</div>
                     </div>
                 </div>
             </div>

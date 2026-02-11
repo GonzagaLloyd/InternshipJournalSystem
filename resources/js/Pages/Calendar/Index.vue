@@ -16,7 +16,7 @@ const props = defineProps({
         subtitle="The Tapestry of Time"
     >
         <div class="fixed inset-0 lg:left-72 flex flex-col">
-            <div class="p-4 md:p-8 lg:p-12 h-full flex flex-col font-serif relative overflow-hidden">
+            <div class="p-4 pt-24 md:p-8 md:pt-28 lg:p-12 lg:pt-32 h-full flex flex-col font-serif relative overflow-hidden">
                 <!-- Atmospheric Background -->
                 <div class="fixed inset-0 pointer-events-none z-0">
                     <div class="absolute top-[15%] left-[20%] w-[60rem] h-[60rem] bg-[#8C6A4A]/5 blur-[150px] rounded-full"></div>
