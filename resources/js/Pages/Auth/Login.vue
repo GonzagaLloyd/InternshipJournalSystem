@@ -75,24 +75,24 @@ const submit = () => {
                         class="absolute inset-0 border rounded-[1.25rem] pointer-events-none transition-all duration-300 z-10"
                         :class="[
                             form.errors.email 
-                                ? 'border-red-500/50 group-hover:border-red-500/80 peer-focus:border-red-500' 
-                                : 'border-white/20 group-hover:border-white/40 peer-focus:border-indigo-400'
+                                ? 'border-[#A65D50]/50 group-hover:border-[#A65D50]/80 peer-focus:border-[#A65D50]' 
+                                : 'border-white/10 group-hover:border-white/20 peer-focus:border-[#8C6A4A]/60'
                         ]"
                     >
                         <legend 
                             class="ml-6 sm:ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                             :class="{ 'floating-notch': form.email || form.errors.email }"
                         >
-                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Email Address</span>
+                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em] font-serif">Email Address</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="email" 
-                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px]"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
                         :class="[
                             form.email || form.errors.email ? 'floating-label' : '',
-                            form.errors.email ? '!text-red-400' : ''
+                            form.errors.email ? '!text-[#A65D50]' : ''
                         ]"
                     >
                         Email Address
@@ -121,24 +121,24 @@ const submit = () => {
                         class="absolute inset-0 border rounded-[1.25rem] pointer-events-none transition-all duration-300 z-10"
                         :class="[
                             form.errors.password
-                                ? 'border-red-500/50 group-hover:border-red-500/80 peer-focus:border-red-500' 
-                                : 'border-white/20 group-hover:border-white/40 peer-focus:border-indigo-400'
+                                ? 'border-[#A65D50]/50 group-hover:border-[#A65D50]/80 peer-focus:border-[#A65D50]' 
+                                : 'border-white/10 group-hover:border-white/20 peer-focus:border-[#8C6A4A]/60'
                         ]"
                     >
                         <legend 
                             class="ml-6 sm:ml-8 px-0 transition-all duration-300 max-w-[0.01px] invisible whitespace-nowrap"
                             :class="{ 'floating-notch': form.password || form.errors.password }"
                         >
-                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em]">Password</span>
+                            <span class="text-[10px] sm:text-[12px] px-2 opacity-0 select-none font-bold uppercase tracking-[0.2em] font-serif">Password</span>
                         </legend>
                     </fieldset>
 
                     <label 
                         for="password" 
-                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-white/50 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px]"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
                         :class="[
                             form.password || form.errors.password ? 'floating-label' : '',
-                            form.errors.password ? '!text-red-400' : ''
+                            form.errors.password ? '!text-[#A65D50]' : ''
                         ]"
                     >
                         Password
@@ -164,9 +164,9 @@ const submit = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-                <label class="flex items-center cursor-pointer group w-full sm:w-auto">
-                    <Checkbox name="remember" v-model:checked="form.remember" class="rounded border-white/20 bg-white/10 text-indigo-400 transition-all shadow-sm" />
-                    <span class="ms-3 text-sm text-white/40 group-hover:text-white/70 transition-colors whitespace-nowrap"
+                <label class="flex items-center cursor-pointer group w-full sm:w-auto font-serif">
+                    <Checkbox name="remember" v-model:checked="form.remember" />
+                    <span class="ms-3 text-sm text-[#C9B79C]/40 group-hover:text-[#C9B79C]/70 transition-colors whitespace-nowrap"
                         >Stay logged in</span
                     >
                 </label>
@@ -174,7 +174,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium border-b border-transparent hover:border-indigo-300"
+                    class="text-sm text-[#8C6A4A] hover:text-[#C9B79C] transition-colors font-serif border-b border-transparent hover:border-[#C9B79C]"
                 >
                     Forgot Password?
                 </Link>
@@ -182,12 +182,12 @@ const submit = () => {
 
             <div class="mt-8 sm:mt-12">
                 <PrimaryButton
-                    class="w-full justify-center py-4 sm:py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base sm:text-lg tracking-[0.2em] shadow-[0_20px_40px_-20px_rgba(79,70,229,0.5)] transition-all duration-300 rounded-[1.25rem] active:scale-95 group overflow-hidden relative"
+                    class="w-full justify-center py-4 sm:py-5 font-serif"
                     :class="{ 'opacity-50 pointer-events-none': form.processing || isLoggingIn }"
                     :disabled="form.processing || isLoggingIn"
                 >
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    <span v-if="form.processing || isLoggingIn" class="mr-3 h-5 w-5 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    <span v-if="form.processing || isLoggingIn" class="mr-3 h-5 w-5 animate-spin border-2 border-[#1B1B1B] border-t-transparent rounded-full font-serif"></span>
                     LOG IN
                 </PrimaryButton>
             </div>
@@ -206,7 +206,7 @@ const submit = () => {
 .floating-label {
     top: 0 !important;
     font-size: 12px !important;
-    color: #818cf8 !important; /* indigo-400 */
+    color: #8C6A4A !important;
     font-weight: 700 !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;

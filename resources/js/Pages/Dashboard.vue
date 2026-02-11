@@ -37,43 +37,39 @@ const submitEntry = () => {
     <Head title="Home - Scriptorium" />
 
     <AuthenticatedLayout>
-        <div class="h-screen bg-[#11100f] flex flex-col overflow-hidden relative font-serif">
-            <!-- Subtle Atmospheric Glow -->
-            <div class="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-[#8b2635]/5 blur-[120px] rounded-full pointer-events-none"></div>
-            
-            <!-- Minimal Texture -->
-            <div class="absolute inset-0 opacity-[0.015] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/black-paper.png')]"></div>
-
-            <main class="flex-1 flex flex-col relative z-20 overflow-hidden px-8 md:px-12 lg:px-20 py-10 lg:py-16">
-                <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col min-h-0">
+        <div class="min-h-screen flex flex-col relative font-serif">
+            <main class="flex-1 flex flex-col relative z-20 px-4 md:px-12 lg:px-20 py-8 lg:py-16 overflow-y-auto">
+                <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col">
                     
                     <!-- Clean Header -->
                     <header class="mb-12 lg:mb-20 flex flex-col lg:flex-row items-end justify-between gap-6 min-h-[80px]">
                         <div>
-                            <h1 class="text-4xl lg:text-5xl font-bold font-cinzel text-[#f4e4bc] tracking-tight">
-                                The <span class="text-[#8b2635]">Chronicler's</span> Desk
+                            <h1 class="text-3xl lg:text-5xl font-bold font-cinzel text-[#C9B79C] tracking-tight">
+                                The <span class="text-[#8C6A4A]">Chronicler's</span> Desk
                             </h1>
-                            <p class="mt-3 text-[#8c7e6a] text-lg opacity-60 italic">{{ formattedDate }}</p>
+                            <p class="mt-3 text-[#C9B79C]/40 text-lg italic">{{ formattedDate }}</p>
                         </div>
 
-                        <div class="hidden lg:flex items-center gap-10 pb-2 border-b border-white/[0.05]">
+                        <div class="hidden lg:flex items-center gap-10 pb-2 border-b border-white/[0.03]">
                             <div class="text-right">
-                                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8c7e6a] font-black">Memory Bloom</p>
-                                <p class="text-xl font-cinzel text-[#d9c5a3]">{{ entryCount || 0 }} Entries</p>
+                                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Memory Bloom</p>
+                                <p class="text-xl font-cinzel text-[#C9B79C]">{{ entryCount || 0 }} Entries</p>
                             </div>
                         </div>
                     </header>
 
                     <!-- Balanced Content Row -->
-                    <div class="flex-1 flex flex-col lg:flex-row gap-16 lg:gap-24 min-h-0">
-                        
-                        <!-- Minimal Sidebar (Tasks) -->
-                        <aside class="hidden xl:flex flex-col w-[18rem] shrink-0 min-h-0">
+                    <div class="flex-1 flex flex-col lg:flex-row gap-8 lg:gap-16 relative">
+                        <!-- Sidebar (Tasks) -->
+                        <aside class="flex flex-col w-full lg:w-[18rem] shrink-0 order-2 lg:order-1 relative z-20">
                             <TaskWidget :tasks="tasks" />
                         </aside>
 
+                        <!-- Subtle Vertical Divider -->
+                        <div class="hidden lg:block absolute left-[18.2rem] top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#8C6A4A]/20 via-[#8C6A4A]/5 to-transparent pointer-events-none"></div>
+
                         <!-- Focused Writing Area (Editor) -->
-                        <div class="flex-1 flex flex-col min-h-0">
+                        <div class="flex-1 flex flex-col order-1 lg:order-2 pl-0 lg:pl-12">
                             <JournalEditor 
                                 :form="form" 
                                 :formattedDate="formattedDate"

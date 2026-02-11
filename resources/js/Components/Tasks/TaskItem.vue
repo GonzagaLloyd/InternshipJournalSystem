@@ -25,22 +25,22 @@ const formattedDate = computed(() => {
 <template>
     <div 
         @click="toggle"
-        class="group relative py-6 px-6 flex items-center justify-between transition-all duration-500 cursor-pointer border-b border-[#3d352e]/10 hover:bg-white/[0.02]"
+        class="group relative py-6 px-6 flex items-center justify-between transition-all duration-500 cursor-pointer border-b border-white/5 hover:bg-[#353535]"
     >
         <div class="flex items-center gap-6 flex-1">
             <!-- Status Indicator -->
             <div 
                 :class="[
                     task.completed 
-                        ? 'bg-[#8b2635]/20 border-[#8b2635]/50 scale-90' 
-                        : 'border-[#d9c5a3]/20 bg-black/40 group-hover:border-[#d9c5a3]/40',
+                        ? 'bg-[#525947]/20 border-[#525947]/50 scale-90' 
+                        : 'border-[#8C6A4A]/20 bg-black/40 group-hover:border-[#8C6A4A]/40',
                     'h-6 w-6 rounded-full border shrink-0 flex items-center justify-center transition-all duration-500'
                 ]"
             >
                 <div 
                     :class="[
                         task.completed ? 'opacity-100 scale-100' : 'opacity-0 scale-0',
-                        'h-2 w-2 rounded-full bg-[#8b2635] shadow-[0_0_10px_rgba(139,38,53,0.5)] transition-all duration-500'
+                        'h-2 w-2 rounded-full bg-[#525947] shadow-[0_0_10px_rgba(82,89,71,0.5)] transition-all duration-500'
                     ]"
                 ></div>
             </div>
@@ -49,8 +49,8 @@ const formattedDate = computed(() => {
                 <h3 
                     :class="[
                         task.completed 
-                            ? 'text-[#8c7e6a]/40 line-through' 
-                            : 'text-[#f4e4bc] font-cinzel text-lg md:text-xl font-bold tracking-wider',
+                            ? 'text-[#C9B79C]/20 line-through' 
+                            : 'text-[#C9B79C] font-cinzel text-lg md:text-xl tracking-wider',
                         'transition-all duration-500'
                     ]"
                 >
@@ -61,9 +61,9 @@ const formattedDate = computed(() => {
                     <!-- Priority -->
                     <div :class="[
                         task.completed ? 'opacity-20' : 'opacity-80',
-                        task.priority === 'high' ? 'text-rose-500' : 
-                        task.priority === 'medium' ? 'text-amber-500' : 'text-[#8c7e6a]',
-                        'text-[10px] uppercase tracking-[0.3em] font-black font-sans'
+                        task.priority === 'high' ? 'text-[#8C6A4A]' : 
+                        task.priority === 'medium' ? 'text-[#C9B79C]/60' : 'text-[#8C6A4A]/40',
+                        'text-[10px] uppercase tracking-[0.3em] font-black font-serif'
                     ]">
                         {{ task.priority || 'medium' }}
                     </div>
@@ -71,11 +71,11 @@ const formattedDate = computed(() => {
                     <!-- Due Date -->
                     <div v-if="task.due_date" 
                         :class="[
-                            task.completed ? 'opacity-20' : 'opacity-40 text-[#d9c5a3]',
-                            'flex items-center gap-2'
+                            task.completed ? 'opacity-20' : 'opacity-40 text-[#C9B79C]',
+                            'flex items-center gap-2 font-serif'
                         ]"
                     >
-                        <span class="text-[10px] uppercase tracking-[0.2em] font-black font-sans">
+                        <span class="text-[10px] uppercase tracking-[0.2em] font-black">
                             {{ formattedDate }}
                         </span>
                     </div>
@@ -86,10 +86,10 @@ const formattedDate = computed(() => {
         <!-- Action Area -->
         <div class="flex items-center gap-4">
             <!-- Delete Action -->
-            <div class="opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-500">
+            <div class="opacity-100 lg:opacity-0 lg:translate-x-2 lg:group-hover:opacity-100 lg:group-hover:translate-x-0 transition-all duration-500">
                 <button 
                     @click.stop="remove"
-                    class="p-3 text-[#8c7e6a]/40 hover:text-[#8b2635] hover:scale-110 transition-all active:scale-90"
+                    class="p-3 text-[#8C6A4A]/40 hover:text-[#C9B79C] hover:scale-110 transition-all active:scale-90"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

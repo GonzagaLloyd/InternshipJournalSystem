@@ -19,58 +19,68 @@ const toggleTask = (task) => {
         <div class="flex-1 flex flex-col relative overflow-hidden">
             <!-- Header -->
             <div class="mb-10 relative z-10">
-                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8b2635] font-black mb-2 opacity-60">Status</p>
-                <h3 class="text-3xl font-cinzel text-[#f4e4bc] tracking-tight">Active Tasks</h3>
+                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-2 opacity-80">Status</p>
+                <h3 class="text-3xl font-cinzel text-[#C9B79C] tracking-tight">Active Tasks</h3>
             </div>
 
-            <!-- Task List -->
-            <div class="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-6 relative z-10 pb-6">
+            <!-- Task List with Lineage -->
+            <div class="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-7 relative z-10 pb-6">
+                <!-- Vertical Line -->
+                <div class="absolute left-2 top-2 bottom-6 w-[1px] bg-gradient-to-b from-[#8C6A4A]/40 via-[#8C6A4A]/10 to-transparent"></div>
+
                 <div 
                     v-for="task in tasks" 
                     :key="task.id || task._id" 
-                    class="group/item flex items-center gap-5 cursor-pointer select-none transition-all duration-300" 
+                    class="group/item flex items-start gap-6 cursor-pointer select-none transition-all duration-500 relative" 
                     @click="toggleTask(task)"
                 >
-                    <!-- Simple Checkbox -->
+                    <!-- Simple Checkbox / Node -->
                     <div 
                         :class="task.completed 
-                            ? 'bg-[#8b2635] border-[#8b2635]' 
-                            : 'border-white/10 bg-white/[0.02] group-hover/item:border-[#d9c5a3]/40'"
-                        class="h-5 w-5 rounded-full border shrink-0 flex items-center justify-center transition-all duration-500"
+                            ? 'bg-[#525947] border-[#525947] shadow-[0_0_10px_rgba(82,89,71,0.3)]' 
+                            : 'border-[#8C6A4A]/30 bg-[#1B1B1B] group-hover/item:border-[#8C6A4A] group-hover/item:shadow-[0_0_10px_rgba(140,106,74,0.2)]'"
+                        class="h-4 w-4 rounded-full border shrink-0 flex items-center justify-center transition-all duration-500 z-10 mt-1"
                     >
-                        <div v-if="task.completed" class="h-1.5 w-1.5 rounded-full bg-[#f4e4bc]"></div>
+                        <div v-if="task.completed" class="h-1 w-1 rounded-full bg-[#C9B79C]"></div>
+                        <!-- Hover Pulse -->
+                        <div v-if="!task.completed" class="absolute inset-0 rounded-full border border-[#8C6A4A]/0 group-hover/item:border-[#8C6A4A]/40 group-hover/item:animate-ping opacity-0 group-hover/item:opacity-100 transition-all duration-700"></div>
                     </div>
 
-                    <!-- Text -->
-                    <span 
-                        :class="[
-                            task.completed 
-                                ? 'text-[#8c7e6a]/40 line-through italic' 
-                                : 'text-[#d9c5a3] group-hover/item:text-[#f4e4bc]',
-                            'text-base font-medium leading-relaxed transition-all duration-300'
-                        ]"
-                    >
-                        {{ task.name }}
-                    </span>
+                    <!-- Text & Priority -->
+                    <div class="flex flex-col gap-1 min-w-0">
+                        <span 
+                            :class="[
+                                task.completed 
+                                    ? 'text-[#C9B79C]/20 line-through italic' 
+                                    : 'text-[#C9B79C]/70 group-hover/item:text-[#C9B79C]',
+                                'text-[15px] font-medium leading-tight transition-all duration-300 font-serif'
+                            ]"
+                        >
+                            {{ task.name }}
+                        </span>
+                        <span v-if="!task.completed" class="text-[8px] uppercase tracking-[0.2em] text-[#8C6A4A]/40 font-black font-serif group-hover/item:text-[#8C6A4A]/60 transition-colors">
+                            {{ task.priority || 'Medium' }}
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Empty State -->
-                <div v-if="tasks && tasks.length === 0" class="flex flex-col items-center justify-center py-12 opacity-20">
-                    <span class="text-[9px] uppercase tracking-[0.4em] font-black text-[#8c7e6a]">Quiet in the Scriptorium</span>
+                <div v-if="tasks && tasks.length === 0" class="flex flex-col items-center justify-center py-12 opacity-10">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-black text-[#C9B79C]">Quiet in the Scriptorium</span>
                 </div>
             </div>
 
-            <!-- Minimal Button -->
+            <!-- Refined Button -->
             <button 
                 @click="router.visit(route('tasks.index'))"
-                class="mt-auto group/btn flex items-center gap-4 py-6 border-t border-white/[0.05] text-[#8c7e6a] hover:text-[#d9c5a3] transition-all"
+                class="mt-auto group/btn flex items-center gap-5 py-8 border-t border-white/[0.03] text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-all"
             >
-                <div class="h-10 w-10 rounded-xl border border-white/[0.1] flex items-center justify-center group-hover/btn:border-[#d9c5a3]/30 transition-all">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                <div class="h-11 w-11 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center group-hover/btn:border-[#8C6A4A]/60 group-hover/btn:bg-[#8C6A4A]/5 transition-all">
+                    <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </div>
                 <div class="text-left">
-                    <span class="text-[9px] uppercase tracking-[0.3em] font-black">Open Ledger</span>
-                    <p class="text-[7px] uppercase tracking-[0.1em] text-[#3d352e] mt-0.5">View all history</p>
+                    <span class="text-[10px] font-cinzel tracking-[0.3em] uppercase text-[#8C6A4A] group-hover/btn:text-[#C9B79C] transition-colors">Open Ledger</span>
+                    <p class="text-[8px] font-serif italic text-white/10 group-hover/btn:text-white/20 mt-1 transition-colors">View all divine decrees</p>
                 </div>
             </button>
         </div>

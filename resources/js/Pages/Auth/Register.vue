@@ -25,83 +25,86 @@ const submit = () => {
         <Head title="Register" />
 
         <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <InputLabel for="name" value="The Scribe's Name" />
+                    <div class="relative bg-black/30 border border-white/5 rounded-2xl overflow-hidden focus-within:border-[#8C6A4A]/60 transition-all px-4 py-1">
+                        <TextInput
+                            id="name"
+                            type="text"
+                            class="block w-full !text-[#C9B79C] !placeholder-[#8C6A4A]/40 !text-lg"
+                            v-model="form.name"
+                            required
+                            autofocus
+                            autocomplete="name"
+                            placeholder="How shall you be known?"
+                        />
+                    </div>
+                    <InputError :message="form.errors.name" />
+                </div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+                <div class="space-y-2">
+                    <InputLabel for="email" value="The Ledger Address" />
+                    <div class="relative bg-black/30 border border-white/5 rounded-2xl overflow-hidden focus-within:border-[#8C6A4A]/60 transition-all px-4 py-1">
+                        <TextInput
+                            id="email"
+                            type="email"
+                            class="block w-full !text-[#C9B79C] !placeholder-[#8C6A4A]/40 !text-lg"
+                            v-model="form.email"
+                            required
+                            autocomplete="username"
+                            placeholder="your@echo.com"
+                        />
+                    </div>
+                    <InputError :message="form.errors.email" />
+                </div>
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <div class="space-y-2">
+                    <InputLabel for="password" value="Master Seal" />
+                    <div class="relative bg-black/30 border border-white/5 rounded-2xl overflow-hidden focus-within:border-[#8C6A4A]/60 transition-all px-4 py-1">
+                        <TextInput
+                            id="password"
+                            type="password"
+                            class="block w-full !text-[#C9B79C] !placeholder-[#8C6A4A]/40 !text-lg"
+                            v-model="form.password"
+                            required
+                            autocomplete="new-password"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                    <InputError :message="form.errors.password" />
+                </div>
+
+                <div class="space-y-2">
+                    <InputLabel
+                        for="password_confirmation"
+                        value="Confirm Master Seal"
+                    />
+                    <div class="relative bg-black/30 border border-white/5 rounded-2xl overflow-hidden focus-within:border-[#8C6A4A]/60 transition-all px-4 py-1">
+                        <TextInput
+                            id="password_confirmation"
+                            type="password"
+                            class="block w-full !text-[#C9B79C] !placeholder-[#8C6A4A]/40 !text-lg"
+                            v-model="form.password_confirmation"
+                            required
+                            autocomplete="new-password"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                    <InputError :message="form.errors.password_confirmation" />
+                </div>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
+            <div class="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <Link
                     :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="text-sm text-[#8C6A4A] hover:text-[#C9B79C] transition-colors font-serif border-b border-transparent hover:border-[#C9B79C]"
                 >
                     Already registered?
                 </Link>
 
                 <PrimaryButton
-                    class="ms-4"
+                    class="w-full sm:w-auto"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >

@@ -50,16 +50,16 @@ const managementItems = [
     <aside 
         :class="[
             isCollapsed ? 'w-24' : 'w-72',
-            'hidden lg:flex flex-col border-r border-[#3d352e] bg-[#1c1a18] fixed h-screen transition-all duration-300 ease-in-out z-40 text-[#d9c5a3] shadow-2xl overflow-hidden'
+            'hidden lg:flex flex-col border-r border-[#3d3d3d] bg-[#2D2D2D] fixed h-screen transition-all duration-300 ease-in-out z-40 text-[#C9B79C] shadow-2xl overflow-hidden'
         ]"
     >
         <!-- Logo Section -->
         <div :class="['h-28 flex items-center shrink-0 transition-all', isCollapsed ? 'justify-center w-full' : 'px-8']">
             <Link :href="route('dashboard')" :class="['flex items-center group', isCollapsed ? 'justify-center' : 'space-x-4']">
                 <div class="flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <ApplicationLogo :class="[isCollapsed ? 'h-11' : 'h-16', 'w-auto opacity-90 group-hover:opacity-100 transition-all']" />
+                    <ApplicationLogo :class="[isCollapsed ? 'h-11' : 'h-16', 'w-auto opacity-90 group-hover:opacity-100 transition-all brightness-[0.8] sepia-[0.3]']" />
                 </div>
-                <span v-if="!isCollapsed" class="text-2xl font-serif font-black tracking-widest text-[#d9c5a3] uppercase italic">OJT</span>
+                <span v-if="!isCollapsed" class="text-2xl font-serif font-black tracking-widest text-[#8C6A4A] uppercase italic">OJT</span>
             </Link>
         </div>
 
@@ -71,7 +71,7 @@ const managementItems = [
                     :key="item.name"
                     :href="item.routeName === '#' ? '#' : route(item.routeName)"
                     :class="[
-                        route().current(item.routeName) ? 'bg-[#3d352e] text-white shadow-xl' : 'text-[#8c7e6a] hover:bg-[#2d2a27] hover:text-[#d9c5a3]',
+                        route().current(item.routeName) ? 'bg-[#3d3d3d] text-[#C9B79C] shadow-xl border border-white/5' : 'text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C]',
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
                         'flex items-center transition-all duration-300 group relative'
                     ]"
@@ -81,7 +81,7 @@ const managementItems = [
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
                         </svg>
                     </div>
-                    <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif">{{ item.name }}</span>
+                    <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif tracking-wide">{{ item.name }}</span>
                 </Link>
             </div>
 
@@ -94,7 +94,7 @@ const managementItems = [
                     href="#"
                     :class="[
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
-                        'flex items-center text-[#8c7e6a] hover:bg-[#2d2a27] hover:text-[#d9c5a3] transition-all duration-300'
+                        'flex items-center text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C] transition-all duration-300'
                     ]"
                 >
                     <div :class="[isCollapsed ? '' : 'mr-5']">
@@ -102,25 +102,25 @@ const managementItems = [
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="sub.icon" />
                         </svg>
                     </div>
-                    <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif">{{ sub.name }}</span>
+                    <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif tracking-wide">{{ sub.name }}</span>
                 </Link>
             </div>
         </div>
 
         <!-- Footer / User Profile -->
-        <div class="p-6 mt-auto border-t border-[#3d352e] bg-black/10">
-            <div :class="['flex items-center transition-all hover:bg-[#2d2a27] cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-[#3d352e] p-3']">
-                <div :class="[isCollapsed ? 'h-8 w-8' : 'h-10 w-10', 'bg-[#8b2635] rounded-lg flex-shrink-0 flex items-center justify-center text-[#f4e4bc] font-black text-xs shadow-lg shadow-black/40 transform transition-transform group-hover:scale-105']">
+        <div class="p-6 mt-auto border-t border-[#3d3d3d] bg-black/5">
+            <div :class="['flex items-center transition-all hover:bg-[#353535] cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-[#3d3d3d] p-3']">
+                <div :class="[isCollapsed ? 'h-8 w-8' : 'h-10 w-10', 'bg-[#8C6A4A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#C9B79C] font-black text-xs shadow-lg shadow-black/40 transform transition-transform group-hover:scale-105']">
                     {{ user.name.charAt(0) }}
                 </div>
                 <div v-if="!isCollapsed" class="ml-4 flex-1 min-w-0">
-                    <p class="text-[13px] font-black text-white truncate tracking-tight font-serif">{{ user.name }}</p>
-                    <p class="text-[10px] font-bold text-[#8c7e6a] truncate group-hover:text-[#d9c5a3] transition-colors uppercase tracking-widest">Scribe Active</p>
+                    <p class="text-[13px] font-black text-[#C9B79C] truncate tracking-tight font-serif">{{ user.name }}</p>
+                    <p class="text-[10px] font-bold text-[#8C6A4A]/60 truncate group-hover:text-[#C9B79C] transition-colors uppercase tracking-widest font-serif">Scribe Active</p>
                 </div>
                 <button 
                     v-if="!isCollapsed"
                     @click="handleLogout"
-                    class="ml-2 p-2 text-[#8c7e6a] hover:text-[#8b2635] transition-colors"
+                    class="ml-2 p-2 text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-colors"
                 >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>
@@ -134,13 +134,13 @@ const managementItems = [
     </transition>
 
     <transition enter-active-class="transition duration-500 transform" enter-from-class="-translate-x-full" leave-active-class="transition duration-500 transform" leave-to-class="-translate-x-full">
-        <aside v-if="showingMobileMenu" class="fixed inset-y-0 left-0 w-80 bg-[#1c1a18] z-[60] lg:hidden flex flex-col p-8 text-[#d9c5a3] shadow-2xl border-r border-[#3d352e]">
+        <aside v-if="showingMobileMenu" class="fixed inset-y-0 left-0 w-80 bg-[#1B1B1B] z-[60] lg:hidden flex flex-col p-8 text-[#C9B79C] shadow-2xl border-r border-[#3d3d3d]">
             <div class="h-20 flex items-center justify-between mb-8">
                 <div class="flex items-center space-x-4">
                     <ApplicationLogo class="h-10 w-auto" />
                     <span class="text-2xl font-serif font-black italic tracking-tighter">OJT</span>
                 </div>
-                <button @click="$emit('close')" class="p-3 bg-white/[0.05] rounded-2xl text-[#8c7e6a] hover:text-[#d9c5a3] transition-all">
+                <button @click="$emit('close')" class="p-3 bg-white/[0.05] rounded-2xl text-[#8C6A4A] hover:text-[#C9B79C] transition-all">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -150,29 +150,29 @@ const managementItems = [
                     v-for="item in menuItems" 
                     :key="item.name" 
                     :href="item.routeName === '#' ? '#' : route(item.routeName)" 
-                    class="flex items-center p-5 rounded-2xl bg-black/20 border border-[#3d352e] hover:bg-[#2d2a27] transition-all group"
+                    class="flex items-center p-5 rounded-2xl bg-black/20 border border-[#3d3d3d] hover:bg-[#353535] transition-all group"
                     @click="$emit('close')"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-6 text-[#8c7e6a] group-hover:text-[#8b2635] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-6 text-[#8C6A4A]/60 group-hover:text-[#8C6A4A] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                     </svg>
-                    <span class="font-bold text-[#d9c5a3] font-serif">{{ item.name }}</span>
+                    <span class="font-bold text-[#C9B79C] font-serif transition-colors group-hover:text-white">{{ item.name }}</span>
                 </Link>
             </nav>
 
             <!-- Mobile Footer / User Profile -->
-            <div class="mt-8 border-t border-[#3d352e] pt-8">
-                <div class="flex items-center p-4 rounded-2xl bg-black/20 border border-[#3d352e] relative overflow-hidden">
-                    <div class="h-12 w-12 bg-[#8b2635] rounded-xl flex-shrink-0 flex items-center justify-center text-[#f4e4bc] font-black text-sm shadow-lg">
+            <div class="mt-8 border-t border-[#3d3d3d] pt-8">
+                <div class="flex items-center p-4 rounded-2xl bg-black/20 border border-[#3d3d3d] relative overflow-hidden">
+                    <div class="h-12 w-12 bg-[#8C6A4A] rounded-xl flex-shrink-0 flex items-center justify-center text-[#C9B79C] font-black text-sm shadow-lg">
                         {{ user.name.charAt(0) }}
                     </div>
                     <div class="ml-4 flex-1 min-w-0">
-                        <p class="text-sm font-black text-white truncate font-serif">{{ user.name }}</p>
-                        <p class="text-[10px] font-bold text-[#8c7e6a] uppercase tracking-widest">Scribe Active</p>
+                        <p class="text-sm font-black text-[#C9B79C] truncate font-serif">{{ user.name }}</p>
+                        <p class="text-[10px] font-bold text-[#8C6A4A]/60 uppercase tracking-widest font-serif">Scribe Active</p>
                     </div>
                     <button 
                         @click="handleLogout"
-                        class="p-2 text-[#8c7e6a] hover:text-[#8b2635] transition-colors"
+                        class="p-2 text-[#8C6A4A]/60 hover:text-[#8C6A4A] transition-colors"
                     >
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     </button>

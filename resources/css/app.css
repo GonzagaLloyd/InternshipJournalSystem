@@ -4,30 +4,33 @@
 
 @layer base {
     body {
-        @apply antialiased bg-[#0d0c0b] text-[#d9c5a3];
-        background-color: #0d0c0b;
-        background-image: 
-            radial-gradient(circle at 50% 50%, rgba(139, 38, 53, 0.03) 0%, transparent 100%),
-            radial-gradient(circle at 10% 20%, rgba(217, 197, 163, 0.02) 0%, transparent 100%);
+        @apply antialiased bg-[#1B1B1B] text-[#C9B79C];
+        background-color: #1B1B1B;
+        background-image:
+            radial-gradient(circle at 50% 50%, rgba(140, 106, 74, 0.05) 0%, transparent 100%),
+            url('/images/obsidian-texture.jpg');
+        background-size: cover;
+        background-position: center;
         background-attachment: fixed;
+        background-blend-mode: soft-light;
     }
 
     ::selection {
-        @apply bg-[#8b2635]/30 text-[#f4e4bc];
+        @apply bg-[#8C6A4A]/30 text-[#C9B79C];
     }
 }
 
 @layer components {
     .glass-sidebar {
-        @apply bg-[#141210]/95 border-r border-white/[0.05] shadow-2xl backdrop-blur-xl;
+        @apply bg-[#2D2D2D]/95 border-r border-white/[0.03] shadow-2xl backdrop-blur-xl;
     }
 
     .glass-card {
-        @apply bg-[#1a1715]/40 border border-white/[0.05] rounded-[2rem] shadow-2xl transition-all duration-700 hover:border-[#8b2635]/20 backdrop-blur-sm;
+        @apply bg-[#2D2D2D]/40 border border-white/[0.05] rounded-[2rem] shadow-2xl transition-all duration-700 hover:border-[#8C6A4A]/20 backdrop-blur-sm;
     }
 
     .glass-input {
-        @apply bg-black/20 border border-white/10 focus:border-[#8b2635]/40 focus:ring-0 transition-all duration-500 rounded-2xl text-[#f4e4bc];
+        @apply bg-black/20 border border-white/5 focus:border-[#8C6A4A]/40 focus:ring-0 transition-all duration-500 rounded-2xl text-[#C9B79C];
     }
 }
 
@@ -42,18 +45,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(139, 38, 53, 0.1);
+    background: rgba(140, 106, 74, 0.1);
     border-radius: 20px;
     transition: all 0.5s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(139, 38, 53, 0.3);
+    background: rgba(140, 106, 74, 0.3);
 }
 
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
