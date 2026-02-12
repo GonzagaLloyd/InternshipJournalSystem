@@ -18,22 +18,27 @@ class AIController extends Controller
 
         if (!$apiKey) {
             return response()->json([
-                'error' => 'The Divine Muse is currently silent. (API key missing)',
+                'error' => 'AI Service Unavailable (API key missing)',
             ], 500);
         }
 
-        $prompt = "You are a helpful scribe's assistant. Your task is to correct grammar, spelling, and polish the following journal entry. 
-        Maintain the original meaning and tone, but make it more elegant and well-written. 
-        If the user's input is very short, suggest a way to expand it slightly to make it more descriptive of a day's event.
-        Return ONLY the refined text without any explanations or introductory remarks.
+        $prompt = "You are a professional Technical Writer and IT Documentation Assistant. 
+        Your task is to refine the following journal entry into clear, professional, and grammatically correct technical documentation.
+        
+        Guidelines:
+        - Maintain a professional and objective tone.
+        - Use precise technical terminology where appropriate.
+        - Ensure clarity and conciseness suitable for a daily work log or progress report.
+        - If the input is brief, expand slightly to make it a complete thought, but do not invent facts.
+        - Return ONLY the refined text. Do not add introductory phrases like 'Here is the refined text:'.
         
         Text to refine:
         " . $request->content;
 
         try {
-            // Using gemini-2.5-flash-lite which has higher rate limits (fastest/efficient)
+            // Using gemini-flash-latest for best availability and performance
             // Adding withoutVerifying() to bypass SSL issues in local development
-            $response = Http::withoutVerifying()->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+            $response = Http::withoutVerifying()->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [
@@ -58,19 +63,19 @@ class AIController extends Controller
             Log::error('AI Refine Error', [
                 'status' => $response->status(),
                 'detail' => $errorDetail,
-                'url' => "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+                'url' => "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent"
             ]);
 
-            $errorMessage = $errorDetail['error']['message'] ?? 'The Divine Muse is troubled.';
+            $errorMessage = $errorDetail['error']['message'] ?? 'AI Service request failed.';
             
             return response()->json([
-                'error' => "The Muse says: {$errorMessage}",
+                'error' => "AI Error: {$errorMessage}",
             ], 500);
 
         } catch (\Exception $e) {
             Log::error('AI Refine Exception', ['message' => $e->getMessage()]);
             return response()->json([
-                'error' => 'Connecting to the Scribe\'s Network failed.',
+                'error' => 'AI Service connection failed.',
             ], 500);
         }
     }
