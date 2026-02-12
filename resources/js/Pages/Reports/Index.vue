@@ -18,6 +18,8 @@ const handleReportGenerated = (data) => {
 
 const loadReport = (report) => {
     generatedReport.value = {
+        id: report.id,
+        _id: report._id,
         report: report.report,
         period: report.period
     };
@@ -63,7 +65,7 @@ const resetReport = () => {
                                     >
                                         <div class="flex justify-between items-center mb-1">
                                             <span class="text-[11px] text-[#E3D5C1] font-sans font-medium group-hover:text-[#A68B6A] transition-colors">
-                                                {{ report.period.start }} - {{ report.period.end }}
+                                                {{ report.period?.start || 'N/A' }} - {{ report.period?.end || 'N/A' }}
                                             </span>
                                             <span class="text-[9px] text-white/30 font-sans">{{ report.created_at }}</span>
                                         </div>

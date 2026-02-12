@@ -6,7 +6,8 @@ import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 
 const props = defineProps({
     entries: Array,
-    tasks: Array
+    tasks: Array,
+    reports: Array
 });
 
 const activeTab = ref('entries'); // entries, tasks
@@ -40,7 +41,15 @@ const openDeletePermanentModal = (item, type) => {
 
 const handleRestore = () => {
     const id = processingItem.value.id || processingItem.value._id;
-    const routeName = processingType.value === 'entry' ? 'vault.journal.restore' : 'vault.tasks.restore';
+    let routeName;
+    
+    if (processingType.value === 'entry') {
+        routeName = 'vault.journal.restore';
+    } else if (processingType.value === 'task') {
+        routeName = 'vault.tasks.restore';
+    } else if (processingType.value === 'report') {
+        routeName = 'vault.reports.restore';
+    }
     
     router.post(route(routeName, id), {}, {
         onSuccess: () => {
@@ -52,7 +61,15 @@ const handleRestore = () => {
 
 const handlePermanentDelete = () => {
     const id = processingItem.value.id || processingItem.value._id;
-    const routeName = processingType.value === 'entry' ? 'vault.journal.force-delete' : 'vault.tasks.force-delete';
+    let routeName;
+    
+    if (processingType.value === 'entry') {
+        routeName = 'vault.journal.force-delete';
+    } else if (processingType.value === 'task') {
+        routeName = 'vault.tasks.force-delete';
+    } else if (processingType.value === 'report') {
+        routeName = 'vault.reports.force-delete';
+    }
     
     router.delete(route(routeName, id), {
         onSuccess: () => {
@@ -103,6 +120,13 @@ const handlePermanentDelete = () => {
                     class="pb-4 px-2 transition-all duration-500 font-cinzel text-xs uppercase tracking-[0.3em] font-bold"
                 >
                     Forgotten Deeds ({{ tasks.length }})
+                </button>
+                <button 
+                    @click="activeTab = 'reports'"
+                    :class="activeTab === 'reports' ? 'text-[#C9B79C] border-[#8C6A4A] border-b-2 -mb-[2px]' : 'text-[#8C6A4A]/40 hover:text-[#C9B79C]'"
+                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-xs uppercase tracking-[0.3em] font-bold"
+                >
+                    Archived Reports ({{ reports.length }})
                 </button>
             </div>
 
@@ -176,6 +200,38 @@ const handlePermanentDelete = () => {
                     </div>
                 </div>
 
+                <!-- Reports Tab -->
+                <div v-if="activeTab === 'reports'" class="space-y-4">
+                    <div v-if="reports.length > 0" class="max-w-4xl space-y-3">
+                        <div 
+                            v-for="report in reports" 
+                            :key="report.id || report._id"
+                            class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
+                        >
+                            <div class="flex flex-col gap-1">
+                                <span class="text-base text-[#C9B79C]/70 group-hover:text-[#C9B79C] transition-colors font-medium">
+                                    Weekly Report: {{ report.period?.start || 'N/A' }} - {{ report.period?.end || 'N/A' }}
+                                </span>
+                                <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/40 italic">Archived on {{ report.deleted_at }}</span>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="flex gap-4">
+                                    <button @click="openRestoreModal(report, 'report')" class="text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    </button>
+                                    <button @click="openDeletePermanentModal(report, 'report')" class="text-red-900/20 hover:text-red-700 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="py-40 flex flex-col items-center justify-center opacity-20 border border-white/5 rounded-sm">
+                        <svg class="w-20 h-20 mb-6 text-[#8C6A4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <p class="font-cinzel tracking-widest text-xs uppercase text-[#8C6A4A]">No Archived Reports Found</p>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -184,7 +240,7 @@ const handlePermanentDelete = () => {
         <ConfirmationModal 
             :show="showRestoreModal"
             title="Resurrect Records?"
-            :message="`Shall we call this ${processingType === 'entry' ? 'lore' : 'deed'} back from the void? It will return to its original place in the archives.`"
+            :message="`Shall we call this ${processingType === 'entry' ? 'lore' : processingType === 'task' ? 'deed' : 'report'} back from the void? It will return to its original place in the archives.`"
             confirm-text="Heal Records"
             cancel-text="Let it Rest"
             type="info"

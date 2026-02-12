@@ -53,6 +53,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Report Routes
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
+    Route::delete('/reports/{id}', [\App\Http\Controllers\ReportController::class, 'destroy'])->name('reports.destroy');
+    
+    // Vault Report Routes
+    Route::post('/vault/reports/{id}/restore', [VaultController::class, 'restoreReport'])->name('vault.reports.restore');
+    Route::delete('/vault/reports/{id}/force', [VaultController::class, 'forceDeleteReport'])->name('vault.reports.force-delete');
 });
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JournalEntry;
 use App\Models\Task;
+use App\Models\Report;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -24,9 +25,23 @@ class VaultController extends Controller
             ->latest('deleted_at')
             ->get();
 
+        $trashedReports = Report::onlyTrashed()
+            ->where('user_id', auth()->id())
+            ->latest('deleted_at')
+            ->get()
+            ->map(function ($report) {
+                return [
+                    'id' => $report->id,
+                    '_id' => $report->_id,
+                    'period' => $report->period,
+                    'deleted_at' => $report->deleted_at->format('M d, Y H:i'),
+                ];
+            });
+
         return Inertia::render('Vault/Index', [
             'entries' => $trashedEntries,
-            'tasks' => $trashedTasks
+            'tasks' => $trashedTasks,
+            'reports' => $trashedReports
         ]);
     }
 
@@ -90,5 +105,33 @@ class VaultController extends Controller
         $task->forceDelete();
 
         return back()->with('success', 'The mandate has been permanently struck from records.');
+    }
+
+    /**
+     * Restore a trashed report.
+     */
+    public function restoreReport($id)
+    {
+        $report = Report::onlyTrashed()
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
+
+        $report->restore();
+
+        return back()->with('success', 'The report has been restored from the vault.');
+    }
+
+    /**
+     * Permanently delete a report.
+     */
+    public function forceDeleteReport($id)
+    {
+        $report = Report::onlyTrashed()
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
+
+        $report->forceDelete();
+
+        return back()->with('success', 'The report has been permanently erased from the vault.');
     }
 }

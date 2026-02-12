@@ -3,11 +3,15 @@ import { ref, watch, computed } from 'vue';
 import { marked } from 'marked';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
+import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 
 const props = defineProps({
-    report: Object
+    report: Object,
+    class: String
 });
+
+const emit = defineEmits(['reset']);
 
 const page = usePage();
 const userName = page.props.auth.user.name; 
@@ -15,6 +19,7 @@ const companyName = "iTech Media Logic";
 
 const rawMarkdown = ref('');
 const isExporting = ref(false);
+const showArchiveModal = ref(false);
 
 watch(() => props.report, (newVal) => {
     if (newVal) {
@@ -41,6 +46,28 @@ const pdfContent = computed(() => {
     
     return marked.parse(cleanMd.trim());
 });
+
+const archiveToVault = () => {
+    showArchiveModal.value = true;
+};
+
+const confirmArchive = () => {
+    const reportId = props.report.id || props.report._id;
+    
+    if (reportId) {
+        router.delete(route('reports.destroy', reportId), {
+            onSuccess: () => {
+                showArchiveModal.value = false;
+                emit('reset');
+            },
+            onError: (errors) => {
+                console.error('Archive failed:', errors);
+            }
+        });
+    } else {
+        console.error('Report ID missing:', props.report);
+    }
+};
 
 const exportToPDF = async () => {
     isExporting.value = true;
@@ -132,7 +159,8 @@ const exportToPDF = async () => {
             pdf.text(companyName, margin, 20);
             
             pdf.setFontSize(8);
-            pdf.text(props.report.period.start + ' - ' + props.report.period.end, pdfWidth - margin, 15, { align: 'right' });
+            const periodText = (props.report.period?.start || 'N/A') + ' - ' + (props.report.period?.end || 'N/A');
+            pdf.text(periodText, pdfWidth - margin, 15, { align: 'right' });
             pdf.text('Internship Program', pdfWidth - margin, 20, { align: 'right' });
             
             // Header Line
@@ -154,7 +182,8 @@ const exportToPDF = async () => {
             pageNum++;
         }
 
-        pdf.save(`Weekly-Report-${props.report.period.start.replace(/ /g, '-')}.pdf`);
+        const fileName = props.report.period?.start ? props.report.period.start.replace(/ /g, '-') : 'Report';
+        pdf.save(`Weekly-Report-${fileName}.pdf`);
     } catch (error) {
         console.error('PDF Export failed:', error);
     } finally {
@@ -174,7 +203,7 @@ const exportToDocs = () => {
                 <h1 style="text-transform: uppercase; margin: 0;">Weekly Progress Report</h1>
                 <p style="margin: 5px 0 0 0; color: #666; font-weight: bold;">${companyName}</p>
                 <p><strong>Intern:</strong> ${userName}</p>
-                <p><strong>Period:</strong> ${props.report.period.start} - ${props.report.period.end}</p>
+                <p><strong>Period:</strong> ${props.report.period?.start || 'N/A'} - ${props.report.period?.end || 'N/A'}</p>
             </div>
             ${marked.parse(content)}
         </body>
@@ -187,32 +216,42 @@ const exportToDocs = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Weekly-Report-${props.report.period.start.replace(/ /g, '-')}.doc`;
+    const docFileName = props.report.period?.start ? props.report.period.start.replace(/ /g, '-') : 'Report';
+    link.download = `Weekly-Report-${docFileName}.doc`;
     link.click();
     URL.revokeObjectURL(url);
 };
 </script>
 
 <template>
-    <div class="relative flex flex-col h-full overflow-hidden group/preview ">
+    <div :class="['relative flex flex-col h-full overflow-hidden group/preview', props.class]">
         <!-- Main Container -->
         <div class="absolute inset-0 bg-[#1A1A1A] rounded-3xl border border-white/[0.05] shadow-2xl"></div>
         
         <div class="relative h-full flex flex-col p-6 md:p-10">
             <!-- Header -->
-            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 shrink-0">
-                <div>
-                    <p class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold">Generated Documentation</p>
-                    <h2 class="text-2xl md:text-3xl font-bold text-[#E3D5C1] font-cinzel">Weekly Progress Report</h2>
-                    <p class="text-[#A68B6A]/60 text-[10px] uppercase tracking-widest mt-1 font-bold">
-                        {{ report.period.start }} — {{ report.period.end }}
-                    </p>
+            <div class="flex flex-col gap-6 mb-8 shrink-0">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold">Generated Documentation</p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#E3D5C1] font-cinzel">Weekly Progress Report</h2>
+                        <p class="text-[#A68B6A]/60 text-[10px] uppercase tracking-widest mt-1 font-bold">
+                            {{ report.period?.start || 'N/A' }} — {{ report.period?.end || 'N/A' }}
+                        </p>
+                    </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full xl:w-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
+                    <button 
+                        @click="archiveToVault"
+                        class="h-12 bg-white/[0.04] hover:bg-white/[0.08] text-[#8C6A4A] rounded-xl border border-[#8C6A4A]/20 hover:border-[#8C6A4A]/40 transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold"
+                    >
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                        <span>To Vault</span>
+                    </button>
                     <button 
                         @click="exportToDocs"
-                        class="h-12 w-full sm:w-40 bg-white/[0.04] hover:bg-white/[0.1] text-[#E3D5C1] rounded-xl border border-white/[0.08] transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap"
+                        class="h-12 bg-white/[0.04] hover:bg-white/[0.1] text-[#E3D5C1] rounded-xl border border-white/[0.08] transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-bold"
                     >
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         <span>Export DOCS</span>
@@ -220,7 +259,7 @@ const exportToDocs = () => {
                     <button 
                         @click="exportToPDF"
                         :disabled="isExporting"
-                        class="h-12 w-full sm:w-40 bg-[#A68B6A] hover:bg-[#C9B79C] text-[#1B1B1B] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-black disabled:opacity-50 whitespace-nowrap"
+                        class="h-12 sm:col-span-2 lg:col-span-1 bg-[#A68B6A] hover:bg-[#C9B79C] text-[#1B1B1B] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-black disabled:opacity-50"
                     >
                         <svg v-if="!isExporting" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                         <svg v-else class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -259,6 +298,18 @@ const exportToDocs = () => {
             </div>
         </div>
     </div>
+
+    <!-- Archive Confirmation Modal -->
+    <ConfirmationModal 
+        :show="showArchiveModal"
+        title="Consign to the Vault?"
+        message="This report shall be cast into the Sunken Vault, where forgotten chronicles rest. You may summon it back from the depths should the need arise."
+        confirm-text="Cast into Vault"
+        cancel-text="Keep in Archives"
+        type="warning"
+        @close="showArchiveModal = false"
+        @confirm="confirmArchive"
+    />
 </template>
 
 <style scoped>

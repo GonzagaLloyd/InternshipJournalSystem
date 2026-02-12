@@ -21,12 +21,9 @@ class ReportController extends Controller
             ->get()
             ->map(function ($report) {
                 return [
-                    'id' => $report->id,
-                    'report' => $report->content, // Mapping 'content' to 'report' prop used in frontend
-                    'period' => [
-                        'start' => $report->period_start->format('M d, Y'),
-                        'end' => $report->period_end->format('M d, Y'),
-                    ],
+                    'id' => (string) $report->_id,
+                    'report' => $report->report,
+                    'period' => $report->period,
                     'created_at' => $report->created_at->format('M d, Y H:i'),
                 ];
             });
@@ -134,10 +131,11 @@ class ReportController extends Controller
                     // Save Report to Database
                     $newReport = \App\Models\Report::create([
                         'user_id' => $user->id,
-                        'content' => $reportContent,
-                        'period_start' => $startDate,
-                        'period_end' => $endDate,
-                        'title' => "Weekly Report: " . $startDate->format('M d') . " - " . $endDate->format('M d'),
+                        'report' => $reportContent,
+                        'period' => [
+                            'start' => $startDate->format('M d, Y'),
+                            'end' => $endDate->format('M d, Y')
+                        ],
                     ]);
 
                     return response()->json([
@@ -146,7 +144,7 @@ class ReportController extends Controller
                             'start' => $startDate->format('M d, Y'),
                             'end' => $endDate->format('M d, Y')
                         ],
-                        'id' => $newReport->id, // Return ID for frontend to possibly highlight
+                        'id' => (string) $newReport->_id, // Return MongoDB _id as string
                     ]);
                 }
             }
@@ -160,6 +158,48 @@ class ReportController extends Controller
             return response()->json([
                 'error' => 'Internal Error: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $user = auth()->user();
+            Log::info("Archiving Report ID: {$id}");
+
+            // Try to find by string ID directly first (MongoDB driver often handles this)
+            $report = \App\Models\Report::where('_id', $id)
+                ->orWhere('id', $id)
+                ->where('user_id', $user->id) 
+                ->first();
+
+            if (!$report) {
+                // Try converting to ObjectId if string lookup failed
+                if (class_exists('MongoDB\BSON\ObjectId')) {
+                    try {
+                        $objectId = new \MongoDB\BSON\ObjectId($id);
+                        $report = \App\Models\Report::where('_id', $objectId)
+                            ->where('user_id', $user->id)
+                            ->first();
+                    } catch (\Exception $e) {
+                        // Invalid ObjectId format
+                    }
+                }
+            }
+
+            if (!$report) {
+                Log::warning("Report not found for archiving: {$id}");
+                return redirect()->back()->with('error', 'Report not found.');
+            }
+
+            // Soft delete the report (moves to vault)
+            $report->delete();
+            Log::info("Report archived successfully: {$id}");
+
+            return redirect()->route('reports.index')->with('success', 'Report archived to vault successfully.');
+        } catch (\Exception $e) {
+            Log::error('Report Archive Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to archive report.');
         }
     }
 }
