@@ -40,7 +40,7 @@ const menuItems = [
 ];
 
 const managementItems = [
-    { name: 'Reports', icon: 'M9 17v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM9 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2z', routeName: '#' },
+    { name: 'Reports', icon: 'M9 17v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM9 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2zm3 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2z', routeName: 'reports.index' },
     { name: 'Vault', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', routeName: 'vault.index' },
 ];
 </script>
@@ -50,16 +50,16 @@ const managementItems = [
     <aside 
         :class="[
             isCollapsed ? 'w-24' : 'w-72',
-            'hidden lg:flex flex-col border-r border-[#3d3d3d] bg-[#2D2D2D] fixed h-screen transition-all duration-300 ease-in-out z-40 text-[#C9B79C] shadow-2xl overflow-hidden'
+            'hidden lg:flex flex-col border-r border-[#3d3d3d] bg-[#222222] fixed h-screen transition-all duration-300 ease-in-out z-40 text-[#E3D5C1] shadow-2xl overflow-hidden'
         ]"
     >
         <!-- Logo Section -->
         <div :class="['h-28 flex items-center shrink-0 transition-all', isCollapsed ? 'justify-center w-full' : 'px-8']">
             <Link :href="route('dashboard')" :class="['flex items-center group', isCollapsed ? 'justify-center' : 'space-x-4']">
                 <div class="flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <ApplicationLogo :class="[isCollapsed ? 'h-11' : 'h-16', 'w-auto opacity-90 group-hover:opacity-100 transition-all brightness-[0.8] sepia-[0.3]']" />
+                    <ApplicationLogo :class="[isCollapsed ? 'h-11' : 'h-16', 'w-auto opacity-90 group-hover:opacity-100 transition-all brightness-[0.9] sepia-[0.2]']" />
                 </div>
-                <span v-if="!isCollapsed" class="text-2xl font-serif font-black tracking-widest text-[#8C6A4A] uppercase italic">OJT</span>
+                <span v-if="!isCollapsed" class="text-2xl font-serif font-black tracking-widest text-[#A68B6A] uppercase italic">OJT</span>
             </Link>
         </div>
 
@@ -71,21 +71,21 @@ const managementItems = [
                     :key="item.name"
                     :href="item.routeName === '#' ? '#' : route(item.routeName)"
                     :class="[
-                        route().current(item.routeName) ? 'bg-[#3d3d3d] text-[#C9B79C] shadow-xl border border-white/5' : 'text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C]',
+                        route().current(item.routeName) ? 'bg-[#3d3d3d] text-[#E3D5C1] shadow-xl border border-white/5' : 'text-[#A68B6A]/70 hover:bg-[#333333] hover:text-[#E3D5C1]',
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
                         'flex items-center transition-all duration-300 group relative'
                     ]"
                 >
                     <div :class="[isCollapsed ? '' : 'mr-5']">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="item.icon" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                         </svg>
                     </div>
                     <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif tracking-wide">{{ item.name }}</span>
                 </Link>
             </div>
 
-            <div class="my-6 border-t border-[#3d352e] mx-8" v-show="!isCollapsed"></div>
+            <div class="my-6 border-t border-white/[0.05] mx-8" v-show="!isCollapsed"></div>
 
             <div class="px-4 space-y-2">
                 <Link 
@@ -93,14 +93,14 @@ const managementItems = [
                     :key="sub.name"
                     :href="sub.routeName === '#' ? '#' : route(sub.routeName)"
                     :class="[
-                        route().current(sub.routeName) ? 'bg-[#3d3d3d] text-[#C9B79C] shadow-xl border border-white/5' : 'text-[#8C6A4A]/60 hover:bg-[#353535] hover:text-[#C9B79C]',
+                        route().current(sub.routeName) ? 'bg-[#3d3d3d] text-[#E3D5C1] shadow-xl border border-white/5' : 'text-[#A68B6A]/70 hover:bg-[#333333] hover:text-[#E3D5C1]',
                         isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
                         'flex items-center transition-all duration-300 group'
                     ]"
                 >
                     <div :class="[isCollapsed ? '' : 'mr-5']">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" :d="sub.icon" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="sub.icon" />
                         </svg>
                     </div>
                     <span v-if="!isCollapsed" class="text-sm font-bold truncate font-serif tracking-wide">{{ sub.name }}</span>
@@ -109,19 +109,19 @@ const managementItems = [
         </div>
 
         <!-- Footer / User Profile -->
-        <div class="p-6 mt-auto border-t border-[#3d3d3d] bg-black/5">
-            <div :class="['flex items-center transition-all hover:bg-[#353535] cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-[#3d3d3d] p-3']">
-                <div :class="[isCollapsed ? 'h-8 w-8' : 'h-10 w-10', 'bg-[#8C6A4A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#C9B79C] font-black text-xs shadow-lg shadow-black/40 transform transition-transform group-hover:scale-105']">
+        <div class="p-6 mt-auto border-t border-[#3d3d3d] bg-black/10">
+            <div :class="['flex items-center transition-all hover:bg-[#333333] cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-white/[0.05] p-3']">
+                <div :class="[isCollapsed ? 'h-8 w-8' : 'h-10 w-10', 'bg-[#A68B6A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#1B1B1B] font-black text-xs shadow-lg transform transition-transform group-hover:scale-105']">
                     {{ user.name.charAt(0) }}
                 </div>
                 <div v-if="!isCollapsed" class="ml-4 flex-1 min-w-0">
-                    <p class="text-[13px] font-black text-[#C9B79C] truncate tracking-tight font-serif">{{ user.name }}</p>
-                    <p class="text-[10px] font-bold text-[#8C6A4A]/60 truncate group-hover:text-[#C9B79C] transition-colors uppercase tracking-widest font-serif">Scribe Active</p>
+                    <p class="text-[14px] font-bold text-[#E3D5C1] truncate tracking-tight font-serif">{{ user.name }}</p>
+                    <p class="text-[10px] font-bold text-[#A68B6A]/80 truncate group-hover:text-[#E3D5C1] transition-colors uppercase tracking-widest font-serif">Scribe Active</p>
                 </div>
                 <button 
                     v-if="!isCollapsed"
                     @click="handleLogout"
-                    class="ml-2 p-2 text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-colors"
+                    class="ml-2 p-2 text-[#A68B6A] hover:text-[#E3D5C1] transition-colors"
                 >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>

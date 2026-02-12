@@ -37,35 +37,32 @@ const submitEntry = () => {
     <Head title="Home - Scriptorium" />
 
     <AuthenticatedLayout 
-        title="The <span class='text-[#8C6A4A]'>Chronicler's</span> Desk"
+        title="The <span class='text-[#A68B6A]'>Chronicler's</span> Desk"
         :subtitle="formattedDate"
     >
-        <!-- Page-Local Fixed Height Logic -->
-        <div class="md:h-screen md:overflow-hidden flex flex-col relative font-serif">
-            <main class="flex-1 flex flex-col relative z-20 px-6 md:px-16 lg:px-24 pt-12 pb-16 md:pt-16 md:pb-24 md:min-h-0">
-                <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col md:min-h-0">
+        <!-- Responsive Layout Logic: Locked on Desktop, Scrollable on Mobile -->
+        <div class="xl:h-[calc(100vh-5rem)] xl:overflow-hidden flex flex-col relative font-serif text-[#E3D5C1]">
+            <main class="flex-1 flex flex-col relative z-20 px-4 md:px-8 xl:px-12 py-6 xl:py-8 xl:min-h-0">
+                <div class="max-w-[1700px] mx-auto w-full flex-1 flex flex-col xl:min-h-0">
                     
-                    <!-- Clean Spacer (since header is now in topbar) -->
-                    <div class="mb-4"></div>
-
-                    <!-- Professional Dual-Scrolling Layout -->
-                    <div class="flex-1 flex flex-col md:flex-row gap-8 md:gap-16 relative md:min-h-0">
-                        <!-- Sidebar (Tasks) -->
-                        <aside class="flex flex-col w-full md:w-[18rem] shrink-0 order-2 md:order-1 relative z-20 md:min-h-0">
-                            <TaskWidget :tasks="tasks" />
-                        </aside>
-
-                        <!-- Subtle Vertical Divider (Tablet/Desktop Only) -->
-                        <div class="hidden md:block absolute left-[18.2rem] top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#8C6A4A]/20 via-[#8C6A4A]/5 to-transparent pointer-events-none"></div>
-
-                        <!-- Focused Writing Area (Editor) -->
-                        <div class="flex-1 flex flex-col order-1 md:order-2 pl-0 md:pl-12 md:min-h-0">
+                    <!-- Dynamic Layout: Vertical stack on mobile, horizontal locked on desktop -->
+                    <div class="flex-1 flex flex-col xl:flex-row gap-8 xl:gap-20 relative xl:min-h-0">
+                        <!-- Focused Writing Area (Editor) - Top on Mobile, Right on Desktop -->
+                        <div class="flex-1 flex flex-col order-1 xl:order-2 xl:pl-16 min-w-0 xl:min-h-0 min-h-[600px] xl:min-h-0">
                             <JournalEditor 
                                 :form="form" 
                                 :formattedDate="formattedDate"
                                 @submit="submitEntry"
                             />
                         </div>
+
+                        <!-- Sidebar (Tasks) - Bottom on Mobile, Left on Desktop -->
+                        <aside class="flex flex-col w-full xl:w-[24rem] lg:max-w-xl lg:mx-auto xl:mx-0 shrink-0 order-2 xl:order-1 relative z-20 xl:min-h-0 pb-12 xl:pb-0">
+                            <TaskWidget :tasks="tasks" />
+                        </aside>
+
+                        <!-- Subtle Vertical Divider (Desktop Only) -->
+                        <div class="hidden xl:block absolute left-[24.2rem] top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#A68B6A]/30 via-[#A68B6A]/10 to-transparent pointer-events-none"></div>
                     </div>
                 </div>
             </main>

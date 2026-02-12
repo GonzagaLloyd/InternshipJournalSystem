@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { router } from '@inertiajs/vue3';
 import DialGrid from './DialGrid.vue';
 import DialSidePanel from './DialSidePanel.vue';
@@ -12,6 +12,7 @@ const props = defineProps({
 const isNavigating = ref(false);
 const currentDate = ref(new Date());
 const selectedDay = ref(null);
+const sidePanelRef = ref(null);
 
 const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -74,6 +75,13 @@ const prevMonth = () => {
 const selectDay = (day) => {
     if (day.month === 'current') {
         selectedDay.value = day;
+        
+        // Auto-scroll on mobile
+        if (window.innerWidth < 1280) { // xl breakpoint
+            nextTick(() => {
+                sidePanelRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
     }
 };
 
@@ -89,24 +97,24 @@ const todayDate = new Date().toISOString().split('T')[0];
 </script>
 
 <template>
-    <div class="flex flex-col h-full overflow-hidden">
+    <div class="flex-1 flex flex-col xl:h-full xl:overflow-hidden">
         <!-- Calendar Controls -->
-        <div class="relative z-10 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shrink-0">
+        <div class="relative z-10 mb-8 md:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shrink-0">
             <div class="group">
                 <div class="flex items-center gap-4 mb-2">
                     <div class="h-[1px] w-8 bg-[#8C6A4A]/40"></div>
                     <span class="text-[9px] uppercase tracking-[0.6em] text-[#8C6A4A] font-black">Celestial Alignment</span>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-cinzel font-bold text-[#C9B79C] tracking-tighter">
+                <h1 class="text-3xl md:text-5xl font-cinzel font-bold text-[#C9B79C] tracking-tighter">
                     The <span class="italic opacity-80">Chronos</span> Dial
                 </h1>
             </div>
 
-            <div class="flex items-center bg-[#2D2D2D]/40 border border-white/5 p-2 rounded-2xl backdrop-blur-sm shadow-xl shrink-0">
+            <div class="flex items-center bg-[#212121]/60 border border-white/5 p-1.5 rounded-2xl backdrop-blur-md shadow-2xl shrink-0">
                 <button @click="prevMonth" class="p-3 text-[#8C6A4A] hover:text-[#C9B79C] transition-colors group">
                     <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <div class="px-6 min-w-[180px] text-center">
+                <div class="px-6 min-w-[160px] md:min-w-[180px] text-center">
                     <span class="text-xs font-cinzel font-black uppercase tracking-[0.4em] text-[#C9B79C]">{{ currentMonthName }}</span>
                     <p class="text-[9px] text-[#8C6A4A] font-serif uppercase tracking-[0.2em] font-bold mt-0.5">{{ currentYear }}</p>
                 </div>
@@ -116,7 +124,7 @@ const todayDate = new Date().toISOString().split('T')[0];
             </div>
         </div>
 
-        <div class="flex-1 flex flex-col lg:flex-row gap-12 relative z-10 min-h-0 overflow-hidden">
+        <div class="flex-1 flex flex-col xl:flex-row gap-8 xl:gap-12 relative z-10 xl:min-h-0 xl:overflow-hidden pb-12">
             <DialGrid 
                 :days="daysInMonth" 
                 :selected-day="selectedDay" 
@@ -124,11 +132,13 @@ const todayDate = new Date().toISOString().split('T')[0];
                 @select-day="selectDay"
             />
 
-            <DialSidePanel 
-                :selected-day="selectedDay"
-                @navigate="navigateToItem"
-                @clear="selectedDay = null"
-            />
+            <div v-if="selectedDay" ref="sidePanelRef" class="scroll-mt-24">
+                <DialSidePanel 
+                    :selected-day="selectedDay"
+                    @navigate="navigateToItem"
+                    @clear="selectedDay = null"
+                />
+            </div>
         </div>
 
         <TomeLoader :show="isNavigating" message="Consulting the Archives..." />

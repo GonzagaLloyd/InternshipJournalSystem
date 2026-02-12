@@ -11,8 +11,8 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-    <aside class="w-full lg:w-96 shrink-0 flex flex-col h-full overflow-hidden">
-        <div class="flex-1 bg-transparent border-l border-[#3d3d3d]/20 px-8 lg:px-12 py-2 flex flex-col overflow-hidden">
+    <aside class="w-full xl:w-96 shrink-0 flex flex-col xl:h-full overflow-hidden">
+        <div class="flex-1 bg-transparent border-t xl:border-t-0 xl:border-l border-[#3d3d3d]/20 px-6 md:px-10 xl:px-12 py-8 xl:py-2 flex flex-col overflow-hidden">
             
             <div class="relative z-10 flex flex-col h-full overflow-hidden">
                 <!-- Selected Header -->

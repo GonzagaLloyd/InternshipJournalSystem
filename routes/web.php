@@ -44,8 +44,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/vault/tasks/{id}/restore', [VaultController::class, 'restoreTask'])->name('vault.tasks.restore');
     Route::delete('/vault/tasks/{id}/force', [VaultController::class, 'forceDeleteTask'])->name('vault.tasks.force-delete');
 
+    // AI Routes
+    Route::post('/journal/refine', [\App\Http\Controllers\AIController::class, 'refine'])->name('journal.refine');
+
     // Calendar Routes
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
+    // Report Routes
+    Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
 });
 
 

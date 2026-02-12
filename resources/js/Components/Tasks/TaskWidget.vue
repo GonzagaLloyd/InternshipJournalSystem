@@ -27,9 +27,9 @@ const urgencyInfo = (task) => {
     const diffMins = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
-    if (diffMs < 0) return { color: 'text-red-500', glow: 'shadow-[0_0_10px_rgba(239,68,68,0.2)]' };
-    if (diffMins <= 30) return { color: 'text-red-500 animate-pulse', glow: 'shadow-[0_0_15px_rgba(239,68,68,0.4)]' };
-    if (diffHours < 1) return { color: 'text-orange-500', glow: 'shadow-[0_0_12px_rgba(249,115,22,0.3)]' };
+    if (diffMs < 0) return { color: 'text-[#AF4B4B]', glow: 'shadow-[0_0_10px_rgba(175,75,75,0.2)]' };
+    if (diffMins <= 30) return { color: 'text-[#AF4B4B] animate-pulse', glow: 'shadow-[0_0_15px_rgba(175,75,75,0.4)]' };
+    if (diffHours < 1) return { color: 'text-[#B07D4E]', glow: 'shadow-[0_0_12px_rgba(176,125,78,0.3)]' };
     if (diffHours < 24) return { color: 'text-yellow-500/80', glow: 'shadow-[0_0_8px_rgba(234,179,8,0.15)]' };
     
     return null;
@@ -50,24 +50,24 @@ const toggleTask = (task) => {
 </script>
 
 <template>
-    <div class="w-full lg:h-full flex flex-col group mb-10">
-        <div class="flex-1 flex flex-col relative overflow-hidden">
+    <div class="w-full h-full flex flex-col group min-h-0">
+        <div class="flex-1 flex flex-col relative overflow-hidden min-h-0">
             <!-- Header -->
             <div class="mb-6 relative z-10">
-                <p class="text-[9px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black mb-1 opacity-80">Status</p>
-                <h3 class="text-2xl font-cinzel text-[#C9B79C] tracking-tight">Active Tasks</h3>
+                <p class="text-[10px] uppercase tracking-[0.4em] text-[#A68B6A] font-bold mb-1">Status</p>
+                <h3 class="text-2xl font-cinzel font-bold text-[#E3D5C1] tracking-tight">Active Tasks</h3>
             </div>
 
             <!-- Task List with Lineage -->
-            <div class="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-7 relative z-10 pb-6">
-                <!-- Vertical Line -->
-                <div class="absolute left-2 top-2 bottom-6 w-[1px] bg-gradient-to-b from-[#8C6A4A]/40 via-[#8C6A4A]/10 to-transparent"></div>
+            <div class="flex-1 overflow-y-auto pr-2 md:pr-4 scrollbar-hide space-y-6 md:space-y-8 relative z-10 pb-6">
+                <!-- Subtle Vertical Line -->
+                <div class="absolute left-2.5 top-2 bottom-6 w-[1px] bg-gradient-to-b from-[#8C6A4A]/20 via-[#8C6A4A]/5 to-transparent"></div>
 
                 <div 
                     v-for="task in sortedTasks" 
                     :key="task.id || task._id" 
                     :class="[
-                        'group/item flex items-start gap-6 cursor-pointer select-none transition-all duration-500 relative py-2 px-1',
+                        'group/item flex items-start gap-5 md:gap-7 cursor-pointer select-none transition-all duration-500 relative py-4 px-2 rounded-xl hover:bg-white/[0.03]',
                         processingTaskId === (task.id || task._id) ? 'bg-[#8C6A4A]/5' : ''
                     ]"
                     @click="toggleTask(task)"
@@ -84,8 +84,8 @@ const toggleTask = (task) => {
                     <div 
                         :class="task.completed 
                             ? 'bg-[#8C6A4A] border-[#8C6A4A] shadow-[0_0_15px_rgba(140,106,74,0.3)]' 
-                            : 'border-[#8C6A4A] bg-black/60 shadow-[0_0_10px_rgba(140,106,74,0.1)] group-hover/item:scale-110 group-hover/item:border-[#C9B79C] group-hover/item:shadow-[0_0_20px_rgba(140,106,74,0.3)]'"
-                        class="h-5 w-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-300 z-10 mt-1 active:scale-90"
+                            : 'border-[#A68B6A]/60 bg-black/60 shadow-[0_0_10px_rgba(140,106,74,0.1)] group-hover/item:scale-110 group-hover/item:border-[#E3D5C1] group-hover/item:shadow-[0_0_20px_rgba(140,106,74,0.3)]'"
+                        class="h-6 w-6 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-300 z-10 mt-1 active:scale-90"
                     >
                         <Transition name="pop" mode="out-in">
                             <div 
@@ -98,33 +98,33 @@ const toggleTask = (task) => {
                             <div 
                                 v-else
                                 key="active"
-                                class="h-1.5 w-1.5 rounded-full bg-[#8C6A4A] animate-pulse shadow-[0_0_5px_#8C6A4A]"
+                                class="h-2 w-2 rounded-full bg-[#A68B6A] animate-pulse shadow-[0_0_8px_#A68B6A]"
                             ></div>
                         </Transition>
                     </div>
 
                     <!-- Text & Priority -->
-                    <div class="flex flex-col gap-1 min-w-0">
+                    <div class="flex flex-col gap-1.5 min-w-0">
                         <span 
                             :class="[
                                 task.completed 
-                                    ? 'text-[#C9B79C]/20 italic' 
-                                    : (urgencyInfo(task) ? urgencyInfo(task).color : 'text-[#C9B79C] group-hover/item:text-white'),
-                                'text-[16px] font-medium leading-tight transition-all duration-500 font-serif relative inline-block'
+                                    ? 'text-[#E3D5C1]/30 italic font-normal' 
+                                    : (urgencyInfo(task) ? urgencyInfo(task).color + ' font-bold' : 'text-[#E3D5C1] group-hover/item:text-white font-semibold'),
+                                'text-lg md:text-[20px] tracking-wide transition-all duration-500 font-serif relative inline-block'
                             ]"
                         >
                             {{ task.name }}
                             <!-- Strike Line -->
                             <div 
-                                :class="task.completed ? 'w-[105%] opacity-100' : 'w-0 opacity-0'"
-                                class="absolute top-[55%] -left-0.5 h-[1.5px] bg-[#8C6A4A] transition-all duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] pointer-events-none shadow-[0_0_5px_rgba(140,106,74,0.3)]"
+                                :class="task.completed ? 'w-[105%] opacity-70' : 'w-0 opacity-0'"
+                                class="absolute top-[55%] -left-0.5 h-[1px] bg-[#8C6A4A] transition-all duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] pointer-events-none"
                             ></div>
                         </span>
-                        <div class="flex items-center gap-3">
-                            <span v-if="!task.completed" class="text-[9px] uppercase tracking-[0.2em] text-[#8C6A4A] font-black font-serif opacity-70 group-hover/item:opacity-100 transition-all duration-500">
+                        <div class="flex items-center gap-4">
+                            <span v-if="!task.completed" class="text-[11px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold font-serif group-hover/item:text-[#E3D5C1] transition-all duration-500">
                                 {{ task.priority || 'Medium' }}
                             </span>
-                            <span v-if="urgencyInfo(task)" class="text-[7px] uppercase tracking-[0.1em] font-black font-serif px-1.5 py-0.5 rounded-sm bg-black/40" :class="urgencyInfo(task).color">
+                            <span v-if="urgencyInfo(task)" class="text-[9px] uppercase tracking-[0.15em] font-black font-serif px-2 py-0.5 rounded shadow-sm bg-black/60 border border-white/[0.05]" :class="urgencyInfo(task).color">
                                 Due Shortly
                             </span>
                         </div>
@@ -132,8 +132,8 @@ const toggleTask = (task) => {
                 </div>
 
                 <!-- Empty State -->
-                <div v-if="sortedTasks.length === 0" class="flex flex-col items-center justify-center py-12 opacity-10">
-                    <span class="text-[9px] uppercase tracking-[0.4em] font-black text-[#C9B79C]">Quiet in the Scriptorium</span>
+                <div v-if="sortedTasks.length === 0" class="flex flex-col items-center justify-center py-12 opacity-30">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-black text-[#A68B6A]">Quiet in the Scriptorium</span>
                 </div>
             </div>
 
@@ -146,8 +146,8 @@ const toggleTask = (task) => {
                     <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </div>
                 <div class="text-left">
-                    <span class="text-[9px] font-cinzel tracking-[0.3em] uppercase text-[#8C6A4A] group-hover/btn:text-[#C9B79C] transition-colors">Open Ledger</span>
-                    <p class="text-[8px] font-serif italic text-white/10 group-hover/btn:text-white/20 mt-0.5 transition-colors">View all divine decrees</p>
+                    <span class="text-[10px] font-cinzel tracking-[0.3em] uppercase text-[#8C6A4A] group-hover/btn:text-[#C9B79C] transition-colors">Open Ledger</span>
+                    <p class="text-[9px] font-serif italic text-white/30 group-hover/btn:text-white/50 mt-0.5 transition-colors">View all divine decrees</p>
                 </div>
             </button>
         </div>

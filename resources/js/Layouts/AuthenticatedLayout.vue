@@ -19,7 +19,7 @@ const toggleSidebar = () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex font-serif text-[#C9B79C] select-none bg-[#1B1B1B]">
+    <div class="min-h-screen flex font-serif text-[#E3D5C1] select-none bg-[#1B1B1B]">
         <!-- Sidebar Navigation -->
         <Sidebar 
             :showingMobileMenu="showingMobileMenu" 

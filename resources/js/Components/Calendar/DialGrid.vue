@@ -27,10 +27,10 @@ const emit = defineEmits(['selectDay']);
                     :key="index"
                     @click="emit('selectDay', day)"
                     :class="[
-                        day.month === 'current' ? 'bg-[#1B1B1B]/25 cursor-pointer hover:bg-[#1B1B1B]/40 border border-[#3d3d3d]/20 hover:border-[#8C6A4A]/30' : 'bg-transparent opacity-10 cursor-default border border-transparent',
+                        day.month === 'current' ? 'bg-[#1B1B1B]/25 cursor-pointer hover:bg-[#1B1B1B]/40 border border-[#3d3d3d]/15 hover:border-[#8C6A4A]/30' : 'bg-transparent opacity-10 cursor-default border border-transparent',
                         day.fullDate === todayDate ? 'ring-1 ring-inset ring-[#8C6A4A]/50' : '',
                         selectedDay?.fullDate === day.fullDate ? 'bg-[#8C6A4A]/10 border-[#8C6A4A]/40' : '',
-                        'min-h-[140px] p-2 md:p-3 transition-all duration-500 flex flex-col items-start gap-1 relative group/cell overflow-hidden backdrop-blur-sm'
+                        'min-h-[80px] md:min-h-[140px] p-2 md:p-3 transition-all duration-500 flex flex-col items-start gap-1 relative group/cell overflow-hidden backdrop-blur-sm'
                     ]"
                 >
                     <div class="flex justify-between w-full items-start">

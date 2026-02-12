@@ -42,12 +42,12 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
 
             <!-- Dynamic Page Title (WIP Aesthetic) -->
             <div v-if="title" class="flex flex-col">
-                <h2 class="text-lg md:text-2xl font-cinzel font-bold text-[#C9B79C] tracking-[0.05em] uppercase leading-none">
+                <h2 class="text-lg md:text-2xl font-cinzel font-bold text-[#E3D5C1] tracking-[0.05em] uppercase leading-none">
                     <span v-html="title"></span>
                 </h2>
                 <div class="flex items-center gap-3 mt-1.5">
-                    <div class="h-[1px] w-4 bg-[#8C6A4A]/40"></div>
-                    <p v-if="subtitle" class="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black opacity-80">
+                    <div class="h-[1px] w-4 bg-[#A68B6A]/40"></div>
+                    <p v-if="subtitle" class="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-[#A68B6A] font-black">
                         {{ subtitle }}
                     </p>
                 </div>
