@@ -56,10 +56,10 @@ const toggleSidebar = () => {
                 <main class="flex-1 min-h-0 relative z-10">
                     <slot />
                 </main>
-
-                <Toast />
-                <ReportProgressWidget />
             </div>
+            
+            <Toast />
+            <ReportProgressWidget />
     </div>
 </template>
 

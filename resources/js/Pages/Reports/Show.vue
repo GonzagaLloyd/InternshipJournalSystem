@@ -5,6 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ReportPreview from '@/Components/Reports/ReportPreview.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import Toast from '@/Components/UI/Toast.vue';
 import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
 
 const props = defineProps({
@@ -206,6 +207,7 @@ onUnmounted(() => {
         />
 
         <ReportProgressWidget />
+        <Toast />
     </div>
 </template>
 

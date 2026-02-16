@@ -4,6 +4,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ReportPreview from '@/Components/Reports/ReportPreview.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import Toast from '@/Components/UI/Toast.vue';
 import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
 
 const props = defineProps({
@@ -123,6 +124,7 @@ onUnmounted(() => {
         </article>
         
         <ReportProgressWidget class="fixed top-24 right-8 z-[100]" />
+        <Toast />
     </div>
 </template>
 
