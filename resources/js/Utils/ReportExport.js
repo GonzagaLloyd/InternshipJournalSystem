@@ -13,7 +13,7 @@ import html2canvas from 'html2canvas';
 
 const COMPANY_NAME = "iTech Media Logic";
 
-export const exportToPDF = async ({ element, report, userName, userRole }) => {
+export const exportToPDF = async ({ element, report, userName, userRole, companyName }) => {
     if (!element) return;
 
     // Show element briefly for capture
@@ -63,7 +63,7 @@ export const exportToPDF = async ({ element, report, userName, userRole }) => {
                 report,
                 userName,
                 userRole,
-                companyName: COMPANY_NAME,
+                companyName: companyName || COMPANY_NAME,
                 margin,
                 pdfWidth,
                 top: headerTop
@@ -94,6 +94,7 @@ export const exportToPDF = async ({ element, report, userName, userRole }) => {
 
             // --- FOOTER (Every Page) ---
             drawFooter(pdf, {
+                report,
                 pageNum,
                 totalPages,
                 margin,
@@ -130,7 +131,7 @@ const drawHeader = (pdf, { report, userName, userRole, companyName, margin, pdfW
     pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(22);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('WEEKLY PROGRESS REPORT', margin, top + 8);
+    pdf.text((report.report_title || 'WEEKLY PROGRESS REPORT').toUpperCase(), margin, top + 8);
 
     // 3. Company & Role Line
     pdf.setFontSize(10);
@@ -151,7 +152,7 @@ const drawHeader = (pdf, { report, userName, userRole, companyName, margin, pdfW
     pdf.line(margin, top + 25, pdfWidth - margin, top + 25);
 };
 
-const drawFooter = (pdf, { pageNum, totalPages, margin, pdfWidth, lineY, textY }) => {
+const drawFooter = (pdf, { report, pageNum, totalPages, margin, pdfWidth, lineY, textY }) => {
     // Divider
     pdf.setDrawColor(200);
     pdf.setLineWidth(0.2);
@@ -161,7 +162,7 @@ const drawFooter = (pdf, { pageNum, totalPages, margin, pdfWidth, lineY, textY }
     pdf.setFontSize(8);
     pdf.setTextColor(150);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('Generated via Internal Journal System', margin, textY);
+    pdf.text(report.footer_text || 'Generated via Internal Journal System', margin, textY);
     pdf.text(`Page ${pageNum} of ${totalPages}`, pdfWidth - margin, textY, { align: 'right' });
 };
 

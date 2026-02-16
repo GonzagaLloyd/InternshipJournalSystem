@@ -19,11 +19,16 @@ class ReportController extends Controller
         $pastReports = \App\Models\Report::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($report) {
+            ->map(function ($report) use ($user) {
                 return [
                     'id' => (string) $report->_id,
                     'report' => $report->report,
                     'period' => $report->period,
+                    'report_title' => $report->report_title ?? 'Weekly Progress Report',
+                    'user_name' => $report->user_name ?? $user->name,
+                    'user_role' => $report->user_role ?? 'IT Intern',
+                    'company_name' => $report->company_name ?? 'iTech Media Logic',
+                    'footer_text' => $report->footer_text ?? 'Generated via Internal Journal System',
                     'created_at' => $report->created_at->format('M d, Y H:i'),
                 ];
             });
@@ -59,6 +64,7 @@ class ReportController extends Controller
             'end' => $endOfWeek->format('M d, Y')
         ];
 
+        $jobRecord = null;
         // Check if we are creating from a completed job
         if ($request->has('job_id')) {
             $user = auth()->user();
@@ -80,6 +86,11 @@ class ReportController extends Controller
                 'id' => null,
                 'report' => $initialReport,
                 'period' => $initialPeriod,
+                'report_title' => $jobRecord?->report_title ?? 'Weekly Progress Report',
+                'user_name' => $jobRecord?->user_name ?? auth()->user()->name,
+                'user_role' => $jobRecord?->user_role ?? 'IT Intern',
+                'company_name' => $jobRecord?->company_name ?? 'iTech Media Logic',
+                'footer_text' => $jobRecord?->footer_text ?? 'Generated via Internal Journal System',
                 'created_at' => $now->format('M d, Y H:i'),
             ]
         ]);
@@ -97,6 +108,11 @@ class ReportController extends Controller
                 'id' => null,
                 'report' => $request->report,
                 'period' => $request->period,
+                'report_title' => $request->report_title ?? 'Weekly Progress Report',
+                'user_name' => $request->user_name ?? auth()->user()->name,
+                'user_role' => $request->user_role ?? 'IT Intern',
+                'company_name' => $request->company_name ?? 'iTech Media Logic',
+                'footer_text' => $request->footer_text ?? 'Generated via Internal Journal System',
                 'created_at' => Carbon::now()->format('M d, Y H:i'),
             ]
         ]);
@@ -128,6 +144,11 @@ class ReportController extends Controller
                 'id' => (string) $report->_id,
                 'report' => $report->report,
                 'period' => $report->period,
+                'report_title' => $report->report_title ?? 'Weekly Progress Report',
+                'user_name' => $report->user_name ?? $user->name,
+                'user_role' => $report->user_role ?? 'IT Intern',
+                'company_name' => $report->company_name ?? 'iTech Media Logic',
+                'footer_text' => $report->footer_text ?? 'Generated via Internal Journal System',
                 'created_at' => $report->created_at->format('M d, Y H:i'),
             ]
         ]);
@@ -237,6 +258,11 @@ class ReportController extends Controller
                 'user_id' => $user->id,
                 'report' => $request->report,
                 'period' => $request->period,
+                'report_title' => $request->report_title ?? 'Weekly Progress Report',
+                'user_name' => $request->user_name ?? $user->name,
+                'user_role' => $request->user_role ?? 'IT Intern',
+                'company_name' => $request->company_name ?? 'iTech Media Logic',
+                'footer_text' => $request->footer_text ?? 'Generated via Internal Journal System',
             ]);
 
             return response()->json([
@@ -319,7 +345,12 @@ class ReportController extends Controller
             }
 
             $report->update([
-                'report' => $request->report
+                'report' => $request->report,
+                'report_title' => $request->report_title ?? $report->report_title,
+                'user_name' => $request->user_name ?? $report->user_name,
+                'user_role' => $request->user_role ?? $report->user_role,
+                'company_name' => $request->company_name ?? $report->company_name,
+                'footer_text' => $request->footer_text ?? $report->footer_text,
             ]);
 
             return response()->json([

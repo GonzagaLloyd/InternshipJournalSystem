@@ -24,15 +24,17 @@ const props = defineProps({
 const emit = defineEmits(['reset', 'saved']);
 
 // Constants & Sessions
+const { success, error: toastError } = useToast();
 const { broadcastUpdate } = useTabSync([], false);
 const page = usePage();
-const userName = page.props.auth.user.name; 
-const userRole = "IT Intern"; 
-const companyName = "iTech Media Logic"; 
-const { success, error: toastError } = useToast();
 
 // State
 const rawMarkdown = ref('');
+const reportTitle = ref('');
+const editableUserName = ref('');
+const editableUserRole = ref('');
+const editableCompanyName = ref('');
+const footerText = ref('');
 const isExporting = ref(false);
 const showArchiveModal = ref(false);
 const isEditing = ref(false);
@@ -44,6 +46,11 @@ const isVisualMode = ref(true);
 watch(() => props.report, (newVal) => {
     if (newVal) {
         rawMarkdown.value = newVal.report;
+        reportTitle.value = newVal.report_title || 'Weekly Progress Report';
+        editableUserName.value = newVal.user_name || page.props.auth.user.name;
+        editableUserRole.value = newVal.user_role || "IT Intern";
+        editableCompanyName.value = newVal.company_name || "iTech Media Logic";
+        footerText.value = newVal.footer_text || "Generated via Internal Journal System";
         isEditing.value = false;
     }
 }, { immediate: true });
@@ -93,13 +100,23 @@ const saveReport = async () => {
 
         if (reportId) {
              response = await axios.put(route('reports.update', reportId), {
-                report: rawMarkdown.value
+                report: rawMarkdown.value,
+                report_title: reportTitle.value,
+                user_name: editableUserName.value,
+                user_role: editableUserRole.value,
+                company_name: editableCompanyName.value,
+                footer_text: footerText.value,
              });
              success('Chronicle updated in the library vault.');
         } else {
              response = await axios.post(route('reports.store'), {
                 report: rawMarkdown.value,
-                period: props.report.period
+                period: props.report.period,
+                report_title: reportTitle.value,
+                user_name: editableUserName.value,
+                user_role: editableUserRole.value,
+                company_name: editableCompanyName.value,
+                footer_text: footerText.value,
             });
              success('Decree sealed and recorded in the library.');
         }
@@ -116,6 +133,11 @@ const saveReport = async () => {
 
 const cancelEdit = () => {
     rawMarkdown.value = props.report.report;
+    reportTitle.value = props.report.report_title || 'Weekly Progress Report';
+    editableUserName.value = props.report.user_name || page.props.auth.user.name;
+    editableUserRole.value = props.report.user_role || "IT Intern";
+    editableCompanyName.value = props.report.company_name || "iTech Media Logic";
+    footerText.value = props.report.footer_text || "Generated via Internal Journal System";
     isEditing.value = false;
 };
 
@@ -151,9 +173,14 @@ const exportToPDF = async () => {
     try {
         await pdfExporter({
             element: document.getElementById('report-document'),
-            report: props.report,
-            userName,
-            userRole
+            report: {
+                ...props.report,
+                report_title: reportTitle.value,
+                footer_text: footerText.value
+            },
+            userName: editableUserName.value,
+            userRole: editableUserRole.value,
+            companyName: editableCompanyName.value
         });
     } catch (error) {
         console.error('PDF Export Error:', error);
@@ -165,9 +192,12 @@ const exportToPDF = async () => {
 
 const exportToDocs = () => {
     docsExporter({
-        report: props.report,
-        userName,
-        companyName,
+        report: {
+            ...props.report,
+            report: rawMarkdown.value
+        },
+        userName: editableUserName.value,
+        companyName: editableCompanyName.value,
         marked
     });
 };
@@ -245,10 +275,10 @@ const archiveToVault = () => (showArchiveModal.value = true);
                 <!-- PDF Capture View (Hidden) -->
                 <ReportExportView 
                     :content="rawMarkdown"
-                    :companyName="companyName"
-                    :report="report"
-                    :userName="userName"
-                    :userRole="userRole"
+                    :companyName="editableCompanyName"
+                    :report="{ ...report, report_title: reportTitle, footer_text: footerText }"
+                    :userName="editableUserName"
+                    :userRole="editableUserRole"
                 />
 
                 <!-- Live Preview View -->
@@ -262,21 +292,21 @@ const archiveToVault = () => (showArchiveModal.value = true);
                         </div>
 
                         <h1 class="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-cinzel font-bold text-[#E3D5C1] leading-tight tracking-tight text-center max-w-4xl mx-auto px-4">
-                            Weekly Progress Report
+                            {{ reportTitle }}
                         </h1>
 
                         <div class="mt-12 flex flex-wrap justify-center gap-12 text-center">
                             <div class="space-y-1">
                                 <p class="text-[9px] uppercase tracking-[0.3em] text-[#A68B6A] font-bold">Intern</p>
-                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ userName }}</p>
+                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ editableUserName }}</p>
                             </div>
                             <div class="space-y-1">
                                 <p class="text-[9px] uppercase tracking-[0.3em] text-[#A68B6A] font-bold">Role</p>
-                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ userRole }}</p>
+                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ editableUserRole }}</p>
                             </div>
                             <div class="space-y-1">
                                 <p class="text-[9px] uppercase tracking-[0.3em] text-[#A68B6A] font-bold">Company</p>
-                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ companyName }}</p>
+                                <p class="text-sm text-[#E3D5C1]/70 font-serif italic">{{ editableCompanyName }}</p>
                             </div>
                         </div>
 
@@ -287,19 +317,69 @@ const archiveToVault = () => (showArchiveModal.value = true);
                 </div>
 
                 <!-- Editor View -->
-                <ReportVisualEditor 
-                    v-else
-                    v-model:blocks="blocks"
-                    v-model:rawMarkdown="rawMarkdown"
-                    :isVisualMode="isVisualMode"
-                    standalone
-                >
-                    <template #toggle-button>
-                        <button type="button" @click="isVisualMode = !isVisualMode" class="toggle-mode-btn">
-                            Switch to {{ isVisualMode ? 'Raw' : 'Visual' }}
-                        </button>
-                    </template>
-                </ReportVisualEditor>
+                <div v-else class="space-y-12 pb-20">
+                    <!-- Header Editor -->
+                    <div class="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 sm:p-10 space-y-8">
+                        <div class="flex items-center gap-3 mb-2">
+                             <div class="w-1 h-1 rounded-full bg-[#A68B6A]"></div>
+                             <p class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold underline decoration-[#A68B6A]/30 underline-offset-8">Header Metadata</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[9px] uppercase tracking-[0.2em] text-[#A68B6A]/60 font-bold ml-1">Report Title</label>
+                                <input v-model="reportTitle" type="text" class="w-full bg-[#1A1A1A]/60 border border-white/5 rounded-xl px-5 py-4 text-[#E3D5C1] font-cinzel text-lg focus:border-[#A68B6A]/30 focus:ring-0 transition-all" />
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-[9px] uppercase tracking-[0.2em] text-[#A68B6A]/60 font-bold ml-1">Intern Name</label>
+                                <input v-model="editableUserName" type="text" class="w-full bg-[#1A1A1A]/60 border border-white/5 rounded-xl px-5 py-4 text-[#E3D5C1] font-serif italic focus:border-[#A68B6A]/30 focus:ring-0 transition-all" />
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-[9px] uppercase tracking-[0.2em] text-[#A68B6A]/60 font-bold ml-1">Role / Designation</label>
+                                <input v-model="editableUserRole" type="text" class="w-full bg-[#1A1A1A]/60 border border-white/5 rounded-xl px-5 py-4 text-[#E3D5C1] font-serif italic focus:border-[#A68B6A]/30 focus:ring-0 transition-all" />
+                            </div>
+                            
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[9px] uppercase tracking-[0.2em] text-[#A68B6A]/60 font-bold ml-1">Company Name</label>
+                                <input v-model="editableCompanyName" type="text" class="w-full bg-[#1A1A1A]/60 border border-white/5 rounded-xl px-5 py-4 text-[#E3D5C1] font-serif italic focus:border-[#A68B6A]/30 focus:ring-0 transition-all" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Editor -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between px-1">
+                             <div class="flex items-center gap-3">
+                                 <div class="w-1 h-1 rounded-full bg-[#A68B6A]"></div>
+                                 <p class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold">Chronicle Content</p>
+                             </div>
+                             <button type="button" @click="isVisualMode = !isVisualMode" class="toggle-mode-btn">
+                                Switch to {{ isVisualMode ? 'Raw' : 'Visual' }}
+                             </button>
+                        </div>
+
+                        <ReportVisualEditor 
+                            v-model:blocks="blocks"
+                            v-model:rawMarkdown="rawMarkdown"
+                            :isVisualMode="isVisualMode"
+                            standalone
+                        />
+                    </div>
+
+                    <!-- Footer Editor -->
+                    <div class="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 sm:p-10 space-y-4">
+                        <div class="flex items-center gap-3 mb-2">
+                             <div class="w-1 h-1 rounded-full bg-[#A68B6A]"></div>
+                             <p class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A] font-bold underline decoration-[#A68B6A]/30 underline-offset-8">Footer Attribution</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[9px] uppercase tracking-[0.2em] text-[#A68B6A]/60 font-bold ml-1">Footer Text</label>
+                            <input v-model="footerText" type="text" class="w-full bg-[#1A1A1A]/60 border border-white/5 rounded-xl px-5 py-4 text-[#E3D5C1] font-serif italic focus:border-[#A68B6A]/30 focus:ring-0 transition-all" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

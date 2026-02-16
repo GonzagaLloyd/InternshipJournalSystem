@@ -60,14 +60,23 @@ onUnmounted(() => {
 
         <TomeLoader :show="isReturning" message="Returning to Archives..." />
 
-        <!-- Header Navigation & Actions (Sticky Responsive) -->
-        <div :class="[
-            'sticky top-0 w-full z-40 transition-all duration-500 flex justify-center px-4 sm:px-6',
-            isScrolled 
-                ? 'bg-[#1B1B1B]/95 backdrop-blur-2xl border-b border-white/[0.08] py-2 shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
-                : 'bg-transparent py-6 md:py-8'
-        ]">
-            <div :class="['w-full max-w-4xl flex items-center justify-between gap-4 transition-all duration-500', isScrolled ? 'md:max-w-5xl' : '']">
+        <!-- Header Navigation & Actions (High Performance Fixed Header) -->
+        <div class="sticky top-0 w-full z-40 flex justify-center h-24 pointer-events-none">
+            <!-- Smooth Background Layer (Pure GPU - No Layout Shift) -->
+            <div 
+                :class="[
+                    'absolute inset-0 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu will-change-[opacity,transform]',
+                    isScrolled 
+                        ? 'opacity-100 translate-y-0 bg-[#1B1B1B]/80 backdrop-blur-md border-b border-white/[0.08] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]' 
+                        : 'opacity-0 -translate-y-full'
+                ]"
+                style="height: 5rem;"
+            ></div>
+
+            <div :class="[
+                'relative w-full max-w-4xl flex items-center justify-between gap-4 px-4 sm:px-6 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu pointer-events-auto h-full', 
+                isScrolled ? 'md:max-w-5xl translate-y-[-0.5rem] scale-[0.95]' : 'translate-y-0 scale-100'
+            ]">
                 <!-- Return Link -->
                 <a href="#" @click.prevent="handleReturn" class="inline-flex items-center gap-2 text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-all duration-300 group">
                     <div class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center group-hover:border-[#8C6A4A]/60 transition-all bg-[#8C6A4A]/5">

@@ -16,6 +16,11 @@ class Report extends Model
         'user_id',
         'report',
         'period',
+        'report_title',
+        'user_name',
+        'user_role',
+        'company_name',
+        'footer_text',
     ];
 
     protected $casts = [
