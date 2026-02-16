@@ -55,7 +55,7 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="space-y-8 sm:space-y-12">
+        <form @submit.prevent="submit" class="space-y-6 sm:space-y-8">
             <!-- Email Input -->
             <div class="relative group">
                 <div class="relative h-[64px] sm:h-[72px]">
@@ -89,7 +89,7 @@ const submit = () => {
 
                     <label 
                         for="email" 
-                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/60 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
                         :class="[
                             form.email || form.errors.email ? 'floating-label' : '',
                             form.errors.email ? '!text-[#A65D50]' : ''
@@ -98,7 +98,7 @@ const submit = () => {
                         Email Address
                     </label>
                 </div>
-                <div class="min-h-[20px] sm:min-h-[24px]">
+                <div class="min-h-[16px] sm:min-h-[20px]">
                     <InputError :message="form.errors.email" />
                 </div>
             </div>
@@ -135,7 +135,7 @@ const submit = () => {
 
                     <label 
                         for="password" 
-                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/40 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
+                        class="absolute left-8 sm:left-10 top-1/2 -translate-y-1/2 text-[#C9B79C]/60 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 font-medium text-[16px] sm:text-[18px] font-serif"
                         :class="[
                             form.password || form.errors.password ? 'floating-label' : '',
                             form.errors.password ? '!text-[#A65D50]' : ''
@@ -158,7 +158,7 @@ const submit = () => {
                         </svg>
                     </button>
                 </div>
-                <div class="min-h-[20px] sm:min-h-[24px]">
+                <div class="min-h-[16px] sm:min-h-[20px]">
                     <InputError :message="form.errors.password" />
                 </div>
             </div>
@@ -166,9 +166,8 @@ const submit = () => {
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
                 <label class="flex items-center cursor-pointer group w-full sm:w-auto font-serif">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-3 text-sm text-[#C9B79C]/40 group-hover:text-[#C9B79C]/70 transition-colors whitespace-nowrap"
-                        >Stay logged in</span
-                    >
+                    <span class="ms-3 text-sm text-[#C9B79C]/60 group-hover:text-[#C9B79C]/70 transition-colors whitespace-nowrap"
+                        >Stay logged in</span>
                 </label>
 
                 <Link
@@ -180,9 +179,9 @@ const submit = () => {
                 </Link>
             </div>
 
-            <div class="mt-8 sm:mt-12">
+            <div class="mt-6 sm:mt-8">
                 <PrimaryButton
-                    class="w-full justify-center py-4 sm:py-5 font-serif"
+                    class="w-full justify-center py-3 sm:py-4 font-serif"
                     :class="{ 'opacity-50 pointer-events-none': form.processing || isLoggingIn }"
                     :disabled="form.processing || isLoggingIn"
                 >

@@ -4,6 +4,10 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import JournalEditor from '@/Components/Journal/JournalEditor.vue';
 import TaskWidget from '@/Components/Tasks/TaskWidget.vue';
+import ActivityHeatmap from '@/Components/UI/ActivityHeatmap.vue';
+import { useTabSync } from '@/Composables/useTabSync';
+
+useTabSync([]); // Reload all props
 
 const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
@@ -14,6 +18,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 const props = defineProps({
     entryCount: Number,
     tasks: Array,
+    activity: Object,
 })
 
 const form = useForm({
@@ -57,7 +62,10 @@ const submitEntry = () => {
                         </div>
 
                         <!-- Sidebar (Tasks) - Bottom on Mobile, Left on Desktop -->
-                        <aside class="flex flex-col w-full xl:w-[24rem] lg:max-w-xl lg:mx-auto xl:mx-0 shrink-0 order-2 xl:order-1 relative z-20 xl:min-h-0 pb-12 xl:pb-0">
+                        <aside class="flex flex-col w-full xl:w-[24rem] lg:max-w-xl lg:mx-auto xl:mx-0 shrink-0 order-2 xl:order-1 relative z-20 xl:min-h-0 pb-12 xl:pb-0 space-y-10">
+                            <!-- Continuity Heatmap -->
+                            <ActivityHeatmap :activity="activity" />
+
                             <TaskWidget :tasks="tasks" />
                         </aside>
 

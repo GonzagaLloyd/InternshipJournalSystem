@@ -6,10 +6,14 @@ import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import TaskItem from '@/Components/Tasks/TaskItem.vue';
 import TaskCreateModal from '@/Components/Tasks/TaskCreateModal.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import { useTabSync } from '@/Composables/useTabSync';
 
 const props = defineProps({
     tasks: Array
 });
+
+// Setup tab sync
+const { broadcastUpdate } = useTabSync(['tasks']);
 
 const isNavigating = ref(false);
 const showCreateModal = ref(false);
@@ -41,15 +45,25 @@ const deleteTask = (task) => {
     showDeleteConfirm.value = true;
 };
 
-const confirmDeletion = () => {
+const isProcessingDelete = ref(false);
+
+const confirmDeletion = async () => {
     const task = taskToDelete.value;
-    if (!task || !task.id) return;
+    if (!task || !task.id || isProcessingDelete.value) return;
+
+    isProcessingDelete.value = true;
+    
+    // Tactile feedback pause
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    broadcastUpdate(); // Notify Vault
 
     router.delete(route('tasks.destroy', { task: task.id }), {
         preserveScroll: true,
-        onSuccess: () => {
+        onFinish: () => {
             showDeleteConfirm.value = false;
             taskToDelete.value = null;
+            isProcessingDelete.value = false;
         }
     });
 };
@@ -71,13 +85,18 @@ const sortedTasks = computed(() => {
         title="Active <span class='text-[#8C6A4A]'>Decrees</span>"
         subtitle="The Scriptorium's Mandate"
     >
-        <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
+        <div class="p-4 md:p-10 lg:p-12 flex flex-col font-serif relative min-h-full">
             <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col relative z-20">
-                <!-- Action Bar (Sticky or at top) -->
-                <div class="flex justify-end mb-12 relative z-10">
+                <!-- Action Bar -->
+                <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-6 mb-12 relative z-10 w-full">
+                    <div class="hidden sm:flex flex-col">
+                        <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Scroll to reveal</span>
+                        <div class="h-[1px] w-12 bg-[#8C6A4A]/20 mt-2"></div>
+                    </div>
+
                     <button 
                         @click="showCreateModal = true"
-                        class="w-full md:w-auto group flex items-center justify-center gap-4 px-10 py-4 bg-[#8C6A4A]/10 border border-[#8C6A4A]/30 rounded-sm text-[#C9B79C] hover:bg-[#8C6A4A] transition-all duration-500 shadow-lg hover:shadow-[#8C6A4A]/20"
+                        class="w-full sm:w-auto group flex items-center justify-center gap-4 px-8 md:px-10 py-4 bg-[#8C6A4A]/10 border border-[#8C6A4A]/30 rounded-sm text-[#C9B79C] hover:bg-[#8C6A4A] transition-all duration-500 shadow-lg hover:shadow-[#8C6A4A]/20"
                     >
                         <span class="text-[10px] font-black uppercase tracking-[0.3em] font-serif">Append Decree</span>
                         <div class="h-6 w-6 rounded-full border border-[#C9B79C]/30 flex items-center justify-center group-hover:border-[#C9B79C] transition-colors">
@@ -147,7 +166,8 @@ const sortedTasks = computed(() => {
         <!-- Delete Confirmation Modal -->
         <ConfirmationModal 
             :show="showDeleteConfirm"
-            title="Banish Decree?"
+            :processing="isProcessingDelete"
+            title="Consign to Vault?"
             message="Are you sure you want to banish this decree to the Sunken Vault? It can be retrieved later from the forgotten archives."
             confirm-text="Banish Records"
             cancel-text="Keep Decree"

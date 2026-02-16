@@ -6,6 +6,7 @@ import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Toast from '@/Components/UI/Toast.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
 
 const props = defineProps({
     entry: Object
@@ -57,9 +58,24 @@ const updateEntry = () => {
     });
 }
 
-const deleteEntry = () => {
-    showDeleteModal.value = false;
-    router.delete(route('journal.destroy', props.entry.id));
+const isProcessingDelete = ref(false);
+
+const deleteEntry = async () => {
+    if (!isProcessingDelete.value) {
+        isProcessingDelete.value = true;
+        
+        // Brief pause for tactile feedback on the button
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        showDeleteModal.value = false;
+        isReturning.value = true; // Show the 'Preserving to Ledger' loader for instant feedback
+        
+        router.delete(route('journal.destroy', props.entry.id), {
+            onFinish: () => {
+                isProcessingDelete.value = false;
+            }
+        });
+    }
 }
 
 /**
@@ -253,6 +269,7 @@ const vAutoResize = {
         <!-- Confirmation Modal for Deletion -->
         <ConfirmationModal 
             :show="showDeleteModal"
+            :processing="isProcessingDelete"
             title="Banish to Vault?"
             message="This lore will be moved to the Sunken Vault. It will be hidden from the ledger but can be recovered from the forgotten depths."
             confirm-text="Banish Record"
@@ -261,6 +278,8 @@ const vAutoResize = {
             @close="showDeleteModal = false"
             @confirm="deleteEntry"
         />
+
+        <ReportProgressWidget />
     </div>
 </template>
 

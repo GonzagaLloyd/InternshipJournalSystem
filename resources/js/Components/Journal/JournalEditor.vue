@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref } from 'vue';
 import axios from 'axios';
 import AssetPalette from './AssetPalette.vue';
+import { useToast } from '@/Composables/useToast';
 
 const props = defineProps({
     form: Object,
@@ -10,9 +11,9 @@ const props = defineProps({
 
 const emit = defineEmits(['submit']);
 
+const { success, error: toastError } = useToast();
 const isFocused = ref(false);
 const isRefining = ref(false);
-const aiError = ref(null);
 const previewUrls = ref({});
 
 const getPreviewUrl = (file, key) => {
@@ -34,7 +35,6 @@ const refineContent = async () => {
     if (!props.form.content || props.form.content.length < 5 || isRefining.value || props.form.processing) return;
     
     isRefining.value = true;
-    aiError.value = null;
     
     try {
         const response = await axios.post(route('journal.refine'), {
@@ -43,17 +43,24 @@ const refineContent = async () => {
         
         if (response.data.refinedText) {
             props.form.content = response.data.refinedText;
+            success('The Muse has refined your lore into professional archives.', 6000);
         }
     } catch (error) {
-        aiError.value = error.response?.data?.error || 'The Muse is silent...';
-        setTimeout(() => aiError.value = null, 5000);
+        const msg = error.response?.data?.error || 'The Muse is silent...';
+        toastError(msg, 7000);
     } finally {
         isRefining.value = false;
     }
 };
 
+const isSealing = ref(false);
+
 const handleSealDecree = () => {
     if (!props.form.content || props.form.processing || isRefining.value) return;
+    
+    isSealing.value = true;
+    setTimeout(() => isSealing.value = false, 1000);
+    
     emit('submit');
 };
 
@@ -104,7 +111,10 @@ onBeforeUnmount(() => {
 
                 <!-- Save Button -->
                 <button 
-                    class="h-10 md:h-11 w-full md:w-44 bg-[#A68B6A] text-[#1B1B1B] rounded-xl transition-all hover:bg-[#C9B79C] hover:scale-[1.02] active:scale-95 disabled:opacity-20 flex-1 md:flex-none flex items-center justify-center font-black text-[10px] md:text-[11px] uppercase tracking-[0.15em] whitespace-nowrap shadow-xl"
+                    :class="[
+                        'h-10 md:h-11 w-full md:w-44 bg-[#A68B6A] text-[#1B1B1B] rounded-xl transition-all hover:bg-[#C9B79C] hover:scale-[1.02] active:scale-95 disabled:opacity-20 flex-1 md:flex-none flex items-center justify-center font-black text-[10px] md:text-[11px] uppercase tracking-[0.15em] whitespace-nowrap shadow-xl',
+                        isSealing ? 'animate-seal' : ''
+                    ]"
                     @click="handleSealDecree"
                     :disabled="form.processing || isRefining || !form.content"
                 >
@@ -124,6 +134,7 @@ onBeforeUnmount(() => {
                         class="w-full bg-transparent border-none focus:ring-0 p-0 text-xl md:text-3xl font-bold font-cinzel text-[#E3D5C1] placeholder:text-[#A68B6A]/30 placeholder:italic"
                     />
                     <div class="h-[1px] w-12 bg-[#A68B6A]/20 mt-4 group-hover/title:w-20 transition-all duration-700"></div>
+                    <div v-if="form.errors.title" class="text-red-400 text-xs mt-2 font-sans tracking-wide">{{ form.errors.title }}</div>
                 </div>
 
                 <!-- Content Area -->
@@ -135,6 +146,7 @@ onBeforeUnmount(() => {
                     class="w-full bg-transparent border-none focus:ring-0 p-0 text-base md:text-lg leading-[2.2] text-[#E3D5C1]/70 placeholder:text-[#E3D5C1]/10 resize-none font-serif min-h-[500px]"
                     :class="{'text-[#E3D5C1]': isFocused}"
                 ></textarea>
+                <div v-if="form.errors.content" class="text-red-400 text-xs mt-2 font-sans tracking-wide">{{ form.errors.content }}</div>
 
                 <!-- Attachments (Subtle Footer Style) -->
                 <div v-if="form.image || form.video || form.audio || form.file" class="mt-16 pt-10 border-t border-white/[0.05] space-y-6">

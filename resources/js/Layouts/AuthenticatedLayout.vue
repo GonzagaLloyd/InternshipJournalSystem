@@ -4,6 +4,7 @@ import Sidebar from '@/Components/Navigation/Sidebar.vue';
 import Topbar from '@/Components/Navigation/Topbar.vue';
 import { Link } from '@inertiajs/vue3';
 import Toast from '@/Components/UI/Toast.vue';
+import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
 
 defineProps({
     title: String,
@@ -57,6 +58,7 @@ const toggleSidebar = () => {
                 </main>
 
                 <Toast />
+                <ReportProgressWidget />
             </div>
     </div>
 </template>

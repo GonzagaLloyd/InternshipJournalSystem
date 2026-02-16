@@ -10,16 +10,41 @@ class JournalController extends Controller
 {
     public function index()
     {
+        $userId = auth()->id();
+        
+        // Fetch activity data for heatmap (last 365 days)
+        $activity = JournalEntry::where('user_id', $userId)
+            ->where('entry_date', '>=', now()->subDays(365)->format('Y-m-d'))
+            ->get(['entry_date'])
+            ->groupBy('entry_date')
+            ->map(fn($group) => $group->count());
+
         return Inertia::render('Dashboard', [
-            'entryCount' => JournalEntry::where('user_id', auth()->id())->count(),
-            'tasks' => \App\Models\Task::where('user_id', auth()->id())->latest()->get(),
+            'entryCount' => JournalEntry::where('user_id', $userId)->count(),
+            'tasks' => \App\Models\Task::where('user_id', $userId)->latest()->get(),
+            'activity' => $activity,
         ]);
     }
 
-    public function entries()
+    public function entries(Request $request)
     {
+        $query = JournalEntry::where('user_id', auth()->id());
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $entries = $query->orderBy('entry_date', 'desc')
+            ->paginate(12)
+            ->withQueryString();
+
         return Inertia::render('Entries/Index', [
-            'entries' => JournalEntry::where('user_id', auth()->id())->latest()->get(),
+            'entries' => $entries,
+            'filters' => $request->only(['search'])
         ]);
     }
 
@@ -28,7 +53,7 @@ class JournalController extends Controller
         // 1. Validate the data
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
-            'content' => 'required|string|min:10',
+            'content' => 'required|string|min:3',
             'entry_date' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
             'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480',      // 20MB
@@ -56,7 +81,7 @@ class JournalController extends Controller
             'file' => $paths['file'],
         ]);
 
-        return back();
+        return back()->with('success', 'New lore has been inscribed in the ledger.');
     }
     public function show($id)
     {
@@ -75,7 +100,7 @@ class JournalController extends Controller
 
            $validated = $request->validate([
             'title' => 'nullable|string|max:255',
-            'content' => 'required|string|min:10',
+            'content' => 'required|string|min:3',
             'entry_date' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
             'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480',      // 20MB
@@ -113,7 +138,7 @@ class JournalController extends Controller
         // \Storage::disk('public')->delete([$entry->image, $entry->video, $entry->audio, $entry->file]);
 
         $entry->delete();
-
-        return to_route('journal.index')->with('success', 'The records has been banished to the Sunken Vault.');
+ 
+        return redirect()->route('journal.index')->with('success', 'The record has been banished to the Sunken Vault.');
     }
 }

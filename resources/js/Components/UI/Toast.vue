@@ -3,22 +3,16 @@ import { watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useToast } from '@/Composables/useToast';
 
-const { toasts, removeToast, addToast } = useToast();
+const { toasts, removeToast, processInertiaFlash } = useToast();
 const page = usePage();
 
-// Watch for flash messages from Inertia
 watch(() => page.props.flash, (flash) => {
-    if (flash?.success) {
-        addToast(flash.success, 'success');
-    }
-    if (flash?.error) {
-        addToast(flash.error, 'error');
-    }
+    processInertiaFlash(flash);
 }, { deep: true, immediate: true });
 </script>
 
 <template>
-    <div class="fixed bottom-8 right-8 z-[200] flex flex-col gap-4 pointer-events-none w-full max-w-sm">
+    <div class="fixed bottom-6 left-6 right-6 md:bottom-8 md:right-8 md:left-auto z-[250] flex flex-col gap-4 pointer-events-none md:w-full md:max-w-sm">
         <TransitionGroup 
             enter-active-class="transform transition duration-500 ease-out"
             enter-from-class="translate-y-4 opacity-0 scale-95 blur-sm"
@@ -34,7 +28,7 @@ watch(() => page.props.flash, (flash) => {
                 <div 
                     :class="[
                         toast.type === 'error' ? 'bg-[#1c1412] border-[#8b2635]/50' : 'bg-[#141210] border-[#d9c5a3]/20',
-                        'relative bg-[#141210] border rounded-2xl p-5 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] flex items-center gap-5 transition-all duration-300'
+                        'relative bg-[#141210] border rounded-2xl p-5 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] flex items-center gap-5 transition-all duration-300 transform-gpu will-change-[transform,opacity]'
                     ]"
                 >
                     <!-- Background Texture -->

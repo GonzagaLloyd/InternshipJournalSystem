@@ -1,13 +1,29 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import { useTabSync } from '@/Composables/useTabSync';
 
 const props = defineProps({
     entries: Array,
     tasks: Array,
     reports: Array
+});
+
+// Setup tab synchronization for auto-refresh
+const { broadcastUpdate } = useTabSync(['entries', 'tasks', 'reports']);
+
+// Local state for instant updates (Optimistic UI)
+const localEntries = ref([]);
+const localTasks = ref([]);
+const localReports = ref([]);
+
+// Sync local state with props whenever props change (e.g. after server roundtrip)
+watchEffect(() => {
+    localEntries.value = props.entries || [];
+    localTasks.value = props.tasks || [];
+    localReports.value = props.reports || [];
 });
 
 const activeTab = ref('entries'); // entries, tasks
@@ -39,42 +55,70 @@ const openDeletePermanentModal = (item, type) => {
     showDeletePermanentModal.value = true;
 };
 
+const removeFromLocalState = (id, type) => {
+    if (type === 'entry') {
+        localEntries.value = localEntries.value.filter(i => (i.id || i._id) !== id);
+    } else if (type === 'task') {
+        localTasks.value = localTasks.value.filter(i => (i.id || i._id) !== id);
+    } else if (type === 'report') {
+        localReports.value = localReports.value.filter(i => (i.id || i._id) !== id);
+    }
+};
+
 const handleRestore = () => {
     const id = processingItem.value.id || processingItem.value._id;
+    const type = processingType.value;
     let routeName;
     
-    if (processingType.value === 'entry') {
+    if (type === 'entry') {
         routeName = 'vault.journal.restore';
-    } else if (processingType.value === 'task') {
+    } else if (type === 'task') {
         routeName = 'vault.tasks.restore';
-    } else if (processingType.value === 'report') {
+    } else if (type === 'report') {
         routeName = 'vault.reports.restore';
     }
     
+    // Optimistic Update: Remove immediately from view
+    removeFromLocalState(id, type);
+    showRestoreModal.value = false;
+    
+    // Broadcast update to other tabs (e.g. Tasks/Entries will refresh)
+    broadcastUpdate();
+
     router.post(route(routeName, id), {}, {
         onSuccess: () => {
-            showRestoreModal.value = false;
             processingItem.value = null;
+        },
+        onError: () => {
+            // Reload props if failed to ensure consistency
+            router.reload();
         }
     });
 };
 
 const handlePermanentDelete = () => {
     const id = processingItem.value.id || processingItem.value._id;
+    const type = processingType.value;
     let routeName;
     
-    if (processingType.value === 'entry') {
+    if (type === 'entry') {
         routeName = 'vault.journal.force-delete';
-    } else if (processingType.value === 'task') {
+    } else if (type === 'task') {
         routeName = 'vault.tasks.force-delete';
-    } else if (processingType.value === 'report') {
+    } else if (type === 'report') {
         routeName = 'vault.reports.force-delete';
     }
     
+    // Optimistic Update: Remove immediately from view
+    removeFromLocalState(id, type);
+    showDeletePermanentModal.value = false;
+    
     router.delete(route(routeName, id), {
         onSuccess: () => {
-            showDeletePermanentModal.value = false;
             processingItem.value = null;
+        },
+        onError: () => {
+            router.reload();
         }
     });
 };
@@ -106,27 +150,27 @@ const handlePermanentDelete = () => {
             </div>
 
             <!-- Navigation Tabs -->
-            <div class="flex items-center gap-8 border-b border-white/5 mb-10 relative z-10">
+            <div class="flex items-center gap-4 md:gap-8 border-b border-white/5 mb-10 relative z-10 overflow-x-auto scrollbar-hide">
                 <button 
                     @click="activeTab = 'entries'"
                     :class="activeTab === 'entries' ? 'text-[#C9B79C] border-[#8C6A4A] border-b-2 -mb-[2px]' : 'text-[#8C6A4A]/40 hover:text-[#C9B79C]'"
-                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-xs uppercase tracking-[0.3em] font-bold"
+                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold whitespace-nowrap flex-shrink-0"
                 >
-                    Stricken Lore ({{ entries.length }})
+                    Stricken Lore ({{ localEntries.length }})
                 </button>
                 <button 
                     @click="activeTab = 'tasks'"
                     :class="activeTab === 'tasks' ? 'text-[#C9B79C] border-[#8C6A4A] border-b-2 -mb-[2px]' : 'text-[#8C6A4A]/40 hover:text-[#C9B79C]'"
-                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-xs uppercase tracking-[0.3em] font-bold"
+                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold whitespace-nowrap flex-shrink-0"
                 >
-                    Forgotten Deeds ({{ tasks.length }})
+                    Forgotten Deeds ({{ localTasks.length }})
                 </button>
                 <button 
                     @click="activeTab = 'reports'"
                     :class="activeTab === 'reports' ? 'text-[#C9B79C] border-[#8C6A4A] border-b-2 -mb-[2px]' : 'text-[#8C6A4A]/40 hover:text-[#C9B79C]'"
-                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-xs uppercase tracking-[0.3em] font-bold"
+                    class="pb-4 px-2 transition-all duration-500 font-cinzel text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold whitespace-nowrap flex-shrink-0"
                 >
-                    Archived Reports ({{ reports.length }})
+                    Archived Reports ({{ localReports.length }})
                 </button>
             </div>
 
@@ -135,9 +179,9 @@ const handlePermanentDelete = () => {
                 
                 <!-- Entries Tab -->
                 <div v-if="activeTab === 'entries'" class="space-y-6">
-                    <div v-if="entries.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-if="localEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div 
-                            v-for="entry in entries" 
+                            v-for="entry in localEntries" 
                             :key="entry.id || entry._id"
                             class="group relative bg-[#2D2D2D]/20 border border-white/5 p-8 rounded-sm hover:border-[#8C6A4A]/40 transition-all duration-700"
                         >
@@ -171,9 +215,9 @@ const handlePermanentDelete = () => {
 
                 <!-- Tasks Tab -->
                 <div v-if="activeTab === 'tasks'" class="space-y-4">
-                    <div v-if="tasks.length > 0" class="max-w-4xl space-y-3">
+                    <div v-if="localTasks.length > 0" class="max-w-4xl space-y-3">
                         <div 
-                            v-for="task in tasks" 
+                            v-for="task in localTasks" 
                             :key="task.id || task._id"
                             class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
                         >
@@ -202,9 +246,9 @@ const handlePermanentDelete = () => {
 
                 <!-- Reports Tab -->
                 <div v-if="activeTab === 'reports'" class="space-y-4">
-                    <div v-if="reports.length > 0" class="max-w-4xl space-y-3">
+                    <div v-if="localReports.length > 0" class="max-w-4xl space-y-3">
                         <div 
-                            v-for="report in reports" 
+                            v-for="report in localReports" 
                             :key="report.id || report._id"
                             class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
                         >

@@ -56,7 +56,7 @@ class VaultController extends Controller
 
         $entry->restore();
 
-        return back()->with('success', 'The records has been restored from the ashes.');
+        return back()->with('success', 'The record has been restored from the ashes.');
     }
 
     /**
@@ -76,7 +76,7 @@ class VaultController extends Controller
 
         $entry->forceDelete();
 
-        return back()->with('success', 'The records has been permanently erased from history.');
+        return back()->with('success', 'The record has been permanently erased from history.');
     }
 
     /**

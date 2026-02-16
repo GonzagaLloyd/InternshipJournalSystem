@@ -60,7 +60,7 @@ class TaskController extends Controller
 
         $task->update($validate);
 
-        return back()->with('success', 'Decree successfully sealed in the ledger.');
+        return back()->with('success', 'Decree successfully amended.');
     }
 
     /**

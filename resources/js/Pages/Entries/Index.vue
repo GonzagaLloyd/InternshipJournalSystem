@@ -1,33 +1,93 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
+
+// Native Debounce Implementation
+const debounce = (fn, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+    };
+};
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import JournalCard from '@/Components/Journal/JournalCard.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import { useTabSync } from '@/Composables/useTabSync';
 
 const props = defineProps({
-    entries: Array
+    entries: Object, // Paginated object
+    filters: Object
 });
 
-const searchQuery = ref('');
+// Setup tab sync
+const { broadcastUpdate } = useTabSync(['entries']);
+
+const searchQuery = ref(props.filters.search || '');
 const isNavigating = ref(false);
 const showDeleteModal = ref(false);
 const entryToDelete = ref(null);
+const isLoadingMore = ref(false);
 
-const filteredEntries = computed(() => {
-    if (!searchQuery.value) return props.entries;
-    return props.entries.filter(entry => 
-        entry.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        entry.content.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+// Local list for infinite scroll
+const allEntries = ref(props.entries?.data ? [...props.entries.data] : []);
+
+// Watch for new entries (pagination or search)
+watch(() => props.entries, (newVal, oldVal) => {
+    if (newVal.current_page === 1) {
+        allEntries.value = [...newVal.data];
+    } else if (newVal.current_page > oldVal.current_page) {
+        allEntries.value = [...allEntries.value, ...newVal.data];
+    }
+}, { deep: true });
+
+// Debounced Search
+const performSearch = debounce((q) => {
+    router.get(route('journal.index'), { search: q }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        only: ['entries', 'filters']
+    });
+}, 400);
+
+watch(searchQuery, (q) => performSearch(q));
+
+// Infinite Scroll Logic
+const loaderTarget = ref(null);
+let observer = null;
+
+const loadMore = () => {
+    if (props.entries.next_page_url && !isLoadingMore.value) {
+        isLoadingMore.value = true;
+        router.get(props.entries.next_page_url, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['entries'],
+            onFinish: () => {
+                isLoadingMore.value = false;
+            }
+        });
+    }
+};
+
+onMounted(() => {
+    observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMore();
+        }
+    }, { threshold: 0.1 });
+
+    if (loaderTarget.value) observer.observe(loaderTarget.value);
+});
+
+onUnmounted(() => {
+    if (observer) observer.disconnect();
 });
 
 const handleEntryClick = (id) => {
-    isNavigating.value = true;
-    setTimeout(() => {
-        router.visit(route('journal.show', id));
-    }, 1500);
+    router.visit(route('journal.show', id));
 };
 
 const confirmDelete = (id) => {
@@ -35,13 +95,33 @@ const confirmDelete = (id) => {
     showDeleteModal.value = true;
 };
 
-const deleteEntry = () => {
-    if (entryToDelete.value) {
-        router.delete(route('journal.destroy', entryToDelete.value), {
-            onSuccess: () => {
-                showDeleteModal.value = false;
+const isProcessingDelete = ref(false);
+
+const deleteEntry = async () => {
+    if (entryToDelete.value && !isProcessingDelete.value) {
+        const idToRemove = entryToDelete.value;
+        isProcessingDelete.value = true;
+        
+        // Give the user a brief moment (300ms) to see the 'Processing' state 
+        // so they know their click was registered before it vanishes cinematically
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // 1. Close modal and remove from UI (Optimistic)
+        showDeleteModal.value = false;
+        allEntries.value = allEntries.value.filter(e => (e.id || e._id) !== idToRemove);
+        
+        broadcastUpdate(); 
+
+        router.delete(route('journal.destroy', idToRemove), {
+            preserveScroll: true,
+            onFinish: () => {
+                isProcessingDelete.value = false;
                 entryToDelete.value = null;
             },
+            onError: () => {
+                isProcessingDelete.value = false;
+                router.reload();
+            }
         });
     }
 };
@@ -70,22 +150,40 @@ const deleteEntry = () => {
                 </div>
 
                 <div class="flex items-center gap-4 text-[#8C6A4A]">
-                    <span class="text-[10px] uppercase font-black tracking-widest">{{ filteredEntries.length }} Chronicles Found</span>
+                    <span class="text-[10px] uppercase font-black tracking-widest">{{ props.entries.total }} Chronicles Found</span>
                     <div class="h-4 w-[1px] bg-[#8C6A4A]/20"></div>
                 </div>
             </div>
 
             <!-- Entries Grid -->
             <div class="flex-1 overflow-y-auto pr-0 md:pr-2 scrollbar-hide relative z-10">
-                <div v-if="filteredEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 pb-20">
-                    <JournalCard 
-                        v-for="entry in filteredEntries" 
-                        :key="entry.id"
-                        :entry="entry"
-                        @click="handleEntryClick(entry.id)"
-                        @delete="confirmDelete"
-                    />
-                </div>
+                <template v-if="allEntries.length > 0">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 pb-20">
+                        <JournalCard 
+                            v-for="entry in allEntries" 
+                            :key="entry.id || entry._id"
+                            :entry="entry"
+                            @click="handleEntryClick(entry.id || entry._id)"
+                            @delete="confirmDelete"
+                        />
+                    </div>
+
+                    <!-- Infinite Scroll Sentinel -->
+                    <div 
+                        ref="loaderTarget" 
+                        id="infinite-sentinel"
+                        class="w-full py-12 flex flex-col items-center justify-center gap-4 transition-all duration-500"
+                        :class="isLoadingMore ? 'opacity-100' : 'opacity-0'"
+                    >
+                        <div class="relative w-10 h-10">
+                            <div class="absolute inset-0 border border-[#8C6A4A]/20 rounded-full animate-[spin_3s_linear_infinite]"></div>
+                            <div class="absolute inset-1 border border-dashed border-[#8C6A4A]/40 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
+                        </div>
+                        <p class="text-[9px] font-cinzel text-[#8C6A4A] uppercase tracking-[0.3em] animate-pulse">
+                            Whispering to the void...
+                        </p>
+                    </div>
+                </template>
 
                 <!-- Empty State -->
                 <div v-else class="flex-1 flex flex-col items-center justify-center py-40 text-center relative z-10">
@@ -112,6 +210,7 @@ const deleteEntry = () => {
     <!-- Confirmation Modal for Deletion -->
     <ConfirmationModal 
         :show="showDeleteModal"
+        :processing="isProcessingDelete"
         title="Banish to Vault?"
         message="This lore will be moved to the Sunken Vault. It will be hidden from the ledger but can be recovered from the forgotten depths."
         confirm-text="Banish Record"

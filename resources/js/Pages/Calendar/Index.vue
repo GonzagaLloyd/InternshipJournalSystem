@@ -2,6 +2,9 @@
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ChronosDial from '@/Components/Calendar/ChronosDial.vue';
+import { useTabSync } from '@/Composables/useTabSync';
+
+useTabSync(['events']);
 
 const props = defineProps({
     events: Object // Grouped by date 'Y-m-d'

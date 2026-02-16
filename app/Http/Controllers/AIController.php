@@ -38,7 +38,9 @@ class AIController extends Controller
         try {
             // Using gemini-flash-latest for best availability and performance
             // Adding withoutVerifying() to bypass SSL issues in local development
-            $response = Http::withoutVerifying()->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}", [
+            $response = Http::withoutVerifying()
+                ->timeout(60)
+                ->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [

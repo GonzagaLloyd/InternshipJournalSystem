@@ -12,6 +12,9 @@ use App\Http\Controllers\CalendarController;
 // ============================================================================
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -52,7 +55,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Report Routes
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/create', [\App\Http\Controllers\ReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports/draft', [\App\Http\Controllers\ReportController::class, 'previewDraft'])->name('reports.draft');
+    Route::get('/reports/{id}', [\App\Http\Controllers\ReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
+    Route::get('/reports/job/{jobId}', [\App\Http\Controllers\ReportController::class, 'jobStatus'])->name('reports.job.status');
+    Route::post('/reports', [\App\Http\Controllers\ReportController::class, 'store'])->name('reports.store');
+    Route::patch('/reports/{id}', [\App\Http\Controllers\ReportController::class, 'update'])->name('reports.update');
     Route::delete('/reports/{id}', [\App\Http\Controllers\ReportController::class, 'destroy'])->name('reports.destroy');
     
     // Vault Report Routes
