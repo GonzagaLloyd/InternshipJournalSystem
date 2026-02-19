@@ -3,12 +3,13 @@ import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, watchEffect } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import { useTabSync } from '@/Composables/useTabSync';
 
 const props = defineProps({
-    entries: Array,
-    tasks: Array,
-    reports: Array
+    entries: { type: Array, default: null },
+    tasks: { type: Array, default: null },
+    reports: { type: Array, default: null }
 });
 
 // Setup tab synchronization for auto-refresh
@@ -179,34 +180,49 @@ const handlePermanentDelete = () => {
                 
                 <!-- Entries Tab -->
                 <div v-if="activeTab === 'entries'" class="space-y-6">
-                    <div v-if="localEntries.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div 
-                            v-for="entry in localEntries" 
-                            :key="entry.id || entry._id"
-                            class="group relative bg-[#2D2D2D]/20 border border-white/5 p-8 rounded-sm hover:border-[#8C6A4A]/40 transition-all duration-700"
-                        >
-                            <!-- Ghostly Overlay -->
-                            <div class="absolute inset-0 bg-[#8C6A4A]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl pointer-events-none"></div>
-                            
-                            <!-- Card Content -->
-                            <div class="relative z-10">
-                                <div class="flex justify-between items-start mb-6">
-                                    <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/60 font-serif">Stricken on {{ formatDate(entry.deleted_at) }}</span>
-                                    <div class="flex gap-3 h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500">
-                                        <button @click="openRestoreModal(entry, 'entry')" class="text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-colors" title="Heal from Ashes">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 10v4L8 12m4-2l4 4m-2 4h5a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2h5" /></svg>
-                                        </button>
-                                        <button @click="openDeletePermanentModal(entry, 'entry')" class="text-red-900/40 hover:text-red-600 transition-colors" title="Burn Forever">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        </button>
-                                    </div>
+                    <template v-if="props.entries === null">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div v-for="i in 3" :key="i" class="bg-[#2D2D2D]/20 border border-white/5 p-8 rounded-sm h-64 flex flex-col space-y-4">
+                                <SkeletonLoader width="40%" height="0.6rem" opacity="0.03" />
+                                <SkeletonLoader width="80%" height="1.5rem" />
+                                <div class="space-y-2">
+                                    <SkeletonLoader width="100%" height="0.8rem" opacity="0.03" />
+                                    <SkeletonLoader width="100%" height="0.8rem" opacity="0.03" />
+                                    <SkeletonLoader width="60%" height="0.8rem" opacity="0.03" />
                                 </div>
-                                <h3 class="text-xl font-cinzel text-[#C9B79C]/80 group-hover:text-[#C9B79C] transition-colors mb-4 truncate">{{ entry.title }}</h3>
-                                <p class="text-sm text-[#8C6A4A]/40 line-clamp-3 italic mb-6 leading-relaxed">{{ entry.content }}</p>
-                                <div class="h-[1px] w-full bg-gradient-to-r from-[#8C6A4A]/20 to-transparent"></div>
                             </div>
                         </div>
-                    </div>
+                    </template>
+                    <template v-else-if="localEntries.length > 0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div 
+                                v-for="entry in localEntries" 
+                                :key="entry.id || entry._id"
+                                class="group relative bg-[#2D2D2D]/20 border border-white/5 p-8 rounded-sm hover:border-[#8C6A4A]/40 transition-all duration-700"
+                            >
+                                <!-- Ghostly Overlay -->
+                                <div class="absolute inset-0 bg-[#8C6A4A]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl pointer-events-none"></div>
+                                
+                                <!-- Card Content -->
+                                <div class="relative z-10">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/60 font-serif">Stricken on {{ formatDate(entry.deleted_at) }}</span>
+                                        <div class="flex gap-3 h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                            <button @click="openRestoreModal(entry, 'entry')" class="text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-colors" title="Heal from Ashes">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 10v4L8 12m4-2l4 4m-2 4h5a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2h5" /></svg>
+                                            </button>
+                                            <button @click="openDeletePermanentModal(entry, 'entry')" class="text-red-900/40 hover:text-red-600 transition-colors" title="Burn Forever">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-cinzel text-[#C9B79C]/80 group-hover:text-[#C9B79C] transition-colors mb-4 truncate">{{ entry.title }}</h3>
+                                    <p class="text-sm text-[#8C6A4A]/40 line-clamp-3 italic mb-6 leading-relaxed">{{ entry.content }}</p>
+                                    <div class="h-[1px] w-full bg-gradient-to-r from-[#8C6A4A]/20 to-transparent"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                     <div v-else class="py-40 flex flex-col items-center justify-center opacity-20 border border-white/5 rounded-sm">
                         <svg class="w-20 h-20 mb-6 text-[#8C6A4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                         <p class="font-cinzel tracking-widest text-xs uppercase text-[#8C6A4A]">No Stricken Lore Found</p>
@@ -215,29 +231,42 @@ const handlePermanentDelete = () => {
 
                 <!-- Tasks Tab -->
                 <div v-if="activeTab === 'tasks'" class="space-y-4">
-                    <div v-if="localTasks.length > 0" class="max-w-4xl space-y-3">
-                        <div 
-                            v-for="task in localTasks" 
-                            :key="task.id || task._id"
-                            class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
-                        >
-                            <div class="flex flex-col gap-1">
-                                <span class="text-base text-[#C9B79C]/70 group-hover:text-[#C9B79C] transition-colors font-medium">{{ task.name }}</span>
-                                <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/40 italic">Banished on {{ formatDate(task.deleted_at) }}</span>
+                    <template v-if="props.tasks === null">
+                        <div class="max-w-4xl space-y-3">
+                            <div v-for="i in 4" :key="i" class="bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm flex justify-between">
+                                <div class="flex-1 space-y-2">
+                                    <SkeletonLoader width="40%" height="1.2rem" />
+                                    <SkeletonLoader width="20%" height="0.6rem" opacity="0.03" />
+                                </div>
+                                <SkeletonLoader width="60px" height="20px" />
                             </div>
-                            <div class="flex items-center gap-6">
-                                <span class="text-[9px] uppercase tracking-[0.2em] text-[#8C6A4A]/40 border border-[#8C6A4A]/10 px-2 py-0.5 rounded-sm">{{ task.priority || 'Medium' }}</span>
-                                <div class="flex gap-4">
-                                    <button @click="openRestoreModal(task, 'task')" class="text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                    </button>
-                                    <button @click="openDeletePermanentModal(task, 'task')" class="text-red-900/20 hover:text-red-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>
+                        </div>
+                    </template>
+                    <template v-else-if="localTasks.length > 0">
+                        <div class="max-w-4xl space-y-3">
+                            <div 
+                                v-for="task in localTasks" 
+                                :key="task.id || task._id"
+                                class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
+                            >
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-base text-[#C9B79C]/70 group-hover:text-[#C9B79C] transition-colors font-medium">{{ task.name }}</span>
+                                    <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/40 italic">Banished on {{ formatDate(task.deleted_at) }}</span>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <span class="text-[9px] uppercase tracking-[0.2em] text-[#8C6A4A]/40 border border-[#8C6A4A]/10 px-2 py-0.5 rounded-sm">{{ task.priority || 'Medium' }}</span>
+                                    <div class="flex gap-4">
+                                        <button @click="openRestoreModal(task, 'task')" class="text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        </button>
+                                        <button @click="openDeletePermanentModal(task, 'task')" class="text-red-900/20 hover:text-red-700 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
                     <div v-else class="py-40 flex flex-col items-center justify-center opacity-20 border border-white/5 rounded-sm">
                         <svg class="w-20 h-20 mb-6 text-[#8C6A4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <p class="font-cinzel tracking-widest text-xs uppercase text-[#8C6A4A]">No Forgotten Deeds Recoverable</p>
@@ -246,30 +275,46 @@ const handlePermanentDelete = () => {
 
                 <!-- Reports Tab -->
                 <div v-if="activeTab === 'reports'" class="space-y-4">
-                    <div v-if="localReports.length > 0" class="max-w-4xl space-y-3">
-                        <div 
-                            v-for="report in localReports" 
-                            :key="report.id || report._id"
-                            class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
-                        >
-                            <div class="flex flex-col gap-1">
-                                <span class="text-base text-[#C9B79C]/70 group-hover:text-[#C9B79C] transition-colors font-medium">
-                                    Weekly Report: {{ report.period?.start || 'N/A' }} - {{ report.period?.end || 'N/A' }}
-                                </span>
-                                <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/40 italic">Archived on {{ report.deleted_at }}</span>
-                            </div>
-                            <div class="flex items-center gap-6">
+                    <template v-if="props.reports === null">
+                        <div class="max-w-4xl space-y-3">
+                            <div v-for="i in 3" :key="i" class="bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm flex justify-between">
+                                <div class="flex-1 space-y-2">
+                                    <SkeletonLoader width="60%" height="1.2rem" />
+                                    <SkeletonLoader width="30%" height="0.6rem" opacity="0.03" />
+                                </div>
                                 <div class="flex gap-4">
-                                    <button @click="openRestoreModal(report, 'report')" class="text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                    </button>
-                                    <button @click="openDeletePermanentModal(report, 'report')" class="text-red-900/20 hover:text-red-700 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>
+                                    <SkeletonLoader width="24px" height="24px" />
+                                    <SkeletonLoader width="24px" height="24px" />
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
+                    <template v-else-if="localReports.length > 0">
+                        <div class="max-w-4xl space-y-3">
+                            <div 
+                                v-for="report in localReports" 
+                                :key="report.id || report._id"
+                                class="group flex items-center justify-between bg-[#2D2D2D]/20 border border-white/5 px-6 py-5 rounded-sm hover:border-[#8C6A4A]/20 transition-all duration-300"
+                            >
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-base text-[#C9B79C]/70 group-hover:text-[#C9B79C] transition-colors font-medium">
+                                        Weekly Report: {{ report.period?.start || 'N/A' }} - {{ report.period?.end || 'N/A' }}
+                                    </span>
+                                    <span class="text-[9px] uppercase tracking-widest text-[#8C6A4A]/40 italic">Archived on {{ report.deleted_at }}</span>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="flex gap-4">
+                                        <button @click="openRestoreModal(report, 'report')" class="text-[#8C6A4A]/40 hover:text-[#C9B79C] transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        </button>
+                                        <button @click="openDeletePermanentModal(report, 'report')" class="text-red-900/20 hover:text-red-700 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                     <div v-else class="py-40 flex flex-col items-center justify-center opacity-20 border border-white/5 rounded-sm">
                         <svg class="w-20 h-20 mb-6 text-[#8C6A4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         <p class="font-cinzel tracking-widest text-xs uppercase text-[#8C6A4A]">No Archived Reports Found</p>

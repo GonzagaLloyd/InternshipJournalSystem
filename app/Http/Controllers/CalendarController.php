@@ -18,7 +18,7 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Calendar/Index', [
-            'events' => $this->calendarService->getCalendarEvents(auth()->user())
+            'events' => Inertia::defer(fn () => $this->calendarService->getCalendarEvents(auth()->user()))
         ]);
     }
 }

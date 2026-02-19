@@ -7,25 +7,39 @@ import { useTabSync } from '@/Composables/useTabSync';
 import { useToast } from '@/Composables/useToast';
 import { Head, router } from '@inertiajs/vue3';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 
 const props = defineProps({
     availableEntries: Array,
-    pastReports: Array
+    pastReports: {
+        type: Array,
+        default: null
+    }
 });
 
 // Setup tab sync
 useTabSync(['pastReports']);
 
-const localPastReports = ref([...props.pastReports]);
+const localPastReports = ref([]);
 const showDeleteModal = ref(false);
 const reportToDelete = ref(null);
+
+// Sync local state when props arrive
+watch(() => props.pastReports, (newVal) => {
+    if (newVal) localPastReports.value = [...newVal];
+}, { immediate: true });
 
 // Computed to group reports by month
 const groupedReports = computed(() => {
     const groups = {};
+    if (!localPastReports.value) return groups;
+
     localPastReports.value.forEach(report => {
+        if (!report.created_at) return;
         // created_at format: "Feb 13, 2026 10:41"
         const dateParts = report.created_at.split(' ');
+        if (dateParts.length < 3) return;
+        
         const month = dateParts[0]; // e.g. "Feb"
         const year = dateParts[2];  // e.g. "2026," (need to remove comma)
         const cleanYear = year.replace(',', '');
@@ -155,7 +169,24 @@ const confirmDelete = async () => {
 
                                     <!-- Vertical Scrollable Library - Grouped by Month -->
                                     <div class="flex-1 overflow-y-auto custom-scrollbar px-6 md:px-14 pb-20">
-                                        <div v-if="localPastReports.length > 0" class="max-w-4xl mx-auto space-y-12">
+                                        <!-- Skeleton Loading State -->
+                                        <div v-if="props.pastReports === null" class="max-w-4xl mx-auto space-y-12">
+                                            <div v-for="i in 2" :key="i" class="space-y-6">
+                                                <SkeletonLoader width="30%" height="1.5rem" />
+                                                <div class="grid grid-cols-1 gap-10">
+                                                    <div v-for="j in 2" :key="j" class="bg-white/[0.02] border border-white/5 p-8 rounded-xl space-y-4">
+                                                        <SkeletonLoader width="20%" height="0.6rem" opacity="0.03" />
+                                                        <SkeletonLoader width="70%" height="2rem" />
+                                                        <div class="flex gap-4">
+                                                            <SkeletonLoader width="40px" height="40px" borderRadius="50%" />
+                                                            <SkeletonLoader width="40px" height="40px" borderRadius="50%" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div v-else-if="localPastReports.length > 0" class="max-w-4xl mx-auto space-y-12">
                                             <div v-for="(reports, month) in groupedReports" :key="month" class="space-y-6">
                                                 <!-- Month Header Toggle -->
                                                 <button 

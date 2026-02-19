@@ -15,15 +15,18 @@ class JournalService
     public function getDashboardData($user)
     {
         return cache()->remember("user_dashboard_{$user->id}", now()->addMinutes(15), function() use ($user) {
+            // Get activity counts grouped by date more efficiently
             $activity = JournalEntry::where('user_id', $user->id)
                 ->where('entry_date', '>=', now()->subDays(365)->format('Y-m-d'))
                 ->get(['entry_date'])
-                ->groupBy('entry_date')
+                ->map(fn($e) => ['date' => substr($e->entry_date, 0, 10)]) // Ensure Y-m-d format
+                ->groupBy('date')
                 ->map(fn($group) => $group->count());
 
             return [
                 'entryCount' => JournalEntry::where('user_id', $user->id)->count(),
-                'tasks' => Task::where('user_id', $user->id)->latest()->get(),
+                // Limit tasks to a reasonable number for dashboard overview or use latest
+                'tasks' => Task::where('user_id', $user->id)->latest()->limit(20)->get(), 
                 'activity' => $activity,
             ];
         });

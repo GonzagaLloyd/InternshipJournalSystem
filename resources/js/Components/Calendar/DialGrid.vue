@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from 'vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 
 const props = defineProps({
     days: Array,
     selectedDay: Object,
-    todayDate: String
+    todayDate: String,
+    loading: Boolean
 });
 
 const emit = defineEmits(['selectDay']);
@@ -33,34 +35,49 @@ const emit = defineEmits(['selectDay']);
                         'min-h-[80px] md:min-h-[140px] p-2 md:p-3 transition-all duration-500 flex flex-col items-start gap-1 relative group/cell overflow-hidden backdrop-blur-sm'
                     ]"
                 >
-                    <div class="flex justify-between w-full items-start">
-                        <span 
-                            :class="[
-                                day.month === 'current' ? 'text-[#C9B79C]' : 'text-[#8C6A4A]/40',
-                                day.fullDate === todayDate ? 'text-white' : '',
-                                'text-sm md:text-base font-cinzel font-bold z-10'
-                            ]"
-                        >{{ day.day }}</span>
-                        <div v-if="day.items?.length > 0" class="flex gap-1 pt-1">
-                            <div 
-                                v-for="(item, idx) in day.items.slice(0, 2)" 
-                                :key="idx"
-                                class="w-1 h-1 rounded-full bg-[#8C6A4A]/60 shadow-[0_0_5px_#8C6A4A]"
-                            ></div>
+                    <template v-if="props.loading && day.month === 'current'">
+                        <div class="w-full flex justify-between mb-4">
+                            <SkeletonLoader width="1.5rem" height="1.2rem" />
+                            <div class="flex gap-1">
+                                <SkeletonLoader width="4px" height="4px" borderRadius="50%" />
+                                <SkeletonLoader width="4px" height="4px" borderRadius="50%" />
+                            </div>
                         </div>
-                    </div>
+                        <div class="flex-1 w-full space-y-2">
+                            <SkeletonLoader width="80%" height="0.6rem" opacity="0.03" />
+                            <SkeletonLoader width="60%" height="0.6rem" opacity="0.03" />
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="flex justify-between w-full items-start">
+                            <span 
+                                :class="[
+                                    day.month === 'current' ? 'text-[#C9B79C]' : 'text-[#8C6A4A]/40',
+                                    day.fullDate === todayDate ? 'text-white' : '',
+                                    'text-sm md:text-base font-cinzel font-bold z-10'
+                                ]"
+                            >{{ day.day }}</span>
+                            <div v-if="day.items?.length > 0" class="flex gap-1 pt-1">
+                                <div 
+                                    v-for="(item, idx) in day.items.slice(0, 2)" 
+                                    :key="idx"
+                                    class="w-1 h-1 rounded-full bg-[#8C6A4A]/60 shadow-[0_0_5px_#8C6A4A]"
+                                ></div>
+                            </div>
+                        </div>
 
-                    <!-- Tiny Preview -->
-                    <div class="hidden md:flex flex-col gap-1 w-full mt-1.5">
-                        <div 
-                            v-for="item in day.items?.slice(0, 2)" 
-                            :key="item.id"
-                            class="text-[9px] uppercase tracking-wider font-serif truncate text-[#C9B79C]/70 group-hover/cell:text-[#C9B79C] transition-colors"
-                        >
-                            {{ item.title }}
+                        <!-- Tiny Preview -->
+                        <div class="hidden md:flex flex-col gap-1 w-full mt-1.5">
+                            <div 
+                                v-for="item in day.items?.slice(0, 2)" 
+                                :key="item.id || item._id"
+                                class="text-[9px] uppercase tracking-wider font-serif truncate text-[#C9B79C]/70 group-hover/cell:text-[#C9B79C] transition-colors"
+                            >
+                                {{ item.title || item.name }}
+                            </div>
+                            <div v-if="day.items?.length > 2" class="text-[8px] text-[#8C6A4A] italic font-bold">+{{ day.items.length - 2 }} more</div>
                         </div>
-                        <div v-if="day.items?.length > 2" class="text-[8px] text-[#8C6A4A] italic font-bold">+{{ day.items.length - 2 }} more</div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </div>

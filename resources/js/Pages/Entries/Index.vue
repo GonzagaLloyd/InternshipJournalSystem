@@ -13,6 +13,7 @@ const debounce = (fn, delay) => {
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import JournalCard from '@/Components/Journal/JournalCard.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 import { useTabSync } from '@/Composables/useTabSync';
 
@@ -44,7 +45,8 @@ const allEntries = ref(props.entries?.data ? [...props.entries.data] : []);
 
 // Watch for new entries (pagination or search)
 watch(() => props.entries, (newVal, oldVal) => {
-    if (newVal.current_page === 1) {
+    if (!newVal) return;
+    if (!oldVal || newVal.current_page === 1) {
         allEntries.value = [...newVal.data];
     } else if (newVal.current_page > oldVal.current_page) {
         allEntries.value = [...allEntries.value, ...newVal.data];
@@ -68,7 +70,7 @@ const loaderTarget = ref(null);
 let observer = null;
 
 const loadMore = () => {
-    if (props.entries.next_page_url && !isLoadingMore.value) {
+    if (props.entries?.next_page_url && !isLoadingMore.value) {
         isLoadingMore.value = true;
         router.get(props.entries.next_page_url, {}, {
             preserveState: true,
@@ -172,13 +174,32 @@ const deleteEntry = async () => {
 
                 <div class="flex items-center gap-4 text-brass/40">
                     <div class="h-[1px] w-8 bg-brass/20"></div>
-                    <span class="text-[10px] font-cinzel uppercase tracking-[0.4em]">{{ props.entries.total }} Chronicles</span>
+                    <span class="text-[10px] font-cinzel uppercase tracking-[0.4em]">{{ props.entries?.total || 0 }} Chronicles</span>
                 </div>
             </div>
 
             <!-- Entries Grid -->
             <div class="flex-1 overflow-y-auto pr-0 md:pr-2 scrollbar-hide relative z-10">
-                <template v-if="allEntries.length > 0">
+                <!-- Skeleton State -->
+                <template v-if="props.entries === null">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12 pb-24">
+                        <div v-for="i in 6" :key="i" class="bg-[#2D2B28]/20 border border-white/5 p-8 rounded-sm h-[20rem] flex flex-col space-y-6">
+                            <SkeletonLoader width="40%" height="0.8rem" opacity="0.03" />
+                            <SkeletonLoader width="80%" height="2rem" />
+                            <div class="space-y-2">
+                                <SkeletonLoader width="100%" height="1rem" opacity="0.03" />
+                                <SkeletonLoader width="100%" height="1rem" opacity="0.03" />
+                                <SkeletonLoader width="60%" height="1rem" opacity="0.03" />
+                            </div>
+                            <div class="mt-auto flex justify-between">
+                                <SkeletonLoader width="3rem" height="1rem" />
+                                <SkeletonLoader width="6rem" height="1rem" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <template v-else-if="allEntries.length > 0">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12 pb-24">
                         <JournalCard 
                             v-for="entry in allEntries" 

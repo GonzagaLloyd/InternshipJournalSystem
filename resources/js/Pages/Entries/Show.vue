@@ -3,13 +3,18 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import EntryMedia from '@/Components/Journal/EntryMedia.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Toast from '@/Components/UI/Toast.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
+import { watch } from 'vue';
 
 const props = defineProps({
-    entry: Object
+    entry: {
+        type: Object,
+        default: null
+    }
 });
 
 const isReturning = ref(false);
@@ -37,11 +42,21 @@ const formatDate = (dateString) => {
 
 
 const form = useForm({
-    title: props.entry.title,
-    content:props.entry.content,
-    entry_date:props.entry.entry_date ? props.entry.entry_date.substring(0, 10): '',
-    file:props.entry.file,
+    title: '',
+    content: '',
+    entry_date: '',
+    file: null,
 });
+
+// Sync form when entry arrives
+watch(() => props.entry, (newEntry) => {
+    if (newEntry) {
+        form.title = newEntry.title;
+        form.content = newEntry.content;
+        form.entry_date = newEntry.entry_date ? newEntry.entry_date.substring(0, 10) : '';
+        form.file = newEntry.file;
+    }
+}, { immediate: true });
 
 const updateEntry = () => {
     if (!form.isDirty){
@@ -177,90 +192,112 @@ const vAutoResize = {
         <!-- Main Entry Container -->
         <article class="w-full max-w-4xl relative z-30 bg-[#2D2D2D]/40 backdrop-blur-[2px] border border-white/5 p-6 sm:p-10 md:p-16 rounded-sm shadow-2xl animate-fade-in-up group">
             
-            <!-- Ornamental Border Corners (Bronze Indication) -->
+            <!-- Ornamental Border Corners -->
             <div class="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#8B6D45]/30 rounded-tl-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
             <div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-[#8B6D45]/30 rounded-tr-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
             <div class="absolute bottom-0 left-0 w-12 h-12 border-b border-l border-[#8B6D45]/30 rounded-bl-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
             <div class="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#8B6D45]/30 rounded-br-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
 
-            <!-- Header -->
-            <header class="text-center mb-10 md:mb-16 relative">
-                <div class="mb-6 flex flex-col items-center gap-4">
-                     <div class="h-12 w-[1px] bg-gradient-to-b from-transparent via-umber/40 to-transparent"></div>
-                     
-                     <!-- Date Display/Input -->
-                     <div class="relative group">
-                         <div v-if="!isEditing" class="text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase bg-umber/5 px-5 py-1.5 rounded-full border border-umber/10 transition-all whitespace-nowrap">
-                            {{ formatDate(entry.entry_date) }}
-                         </div>
-                         <input
-                            v-else
-                            v-model="form.entry_date"
-                            type="date"
-                            class="bg-black/20 border border-umber/20 focus:border-umber/60 focus:ring-0 text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase px-5 py-1.5 rounded-full text-center transition-all dark:[color-scheme:dark]"
-                         >
+            <!-- Skeleton Content -->
+            <template v-if="props.entry === null">
+                <div class="flex flex-col items-center mb-16">
+                    <div class="h-12 w-[1px] bg-gradient-to-b from-transparent via-umber/20 to-transparent"></div>
+                    <SkeletonLoader width="15rem" height="2rem" class="mt-6" borderRadius="2rem" />
+                    <SkeletonLoader width="80%" height="4rem" class="mt-10" />
+                    <div class="mt-8 w-24 h-[1px] bg-gradient-to-r from-transparent via-umber/20 to-transparent"></div>
+                </div>
+                <div class="space-y-6">
+                    <SkeletonLoader v-for="i in 10" :key="i" width="100%" height="1.2rem" opacity="0.03" />
+                </div>
+                <div class="mt-20 flex flex-col items-center gap-4 opacity-20">
+                     <div class="flex gap-2 mb-3">
+                          <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                          <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                          <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
                      </div>
                 </div>
-                
-                <!-- Title Section -->
-                <div class="relative">
-                    <h1
-                        v-if="!isEditing"
-                        class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment leading-tight tracking-tight drop-shadow-sm px-2 break-words text-center">
-                        {{ entry.title }}
-                    </h1>
-                    <textarea
-                        v-else
-                        v-model="form.title"
-                        rows="1"
-                        v-auto-resize
-                        class="bg-transparent border-none focus:ring-0 w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment text-center leading-tight tracking-tight selection:bg-umber/20 p-0 resize-none overflow-hidden placeholder:text-parchment/20"
-                        placeholder="Title of Lore..."
-                    ></textarea>
-                </div>
+            </template>
 
-                <div class="mt-8 w-16 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-umber/40 to-transparent mx-auto"></div>
-            </header>
-
-            <!-- Content -->
-            <div class="prose prose-lg md:prose-xl prose-invert max-w-none text-parchment/80 font-serif leading-relaxed tracking-wide text-justify selection:bg-umber/20 mb-12 md:mb-20">
-                 <div class="relative min-h-[300px]">
-                    <div v-if="!isEditing" class="first-letter:text-5xl first-letter:font-cinzel first-letter:text-parchment first-letter:mr-3 first-letter:float-left first-letter:leading-[0.8] break-words overflow-hidden">
-                        <p class="whitespace-pre-wrap text-[17px] sm:text-lg md:text-xl text-justify">{{ entry.content }}</p>
+            <template v-else>
+                <!-- Header -->
+                <header class="text-center mb-10 md:mb-16 relative">
+                    <div class="mb-6 flex flex-col items-center gap-4">
+                         <div class="h-12 w-[1px] bg-gradient-to-b from-transparent via-umber/40 to-transparent"></div>
+                         
+                         <!-- Date Display/Input -->
+                         <div class="relative group">
+                             <div v-if="!isEditing" class="text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase bg-umber/5 px-5 py-1.5 rounded-full border border-umber/10 transition-all whitespace-nowrap">
+                                {{ formatDate(entry.entry_date) }}
+                             </div>
+                             <input
+                                v-else
+                                v-model="form.entry_date"
+                                type="date"
+                                class="bg-black/20 border border-umber/20 focus:border-umber/60 focus:ring-0 text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase px-5 py-1.5 rounded-full text-center transition-all dark:[color-scheme:dark]"
+                             >
+                         </div>
                     </div>
-                    <textarea
-                        v-else
-                        v-model="form.content"
-                        rows="12"
-                        class="bg-black/10 border-none focus:ring-0 w-full whitespace-pre-wrap text-[17px] sm:text-lg md:text-xl font-serif leading-relaxed p-0 min-h-[400px] transition-all duration-300 resize-none placeholder:text-[#C9B79C]/20"
-                        placeholder="Inscribe the history..."
-                    ></textarea>
-                </div>
-            </div>
-
-            <!-- Media Section -->
-            <EntryMedia :entry="entry" class="mb-12 md:mb-20" />
-
-            <!-- Footer -->
-             <div class="pt-8 sm:pt-12 border-t border-umber/10 flex flex-col items-center gap-6 md:gap-8">
-                <div v-if="entry.file">
-                    <a :href="'/storage/' + entry.file" target="_blank" class="flex items-center gap-3 text-umber/60 hover:text-parchment transition-all px-6 py-2.5 border border-umber/10 hover:border-umber/30 rounded-sm bg-umber/5 group">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                        </svg>
-                        <span class="text-[10px] sm:text-xs font-cinzel tracking-widest uppercase">Attached Parchment</span>
-                    </a>
-                </div>
-                
-                <div class="flex flex-col items-center opacity-30">
-                    <div class="flex gap-2 mb-3">
-                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
-                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
-                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                    
+                    <!-- Title Section -->
+                    <div class="relative">
+                        <h1
+                            v-if="!isEditing"
+                            class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment leading-tight tracking-tight drop-shadow-sm px-2 break-words text-center">
+                            {{ entry.title }}
+                        </h1>
+                        <textarea
+                            v-else
+                            v-model="form.title"
+                            rows="1"
+                            v-auto-resize
+                            class="bg-transparent border-none focus:ring-0 w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment text-center leading-tight tracking-tight selection:bg-umber/20 p-0 resize-none overflow-hidden placeholder:text-parchment/20"
+                            placeholder="Title of Lore..."
+                        ></textarea>
                     </div>
-                    <span class="text-[9px] font-cinzel uppercase tracking-[0.5em] text-umber">Lore End</span>
+
+                    <div class="mt-8 w-16 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-umber/40 to-transparent mx-auto"></div>
+                </header>
+
+                <!-- Content -->
+                <div class="prose prose-lg md:prose-xl prose-invert max-w-none text-parchment/80 font-serif leading-relaxed tracking-wide text-justify selection:bg-umber/20 mb-12 md:mb-20">
+                     <div class="relative min-h-[300px]">
+                        <div v-if="!isEditing" class="first-letter:text-5xl first-letter:font-cinzel first-letter:text-parchment first-letter:mr-3 first-letter:float-left first-letter:leading-[0.8] break-words overflow-hidden">
+                            <p class="whitespace-pre-wrap text-[17px] sm:text-lg md:text-xl text-justify">{{ entry.content }}</p>
+                        </div>
+                        <textarea
+                            v-else
+                            v-model="form.content"
+                            rows="12"
+                            class="bg-black/10 border-none focus:ring-0 w-full whitespace-pre-wrap text-[17px] sm:text-lg md:text-xl font-serif leading-relaxed p-0 min-h-[400px] transition-all duration-300 resize-none placeholder:text-[#C9B79C]/20"
+                            placeholder="Inscribe the history..."
+                        ></textarea>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Media Section -->
+                <EntryMedia :entry="entry" class="mb-12 md:mb-20" />
+
+                <!-- Footer -->
+                 <div class="pt-8 sm:pt-12 border-t border-umber/10 flex flex-col items-center gap-6 md:gap-8">
+                    <div v-if="entry.file">
+                        <a :href="'/storage/' + entry.file" target="_blank" class="flex items-center gap-3 text-umber/60 hover:text-parchment transition-all px-6 py-2.5 border border-umber/10 hover:border-umber/30 rounded-sm bg-umber/5 group">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                            <span class="text-[10px] sm:text-xs font-cinzel tracking-widest uppercase">Attached Parchment</span>
+                        </a>
+                    </div>
+                    
+                    <div class="flex flex-col items-center opacity-30">
+                        <div class="flex gap-2 mb-3">
+                             <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                             <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                             <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                        </div>
+                        <span class="text-[9px] font-cinzel uppercase tracking-[0.5em] text-umber">Lore End</span>
+                    </div>
+                </div>
+            </template>
         </article>
         
         <!-- Re-added Toast for standalone functionality -->

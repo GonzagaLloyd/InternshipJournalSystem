@@ -1,9 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 
 const props = defineProps({
-    tasks: Array
+    tasks: {
+        type: Array,
+        default: null
+    }
 });
 
 const processingTaskId = ref(null);
@@ -63,86 +67,99 @@ const toggleTask = (task) => {
                 <!-- Subtle Vertical Line -->
                 <div class="absolute left-2.5 top-2 bottom-6 w-[1px] bg-gradient-to-b from-umber/20 via-umber/5 to-transparent"></div>
 
-                <div 
-                    v-for="task in sortedTasks" 
-                    :key="task.id || task._id" 
-                    :class="[
-                        'group/item flex items-start gap-5 md:gap-7 cursor-pointer select-none transition-all duration-500 relative py-4 px-2 rounded-xl hover:bg-white/[0.03]',
-                        processingTaskId === (task.id || task._id) ? 'bg-umber/5' : ''
-                    ]"
-                    @click="toggleTask(task)"
-                >
-                    <!-- Processing Glow -->
-                    <Transition name="fade">
-                        <div v-if="processingTaskId === (task.id || task._id)" class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-umber to-transparent shadow-[0_0_15px_var(--color-accent-umber)] z-20"></div>
-                    </Transition>
-                    <Transition name="fade">
-                        <div v-if="processingTaskId === (task.id || task._id)" class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-umber to-transparent shadow-[0_0_15px_var(--color-accent-umber)] z-20"></div>
-                    </Transition>
-
-                    <!-- Simple Checkbox / Node -->
-                    <div 
-                        :class="task.completed 
-                            ? 'bg-umber border-umber shadow-[0_0_15px_rgba(140,106,74,0.3)]' 
-                            : 'border-brass/60 bg-black/60 shadow-[0_0_10px_rgba(140,106,74,0.1)] group-hover/item:scale-110 group-hover/item:border-cream group-hover/item:shadow-[0_0_20px_rgba(140,106,74,0.3)]'"
-                        class="h-6 w-6 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-300 z-10 mt-1 active:scale-90"
-                    >
-                        <Transition name="pop" mode="out-in">
-                            <div 
-                                v-if="task.completed"
-                                key="completed"
-                                class="text-void scale-110"
-                            >
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                            </div>
-                            <div 
-                                v-else
-                                key="active"
-                                class="h-2 w-2 rounded-full bg-brass animate-pulse shadow-[0_0_8px_var(--color-accent-brass)]"
-                            ></div>
-                        </Transition>
-                    </div>
-
-                    <!-- Text & Priority -->
-                    <div class="flex flex-col gap-1.5 min-w-0">
-                        <span 
-                            :class="[
-                                task.completed 
-                                    ? 'text-cream/30 italic font-normal' 
-                                    : (urgencyInfo(task) ? urgencyInfo(task).color + ' font-bold' : 'text-cream group-hover/item:text-white font-semibold'),
-                                'text-lg md:text-[20px] tracking-wide transition-all duration-500 font-serif relative inline-block'
-                            ]"
-                        >
-                            {{ task.name }}
-                            <!-- Ink Stroke (Thematic Strike-through) -->
-                            <div 
-                                :class="task.completed ? 'w-full opacity-60 scale-x-100' : 'w-0 opacity-0 scale-x-0'"
-                                class="absolute top-[55%] left-0 h-[2px] bg-umber transition-all duration-700 ease-in-out origin-left pointer-events-none rounded-full"
-                                style="mask-image: linear-gradient(to right, black, transparent);"
-                            ></div>
-                        </span>
-                        <div class="flex items-center gap-4">
-                            <span v-if="!task.completed" class="text-[11px] uppercase tracking-[0.2em] text-brass font-bold font-serif group-hover/item:text-cream transition-all duration-500">
-                                {{ task.priority || 'Medium' }}
-                            </span>
-                            <span v-if="urgencyInfo(task)" class="text-[9px] uppercase tracking-[0.15em] font-black font-serif px-2 py-0.5 rounded shadow-sm bg-black/60 border border-white/[0.05]" :class="urgencyInfo(task).color">
-                                Due Shortly
-                            </span>
+                <!-- Skeleton Loading State -->
+                <template v-if="props.tasks === null">
+                    <div v-for="i in 5" :key="i" class="flex items-start gap-5 md:gap-7 py-4 px-2">
+                        <SkeletonLoader width="1.5rem" height="1.5rem" borderRadius="50%" />
+                        <div class="flex-1 space-y-2 mt-1">
+                            <SkeletonLoader width="60%" height="1.2rem" />
+                            <SkeletonLoader width="30%" height="0.8rem" opacity="0.03" />
                         </div>
                     </div>
-                </div>
+                </template>
 
-                <!-- Empty State (Refined) -->
-                <div v-if="sortedTasks.length === 0" class="flex-1 flex flex-col items-center justify-center py-20 opacity-0 animate-fade-in group-hover:opacity-100 transition-opacity duration-1000">
-                    <div class="relative mb-6">
-                        <svg class="w-16 h-16 text-umber/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5S19.832 5.477 21 6.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        <div class="absolute inset-0 bg-umber/5 blur-xl rounded-full animate-pulse"></div>
+                <template v-else>
+                    <div 
+                        v-for="task in sortedTasks" 
+                        :key="task.id || task._id" 
+                        :class="[
+                            'group/item flex items-start gap-5 md:gap-7 cursor-pointer select-none transition-all duration-500 relative py-4 px-2 rounded-xl hover:bg-white/[0.03]',
+                            processingTaskId === (task.id || task._id) ? 'bg-umber/5' : ''
+                        ]"
+                        @click="toggleTask(task)"
+                    >
+                        <!-- Processing Glow -->
+                        <Transition name="fade">
+                            <div v-if="processingTaskId === (task.id || task._id)" class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-umber to-transparent shadow-[0_0_15px_var(--color-accent-umber)] z-20"></div>
+                        </Transition>
+                        <Transition name="fade">
+                            <div v-if="processingTaskId === (task.id || task._id)" class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-umber to-transparent shadow-[0_0_15px_var(--color-accent-umber)] z-20"></div>
+                        </Transition>
+
+                        <!-- Simple Checkbox / Node -->
+                        <div 
+                            :class="task.completed 
+                                ? 'bg-umber border-umber shadow-[0_0_15px_rgba(140,106,74,0.3)]' 
+                                : 'border-brass/60 bg-black/60 shadow-[0_0_10px_rgba(140,106,74,0.1)] group-hover/item:scale-110 group-hover/item:border-cream group-hover/item:shadow-[0_0_20px_rgba(140,106,74,0.3)]'"
+                            class="h-6 w-6 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-300 z-10 mt-1 active:scale-90"
+                        >
+                            <Transition name="pop" mode="out-in">
+                                <div 
+                                    v-if="task.completed"
+                                    key="completed"
+                                    class="text-void scale-110"
+                                >
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <div 
+                                    v-else
+                                    key="active"
+                                    class="h-2 w-2 rounded-full bg-brass animate-pulse shadow-[0_0_8px_var(--color-accent-brass)]"
+                                ></div>
+                            </Transition>
+                        </div>
+
+                        <!-- Text & Priority -->
+                        <div class="flex flex-col gap-1.5 min-w-0">
+                            <span 
+                                :class="[
+                                    task.completed 
+                                        ? 'text-cream/30 italic font-normal' 
+                                        : (urgencyInfo(task) ? urgencyInfo(task).color + ' font-bold' : 'text-cream group-hover/item:text-white font-semibold'),
+                                    'text-lg md:text-[20px] tracking-wide transition-all duration-500 font-serif relative inline-block'
+                                ]"
+                            >
+                                {{ task.name }}
+                                <!-- Ink Stroke (Thematic Strike-through) -->
+                                <div 
+                                    :class="task.completed ? 'w-full opacity-60 scale-x-100' : 'w-0 opacity-0 scale-x-0'"
+                                    class="absolute top-[55%] left-0 h-[2px] bg-umber transition-all duration-700 ease-in-out origin-left pointer-events-none rounded-full"
+                                    style="mask-image: linear-gradient(to right, black, transparent);"
+                                ></div>
+                            </span>
+                            <div class="flex items-center gap-4">
+                                <span v-if="!task.completed" class="text-[11px] uppercase tracking-[0.2em] text-brass font-bold font-serif group-hover/item:text-cream transition-all duration-500">
+                                    {{ task.priority || 'Medium' }}
+                                </span>
+                                <span v-if="urgencyInfo(task)" class="text-[9px] uppercase tracking-[0.15em] font-black font-serif px-2 py-0.5 rounded shadow-sm bg-black/60 border border-white/[0.05]" :class="urgencyInfo(task).color">
+                                    Due Shortly
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <span class="text-[9px] uppercase tracking-[0.5em] font-black text-brass italic">The Scriptorium is Silent</span>
-                    <p class="text-[8px] font-serif text-umber/50 mt-2 tracking-[0.1em]">No divine decrees await transcription</p>
-                </div>
+
+                    <!-- Empty State (Refined) -->
+                    <div v-if="sortedTasks.length === 0" class="flex-1 flex flex-col items-center justify-center py-20 opacity-0 animate-fade-in group-hover:opacity-100 transition-opacity duration-1000">
+                        <div class="relative mb-6">
+                            <svg class="w-16 h-16 text-umber/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5S19.832 5.477 21 6.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <div class="absolute inset-0 bg-umber/5 blur-xl rounded-full animate-pulse"></div>
+                        </div>
+                        <span class="text-[9px] uppercase tracking-[0.5em] font-black text-brass italic">The Scriptorium is Silent</span>
+                        <p class="text-[8px] font-serif text-umber/50 mt-2 tracking-[0.1em]">No divine decrees await transcription</p>
+                    </div>
+                </template>
             </div>
 
             <!-- Refined Button -->

@@ -22,7 +22,7 @@ class TaskController extends Controller
     public function index()
     {
         return Inertia::render('Tasks/Index', [
-            'tasks' => $this->taskService->getUserTasks(auth()->user())->toArray()
+            'tasks' => Inertia::defer(fn () => $this->taskService->getUserTasks(auth()->user())->toArray())
         ]);
     }
 

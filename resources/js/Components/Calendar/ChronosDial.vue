@@ -47,7 +47,7 @@ const daysInMonth = computed(() => {
             day: i, 
             month: 'current', 
             fullDate: fullDate,
-            items: props.events[fullDate] || []
+            items: props.events ? (props.events[fullDate] || []) : []
         });
     }
     
@@ -129,6 +129,7 @@ const todayDate = new Date().toISOString().split('T')[0];
                 :days="daysInMonth" 
                 :selected-day="selectedDay" 
                 :today-date="todayDate"
+                :loading="props.events === null"
                 @select-day="selectDay"
             />
 

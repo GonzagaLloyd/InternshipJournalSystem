@@ -18,13 +18,17 @@ class JournalController extends Controller
 
     public function index()
     {
-        return Inertia::render('Dashboard', $this->journalService->getDashboardData(auth()->user()));
+        return Inertia::render('Dashboard', [
+            'entryCount' => Inertia::defer(fn () => $this->journalService->getDashboardData(auth()->user())['entryCount']),
+            'tasks' => Inertia::defer(fn () => $this->journalService->getDashboardData(auth()->user())['tasks']),
+            'activity' => Inertia::defer(fn () => $this->journalService->getDashboardData(auth()->user())['activity']),
+        ]);
     }
 
     public function entries(Request $request)
     {
         return Inertia::render('Entries/Index', [
-            'entries' => $this->journalService->getPaginatedEntries(auth()->user(), $request->search)->withQueryString(),
+            'entries' => Inertia::defer(fn () => $this->journalService->getPaginatedEntries(auth()->user(), $request->search)->withQueryString()),
             'filters' => $request->only(['search'])
         ]);
     }
@@ -47,9 +51,8 @@ class JournalController extends Controller
 
     public function show($id)
     {
-        $entry = JournalEntry::where('user_id', auth()->id())->findOrFail($id);
         return Inertia::render('Entries/Show', [
-            'entry' => $entry,
+            'entry' => Inertia::defer(fn () => JournalEntry::where('user_id', auth()->id())->findOrFail($id)),
         ]);
     }
     

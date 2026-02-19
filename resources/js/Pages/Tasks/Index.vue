@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
 import TaskItem from '@/Components/Tasks/TaskItem.vue';
 import TaskCreateModal from '@/Components/Tasks/TaskCreateModal.vue';
@@ -9,7 +10,10 @@ import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 import { useTabSync } from '@/Composables/useTabSync';
 
 const props = defineProps({
-    tasks: Array
+    tasks: {
+        type: Array,
+        default: null
+    }
 });
 
 // Setup tab sync
@@ -69,6 +73,7 @@ const confirmDeletion = async () => {
 };
 
 const sortedTasks = computed(() => {
+    if (!props.tasks) return [];
     return [...props.tasks].sort((a, b) => {
         if (a.completed !== b.completed) {
             return a.completed ? 1 : -1;
@@ -109,53 +114,79 @@ const sortedTasks = computed(() => {
 
                 <!-- Task List -->
                 <div class="flex-1 overflow-y-auto scrollbar-hide pr-2">
-                    <!-- Outstanding Decrees (Active) -->
-                    <div v-if="sortedTasks.some(t => !t.completed)" class="mb-12">
-                        <div class="px-8 mb-6 flex items-center gap-4">
-                            <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Outstanding Decrees</span>
-                            <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
+                    <!-- Skeleton State -->
+                    <template v-if="props.tasks === null">
+                        <div class="space-y-12">
+                            <div v-for="i in 2" :key="i" class="space-y-6">
+                                <div class="px-8 flex items-center gap-4">
+                                    <SkeletonLoader width="12rem" height="1rem" opacity="0.05" />
+                                    <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
+                                </div>
+                                <div class="bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden divide-y divide-[#3d352e]/10">
+                                    <div v-for="j in 3" :key="j" class="px-8 py-6 flex items-center justify-between">
+                                        <div class="flex items-center gap-6 flex-1">
+                                            <SkeletonLoader width="1.5rem" height="1.5rem" borderRadius="50%" />
+                                            <div class="space-y-2 flex-1">
+                                                <SkeletonLoader width="40%" height="1.2rem" />
+                                                <SkeletonLoader width="20%" height="0.6rem" opacity="0.03" />
+                                            </div>
+                                        </div>
+                                        <SkeletonLoader width="4rem" height="1.5rem" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="divide-y divide-[#3d352e]/10 bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden">
-                            <TaskItem 
-                                v-for="task in sortedTasks.filter(t => !t.completed)" 
-                                :key="task.id"
-                                :task="task"
-                                :processing="processingTaskId === task.id"
-                                @toggle="toggleTask"
-                                @delete="deleteTask"
-                            />
-                        </div>
-                    </div>
+                    </template>
 
-                    <!-- Fulfilled Records (Completed) -->
-                    <div v-if="sortedTasks.some(t => t.completed)" class="opacity-50">
-                        <div class="px-8 mb-6 flex items-center gap-4">
-                            <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A]/40 font-black">Fulfilled Records</span>
-                            <div class="h-[1px] flex-1 bg-[#8C6A4A]/5"></div>
+                    <template v-else>
+                        <!-- Outstanding Decrees (Active) -->
+                        <div v-if="sortedTasks.some(t => !t.completed)" class="mb-12">
+                            <div class="px-8 mb-6 flex items-center gap-4">
+                                <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Outstanding Decrees</span>
+                                <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
+                            </div>
+                            <div class="divide-y divide-[#3d352e]/10 bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden">
+                                <TaskItem 
+                                    v-for="task in sortedTasks.filter(t => !t.completed)" 
+                                    :key="task.id"
+                                    :task="task"
+                                    :processing="processingTaskId === task.id"
+                                    @toggle="toggleTask"
+                                    @delete="deleteTask"
+                                />
+                            </div>
                         </div>
-                        <div class="divide-y divide-[#3d352e]/5">
-                            <TaskItem 
-                                v-for="task in sortedTasks.filter(t => t.completed)" 
-                                :key="task.id"
-                                :task="task"
-                                :processing="processingTaskId === task.id"
-                                @toggle="toggleTask"
-                                @delete="deleteTask"
-                            />
-                        </div>
-                    </div>
 
-                    <!-- Empty State -->
-                    <div v-if="tasks.length === 0" class="flex flex-col items-center justify-center py-32 animate-pulse-slow">
-                        <div class="relative mb-10">
-                            <svg class="w-32 h-32 text-[#3d3d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                            <div class="absolute inset-0 bg-radial-gradient from-[#8C6A4A]/10 to-transparent blur-2xl"></div>
+                        <!-- Fulfilled Records (Completed) -->
+                        <div v-if="sortedTasks.some(t => t.completed)" class="opacity-50">
+                            <div class="px-8 mb-6 flex items-center gap-4">
+                                <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A]/40 font-black">Fulfilled Records</span>
+                                <div class="h-[1px] flex-1 bg-[#8C6A4A]/5"></div>
+                            </div>
+                            <div class="divide-y divide-[#3d352e]/5">
+                                <TaskItem 
+                                    v-for="task in sortedTasks.filter(t => t.completed)" 
+                                    :key="task.id"
+                                    :task="task"
+                                    :processing="processingTaskId === task.id"
+                                    @toggle="toggleTask"
+                                    @delete="deleteTask"
+                                />
+                            </div>
                         </div>
-                        <h3 class="text-3xl font-cinzel text-[#8C6A4A] uppercase tracking-[0.5em] opacity-40">The Ledger is Satisfied</h3>
-                        <p class="text-[#3d3d3d] text-[10px] uppercase tracking-[0.4em] mt-4 font-serif font-black">No decrees remain outstanding</p>
-                    </div>
+
+                        <!-- Empty State -->
+                        <div v-if="tasks.length === 0" class="flex flex-col items-center justify-center py-32 animate-pulse-slow">
+                            <div class="relative mb-10">
+                                <svg class="w-32 h-32 text-[#3d3d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                <div class="absolute inset-0 bg-radial-gradient from-[#8C6A4A]/10 to-transparent blur-2xl"></div>
+                            </div>
+                            <h3 class="text-3xl font-cinzel text-[#8C6A4A] uppercase tracking-[0.5em] opacity-40">The Ledger is Satisfied</h3>
+                            <p class="text-[#3d3d3d] text-[10px] uppercase tracking-[0.4em] mt-4 font-serif font-black">No decrees remain outstanding</p>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>

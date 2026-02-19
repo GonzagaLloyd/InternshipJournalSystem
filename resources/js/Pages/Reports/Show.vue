@@ -4,12 +4,16 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ReportPreview from '@/Components/Reports/ReportPreview.vue';
 import TomeLoader from '@/Components/UI/TomeLoader.vue';
+import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 import Toast from '@/Components/UI/Toast.vue';
 import ReportProgressWidget from '@/Components/UI/ReportProgressWidget.vue';
 
 const props = defineProps({
-    report: Object
+    report: {
+        type: Object,
+        default: null
+    }
 });
 
 const previewRef = ref(null);
@@ -183,7 +187,26 @@ onUnmounted(() => {
             <div class="absolute bottom-0 left-0 w-12 h-12 border-b border-l border-[#8C6A4A]/20 rounded-bl-sm pointer-events-none"></div>
             <div class="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#8C6A4A]/20 rounded-br-sm pointer-events-none"></div>
 
+            <!-- Skeleton Content -->
+            <template v-if="props.report === null">
+                <div class="flex flex-col items-center mb-16 space-y-4">
+                    <SkeletonLoader width="60%" height="2rem" />
+                    <SkeletonLoader width="40%" height="0.8rem" opacity="0.03" />
+                </div>
+                <div class="space-y-12">
+                    <div v-for="i in 4" :key="i" class="space-y-4">
+                        <SkeletonLoader width="30%" height="1.5rem" />
+                        <div class="space-y-2">
+                            <SkeletonLoader width="100%" height="1rem" opacity="0.03" />
+                            <SkeletonLoader width="100%" height="1rem" opacity="0.03" />
+                            <SkeletonLoader width="60%" height="1rem" opacity="0.03" />
+                        </div>
+                    </div>
+                </div>
+            </template>
+
             <ReportPreview 
+                v-else
                 ref="previewRef"
                 :report="props.report" 
                 @reset="handleReset"

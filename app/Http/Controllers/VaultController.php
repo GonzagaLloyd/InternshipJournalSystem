@@ -23,7 +23,11 @@ class VaultController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Vault/Index', $this->vaultService->getTrashedItems(auth()->user()));
+        return Inertia::render('Vault/Index', [
+            'entries' => Inertia::defer(fn () => $this->vaultService->getTrashedItems(auth()->user())['entries']),
+            'tasks' => Inertia::defer(fn () => $this->vaultService->getTrashedItems(auth()->user())['tasks']),
+            'reports' => Inertia::defer(fn () => $this->vaultService->getTrashedItems(auth()->user())['reports']),
+        ]);
     }
 
     /**

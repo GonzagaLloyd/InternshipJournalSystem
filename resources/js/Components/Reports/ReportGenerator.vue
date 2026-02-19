@@ -82,6 +82,8 @@ const toggleEntry = (id) => {
 };
 
 const toggleAll = () => {
+    if (!props.availableEntries) return;
+    
     if (selectedIds.value.length === props.availableEntries.length) {
         selectedIds.value = [];
     } else {

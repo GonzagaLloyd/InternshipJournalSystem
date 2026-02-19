@@ -21,15 +21,12 @@ class ReportController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $pastReports = $this->reportService->getUserReports($user);
-
-        $availableEntries = JournalEntry::where('user_id', $user->id)
-            ->orderBy('entry_date', 'desc')
-            ->get(['id', 'title', 'content', 'entry_date']);
-
+        
         return Inertia::render('Reports/Index', [
-            'availableEntries' => $availableEntries,
-            'pastReports' => $pastReports
+            'availableEntries' => Inertia::defer(fn () => JournalEntry::where('user_id', $user->id)
+                ->orderBy('entry_date', 'desc')
+                ->get(['id', 'title', 'content', 'entry_date'])),
+            'pastReports' => Inertia::defer(fn () => $this->reportService->getUserReports($user))
         ]);
     }
 
@@ -96,14 +93,12 @@ class ReportController extends Controller
     public function show($id)
     {
         $user = auth()->user();
-        $report = $this->reportService->findUserReport($id, $user);
-
-        if (!$report) {
-            return redirect()->route('reports.index')->with('error', 'Report not found.');
-        }
 
         return Inertia::render('Reports/Show', [
-            'report' => $this->reportService->formatReport($report, $user)
+            'report' => Inertia::defer(function () use ($id, $user) {
+                $report = $this->reportService->findUserReport($id, $user);
+                return $report ? $this->reportService->formatReport($report, $user) : null;
+            })
         ]);
     }
 
