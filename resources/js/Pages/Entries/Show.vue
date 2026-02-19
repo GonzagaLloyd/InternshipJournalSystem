@@ -114,7 +114,7 @@ const vAutoResize = {
 </script>
 
 <template>
-    <Head :title="entry.title" />
+    <Head :title="entry ? entry.title : 'Consulting the Scriptorium...'" />
 
     <!-- Standalone View Container (Aligned with System Background) -->
     <div class="text-parchment py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center relative font-serif min-h-screen">
@@ -128,7 +128,7 @@ const vAutoResize = {
         </div>
 
         <!-- Header Navigation & Actions -->
-        <div class="w-full max-w-4xl z-30 mb-8 flex flex-wrap justify-between items-center gap-4">
+        <div v-if="entry" class="w-full max-w-4xl z-30 mb-8 flex flex-wrap justify-between items-center gap-4">
              <a href="#" @click.prevent="handleReturn" class="inline-flex items-center gap-2 text-umber/60 hover:text-parchment transition-colors duration-300 group">
                 <div class="w-8 h-8 rounded-full border border-umber/20 flex items-center justify-center group-hover:border-umber/60 transition-all">
                     <svg class="w-3 h-3 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>

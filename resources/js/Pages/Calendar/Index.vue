@@ -9,7 +9,10 @@ const ChronosDial = defineAsyncComponent(() => import('@/Components/Calendar/Chr
 useTabSync(['events']);
 
 const props = defineProps({
-    events: Object // Grouped by date 'Y-m-d'
+    events: {
+        type: Object,
+        default: null
+    }
 });
 </script>
 

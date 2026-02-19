@@ -19,8 +19,8 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 
 const props = defineProps({
     entryCount: Number,
-    tasks: Array,
-    activity: Object,
+    tasks: { type: Array, default: null },
+    activity: { type: Object, default: null },
 })
 
 const form = useForm({

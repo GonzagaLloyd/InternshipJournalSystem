@@ -57,7 +57,20 @@ class JournalEntrySeeder extends Seeder
                 'user_id' => $user->id,
                 'title' => 'Day 6: Reporting Engine and Integration Testing',
                 'entry_date' => '2026-02-13 08:00:00',
-                'content' => "Weather Condition: Good.\n\nActivities: Focused on the core objective of the system: the Weekly Progress Report generation module. This is critical for administrative compliance and performance tracking.\n\nTechnical Implementation: I engineered a reporting engine that aggregates data from both the JournalEntries and Tasks collections based on the selected work week. I implemented logic to filter records by 'entry_date' and format the content into a professional document structure. I also spent time debugging the session persistence issue where users were being logged out across different tabs, which involved adjusting the 'SESSION_DRIVER' and 'SESSION_DOMAIN' configurations in the environment settings. The day concluded with a full integration test of the CRUD operations.",
+                'content' => "Weather Condition: Good.\n\nActivities: Focused on the core objective of the system: the Weekly Progress Report generation module. This is critical for administrative compliance and performance tracking.\n\nTechnical Implementation: I engineered a reporting engine that aggregates data from both the JournalEntries and Tasks collections based on the selected work week. I implemented logic to filter records by 'entry_date' and format the content into a professional document structure. I also spent time debugging the session persistence issue where users were being logged out across different tabs, which involved adjusting the 'SESSION_DRIVER' and 'SESSION_DOMAIN' configurations in the environment settings. The day concluded with a full integration test of the CRUD operations. Then the presentation of the project we made one by one",
+            ],
+            [
+                'user_id' => $user->id,
+                'title' => 'Day 7: Advanced UI/UX and Performance Optimization',
+                'entry_date' => '2026-02-16 08:00:00',
+                'content' => "Weather Condition: Partly Cloudy.\n\nActivities: Focused on enhancing the user interface and optimizing system performance. I implemented a new 'Calendar' view to provide users with a visual overview of their entries and introduced skeleton loaders to improve perceived performance during data fetching.\n\nTechnical Implementation: I developed a custom calendar component using FullCalendar.js, integrating it with the existing Inertia.js architecture. I also refactored the 'JournalCard' and 'Dashboard' components to incorporate skeleton loading states, ensuring a smoother user experience. Additionally, I optimized database queries by adding indexes to the 'journal_entries' and 'tasks' collections to improve retrieval times.",
+            ],
+
+            [
+                'user_id' => $user->id,
+                'title' => 'Day 8: Final Project Submission and Documentation',
+                'entry_date' => '2026-02-18 08:00:00',
+                'content' => "Weather Condition: Partly Cloudy.\n\nActivities: In the morning CEO mr. kit give as our designated project. For me i recieve the PayOS which me and my teamate grant will finalized the remaining task and see if there are any bug that we need to fixed they gave us also the huly account for the task and the webmail for itech company"
             ],
         ];
 

@@ -101,7 +101,7 @@ onUnmounted(() => {
                 style="height: 5rem;"
             ></div>
 
-            <div :class="[
+            <div v-if="props.report" :class="[
                 'relative w-full max-w-4xl flex items-center justify-between gap-4 px-4 sm:px-6 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu pointer-events-auto h-full', 
                 isScrolled ? 'md:max-w-5xl translate-y-[-0.5rem] scale-[0.95]' : 'translate-y-0 scale-100'
             ]">
