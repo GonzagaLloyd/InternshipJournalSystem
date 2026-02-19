@@ -89,47 +89,10 @@ class GenerateReportJob implements ShouldQueue
                 return "Date: {$entry->entry_date}\nTitle: {$entry->title}\nContent: {$entry->content}\n---";
             })->implode("\n");
 
-            $apiKey = env('GEMINI_API_KEY');
-            if (!$apiKey) {
-                throw new \Exception('GEMINI_API_KEY not configured.');
-            }
-
-            $prompt = "You are a professional IT Documentation Specialist. I am providing you with daily task entries from a BSIT student/intern's journal.\n\nYour task is to generate a professional 'Weekly Progress Report' suitable for documentation and submission to a supervisor.\n\n**Formatting Rules:**\n- Use proper Markdown headers (e.g., '# Title', '## Section').\n- Do NOT use bold keys for main sections (e.g., don't use '**1. Executive Summary**', use '## Executive Summary').\n- Use bullet points for lists.\n- The report must be **technical, concise, and professional**. \n- Do NOT use any fantasy, ancient, or flowery language. Refine the user's rough notes into clear, professional technical writing.\n\nStructure the report as follows:\n# Weekly Progress Report\n\n## Executive Summary\n(A high-level overview of the week's progress and main focus.)\n\n## Technical Accomplishments\n(A bulleted list of specific tasks completed, features implemented, and technologies used. Use strong action verbs like 'Implemented', 'Refactored', 'Debugged'.)\n\n## Challenges & Resolutions\n(A section detailing specific technical hurdles encountered and the solutions applied.)\n\n## Key Learnings\n(New technical skills or concepts reinforced during the week.)\n\n## Forward Outlook\n(Brief goals for the next week based on current progress.)\n\nJournal Entries:\n{$formattedEntries}";
-
-            Log::info("Calling Gemini API for job #{$this->jobId}");
-
-            // Call Gemini API
-            $response = Http::withoutVerifying()
-                ->timeout(120)
-                ->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={$apiKey}", [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
-                    ]
-                ]);
-
-            if (!$response->successful()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['error']['message'] ?? 'Gemini API request failed.';
-                // If 429 (Too Many Requests) or 5xx, we might want to retry.
-                // Http client throws exception usually, but successful() check handles non-200.
-                if ($response->status() >= 500 || $response->status() === 429) {
-                     // Throwing exception triggers retry
-                     throw new \Exception("Gemini API Error ({$response->status()}): $errorMessage");
-                }
-                // For client errors (400), don't retry
-                throw new \Exception($errorMessage);
-            }
-
-            $data = $response->json();
-            $reportContent = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-            if (!$reportContent) {
-                throw new \Exception('No report content returned from Gemini API.');
-            }
+            Log::info("Calling AIService for job #{$this->jobId}");
+            
+            $aiService = app(\App\Services\AIService::class);
+            $reportContent = $aiService->generateReport($formattedEntries);
 
             // Update job record with completed status
             $jobRecord->update([
@@ -147,13 +110,17 @@ class GenerateReportJob implements ShouldQueue
         } catch (\Exception $e) {
             Log::error("Report generation exception for job #{$this->jobId}: " . $e->getMessage());
             
-            // Check if we should retry or fail permanently
-            if ($this->attempts() >= $this->tries) {
-                $this->fail($e);
-            } else {
-                // Release back to queue for retry
-                $this->release($this->backoff()[$this->attempts() - 1] ?? 60);
+            // Re-throw to trigger backoff/retry if it's not the last attempt
+            if ($this->attempts() < $this->tries) {
+                throw $e;
             }
+
+            // If last attempt, mark as failed
+            $jobRecord->update([
+                'status' => 'failed',
+                'error_message' => $e->getMessage(),
+                'completed_at' => now()
+            ]);
         }
     }
 

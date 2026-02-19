@@ -76,3 +76,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/auth.php';
 
 
+//php artisan queue:work --timeout=300

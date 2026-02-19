@@ -3,48 +3,29 @@
 namespace App\Http\Controllers;
  
 use App\Models\JournalEntry;
+use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
+    protected $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     public function index()
     {
         $user = auth()->user();
+        $pastReports = $this->reportService->getUserReports($user);
 
-        // Fetch reports sorted by latest
-        $pastReports = \App\Models\Report::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($report) use ($user) {
-                return [
-                    'id' => (string) $report->_id,
-                    'report' => $report->report,
-                    'period' => $report->period,
-                    'report_title' => $report->report_title ?? 'Weekly Progress Report',
-                    'user_name' => $report->user_name ?? $user->name,
-                    'user_role' => $report->user_role ?? 'IT Intern',
-                    'company_name' => $report->company_name ?? 'iTech Media Logic',
-                    'footer_text' => $report->footer_text ?? 'Generated via Internal Journal System',
-                    'created_at' => $report->created_at->format('M d, Y H:i'),
-                ];
-            });
-
-        $entries = JournalEntry::where('user_id', $user->id)
+        $availableEntries = JournalEntry::where('user_id', $user->id)
             ->orderBy('entry_date', 'desc')
-            ->get();
-
-        $availableEntries = $entries->map(function ($entry) {
-            return [
-                'id' => $entry->id,
-                'title' => $entry->title,
-                'content' => $entry->content,
-                'entry_date' => $entry->entry_date,
-            ];
-        });
+            ->get(['id', 'title', 'content', 'entry_date']);
 
         return Inertia::render('Reports/Index', [
             'availableEntries' => $availableEntries,
@@ -55,29 +36,23 @@ class ReportController extends Controller
     public function create(Request $request)
     {
         $now = Carbon::now();
-        $startOfWeek = $now->copy()->startOfWeek();
-        $endOfWeek = $now->copy()->endOfWeek();
-
+        $user = auth()->user();
+        
         $initialReport = "# Weekly Progress Report\n\n## Executive Summary\n \n## Technical Accomplishments\n-\n\n## Challenges & Resolutions\n-\n\n## Key Learnings\n-\n\n## Forward Outlook\n-\n";
         $initialPeriod = [
-            'start' => $startOfWeek->format('M d, Y'),
-            'end' => $endOfWeek->format('M d, Y')
+            'start' => $now->copy()->startOfWeek()->format('M d, Y'),
+            'end' => $now->copy()->endOfWeek()->format('M d, Y')
         ];
 
         $jobRecord = null;
-        // Check if we are creating from a completed job
         if ($request->has('job_id')) {
-            $user = auth()->user();
             $jobRecord = \App\Models\ReportGenerationJob::where('id', $request->job_id)
                 ->where('user_id', $user->id) 
                 ->first();
 
             if ($jobRecord && $jobRecord->status === 'completed') {
                 $initialReport = $jobRecord->report;
-                // Ensure period format matches if stored differently, but usually it's compatible
-                if (isset($jobRecord->period)) {
-                    $initialPeriod = $jobRecord->period;
-                }
+                $initialPeriod = $jobRecord->period ?? $initialPeriod;
             }
         }
 
@@ -87,7 +62,7 @@ class ReportController extends Controller
                 'report' => $initialReport,
                 'period' => $initialPeriod,
                 'report_title' => $jobRecord?->report_title ?? 'Weekly Progress Report',
-                'user_name' => $jobRecord?->user_name ?? auth()->user()->name,
+                'user_name' => $jobRecord?->user_name ?? $user->name,
                 'user_role' => $jobRecord?->user_role ?? 'IT Intern',
                 'company_name' => $jobRecord?->company_name ?? 'iTech Media Logic',
                 'footer_text' => $jobRecord?->footer_text ?? 'Generated via Internal Journal System',
@@ -121,69 +96,26 @@ class ReportController extends Controller
     public function show($id)
     {
         $user = auth()->user();
-        
-        $report = \App\Models\Report::where('user_id', $user->id)
-            ->where('_id', $id)
-            ->first();
-
-        if (!$report && class_exists('MongoDB\BSON\ObjectId')) {
-            try {
-                $objectId = new \MongoDB\BSON\ObjectId($id);
-                $report = \App\Models\Report::where('user_id', $user->id)
-                    ->where('_id', $objectId)
-                    ->first();
-            } catch (\Exception $e) {}
-        }
+        $report = $this->reportService->findUserReport($id, $user);
 
         if (!$report) {
             return redirect()->route('reports.index')->with('error', 'Report not found.');
         }
 
         return Inertia::render('Reports/Show', [
-            'report' => [
-                'id' => (string) $report->_id,
-                'report' => $report->report,
-                'period' => $report->period,
-                'report_title' => $report->report_title ?? 'Weekly Progress Report',
-                'user_name' => $report->user_name ?? $user->name,
-                'user_role' => $report->user_role ?? 'IT Intern',
-                'company_name' => $report->company_name ?? 'iTech Media Logic',
-                'footer_text' => $report->footer_text ?? 'Generated via Internal Journal System',
-                'created_at' => $report->created_at->format('M d, Y H:i'),
-            ]
+            'report' => $this->reportService->formatReport($report, $user)
         ]);
     }
 
     public function generate(Request $request)
     {
-        Log::info('Report Generation Initiated');
-
         try {
-            $user = auth()->user();
-            if (!$user) {
-                return response()->json(['error' => 'User not authenticated'], 401);
-            }
-
             $request->validate([
                 'entry_ids' => 'required|array|min:1',
                 'entry_ids.*' => 'string'
             ]);
 
-            // Create a job record
-            $jobRecord = \App\Models\ReportGenerationJob::create([
-                'user_id' => $user->id,
-                'entry_ids' => $request->entry_ids,
-                'status' => 'pending'
-            ]);
-
-            // Dispatch the background job
-            \App\Jobs\GenerateReportJob::dispatch(
-                $jobRecord->id,
-                $user->id,
-                $request->entry_ids
-            );
-
-            Log::info("Report generation job #{$jobRecord->id} dispatched");
+            $jobRecord = $this->reportService->startGeneration(auth()->user(), $request->entry_ids);
 
             return response()->json([
                 'job_id' => $jobRecord->id,
@@ -192,61 +124,25 @@ class ReportController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Report Generation Fatal Error: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Failed to start report generation: ' . $e->getMessage(),
-            ], 500);
+            Log::error('Report Generation Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to start report generation.'], 500);
         }
     }
 
     public function jobStatus($jobId)
     {
-        try {
-            $user = auth()->user();
-            
-            $jobRecord = \App\Models\ReportGenerationJob::where('id', $jobId)
-                ->where('user_id', $user->id)
-                ->first();
+        $status = $this->reportService->getJobStatus($jobId, auth()->user());
 
-            if (!$jobRecord) {
-                return response()->json(['error' => 'Job not found'], 404);
-            }
-
-            $response = [
-                'job_id' => $jobRecord->id,
-                'status' => $jobRecord->status,
-            ];
-
-            // Safety check for zombie jobs
-            if ($jobRecord->status === 'processing' && $jobRecord->created_at->diffInMinutes(now()) > 2) {
-                return response()->json([
-                    'job_id' => $jobRecord->id,
-                    'status' => 'failed',
-                    'error' => 'Job timed out or worker failed.'
-                ]);
-            }
-
-            if ($jobRecord->status === 'completed') {
-                $response['report'] = $jobRecord->report;
-                $response['period'] = $jobRecord->period;
-            } elseif ($jobRecord->status === 'failed') {
-                $response['error'] = $jobRecord->error_message;
-            }
-
-            return response()->json($response);
-
-        } catch (\Exception $e) {
-            Log::error('Job Status Check Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to check job status'], 500);
+        if (!$status) {
+            return response()->json(['error' => 'Job not found'], 404);
         }
-    }
 
+        return response()->json($status);
+    }
 
     public function store(Request $request)
     {
         try {
-            $user = auth()->user();
-            
             $request->validate([
                 'report' => 'required|string',
                 'period' => 'required|array',
@@ -254,24 +150,13 @@ class ReportController extends Controller
                 'period.end' => 'required|string',
             ]);
 
-            $newReport = \App\Models\Report::create([
-                'user_id' => $user->id,
-                'report' => $request->report,
-                'period' => $request->period,
-                'report_title' => $request->report_title ?? 'Weekly Progress Report',
-                'user_name' => $request->user_name ?? $user->name,
-                'user_role' => $request->user_role ?? 'IT Intern',
-                'company_name' => $request->company_name ?? 'iTech Media Logic',
-                'footer_text' => $request->footer_text ?? 'Generated via Internal Journal System',
-            ]);
+            $user = auth()->user();
+            $newReport = $this->reportService->storeReport($user, $request->all());
 
-            return response()->json([
-                'id' => (string) $newReport->_id,
-                'report' => $newReport->report,
-                'period' => $newReport->period,
-                'created_at' => $newReport->created_at->format('M d, Y H:i'),
-                'message' => 'Decree sealed and recorded in the library.'
-            ]);
+            return response()->json(array_merge(
+                $this->reportService->formatReport($newReport, $user),
+                ['message' => 'Decree sealed and recorded in the library.']
+            ));
 
         } catch (\Exception $e) {
             Log::error('Report Save Error: ' . $e->getMessage());
@@ -279,91 +164,41 @@ class ReportController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        try {
-            $user = auth()->user();
-            Log::info("Archiving Report ID: {$id}");
-
-            // Try to find by string ID directly first (MongoDB driver often handles this)
-            $report = \App\Models\Report::where('_id', $id)
-                ->orWhere('id', $id)
-                ->where('user_id', $user->id) 
-                ->first();
-
-            if (!$report) {
-                // Try converting to ObjectId if string lookup failed
-                if (class_exists('MongoDB\BSON\ObjectId')) {
-                    try {
-                        $objectId = new \MongoDB\BSON\ObjectId($id);
-                        $report = \App\Models\Report::where('_id', $objectId)
-                            ->where('user_id', $user->id)
-                            ->first();
-                    } catch (\Exception $e) {
-                        // Invalid ObjectId format
-                    }
-                }
-            }
-
-            if (!$report) {
-                Log::warning("Report not found for archiving: {$id}");
-                return redirect()->back()->with('error', 'Chronicle not found.');
-            }
-
-            // Soft delete the report (moves to vault)
-            $report->delete();
-            Log::info("Report archived successfully: {$id}");
-
-            return redirect()->route('reports.index')->with('success', 'Chronicle banished to the Sunken Vault.');
-        } catch (\Exception $e) {
-            Log::error('Report Archive Error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Banishment failed: The chronicle resists.');
-        }
-    }
-
     public function update(Request $request, $id)
     {
         try {
+            $request->validate(['report' => 'required|string']);
             $user = auth()->user();
             
-            $request->validate([
-                'report' => 'required|string',
-            ]);
+            $report = $this->reportService->findUserReport($id, $user);
+            if (!$report) return response()->json(['error' => 'Report not found.'], 404);
 
-            // Find report
-            $report = \App\Models\Report::where('_id', $id)->where('user_id', $user->id)->first();
-            
-            if (!$report && class_exists('MongoDB\BSON\ObjectId')) {
-                 try {
-                    $objectId = new \MongoDB\BSON\ObjectId($id);
-                    $report = \App\Models\Report::where('_id', $objectId)->where('user_id', $user->id)->first();
-                } catch (\Exception $e) {}
-            }
+            $this->reportService->updateReport($report, $request->all());
 
-            if (!$report) {
-                 return response()->json(['error' => 'Report not found.'], 404);
-            }
-
-            $report->update([
-                'report' => $request->report,
-                'report_title' => $request->report_title ?? $report->report_title,
-                'user_name' => $request->user_name ?? $report->user_name,
-                'user_role' => $request->user_role ?? $report->user_role,
-                'company_name' => $request->company_name ?? $report->company_name,
-                'footer_text' => $request->footer_text ?? $report->footer_text,
-            ]);
-
-            return response()->json([
-                'id' => (string) $report->_id,
-                'report' => $report->report,
-                'period' => $report->period,
-                'created_at' => $report->created_at->format('M d, Y H:i'),
-                'message' => 'Chronicle updated in the library vault.'
-            ]);
+            return response()->json(array_merge(
+                $this->reportService->formatReport($report, $user),
+                ['message' => 'Chronicle updated in the library vault.']
+            ));
 
         } catch (\Exception $e) {
             Log::error('Report Update Error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to update report.'], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $user = auth()->user();
+            $report = $this->reportService->findUserReport($id, $user);
+
+            if (!$report) return redirect()->back()->with('error', 'Chronicle not found.');
+
+            $report->delete();
+            return redirect()->route('reports.index')->with('success', 'Chronicle banished to the Sunken Vault.');
+        } catch (\Exception $e) {
+            Log::error('Report Archive Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Banishment failed: The chronicle resists.');
         }
     }
 }

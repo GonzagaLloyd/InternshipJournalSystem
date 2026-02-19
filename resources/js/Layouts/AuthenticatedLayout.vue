@@ -20,7 +20,7 @@ const toggleSidebar = () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex font-serif text-[#E3D5C1] select-none bg-[#1B1B1B]">
+    <div class="min-h-screen flex font-serif text-cream select-none bg-void">
         <!-- Sidebar Navigation -->
         <Sidebar 
             :showingMobileMenu="showingMobileMenu" 
@@ -29,7 +29,7 @@ const toggleSidebar = () => {
         />
 
             <!-- Main Content Area -->
-            <div 
+            <div
                 :class="[
                     isCollapsed ? 'lg:pl-24' : 'lg:pl-72',
                     'flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out relative z-10'
@@ -38,14 +38,14 @@ const toggleSidebar = () => {
                 <!-- Centralized Atmosphere (Matches Dashboard) -->
                 <div class="fixed inset-0 pointer-events-none z-0">
                     <!-- Subtle Atmospheric Glow -->
-                    <div class="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-[#8C6A4A]/5 blur-[120px] rounded-full"></div>
+                    <div class="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-umber/5 blur-[120px] rounded-full"></div>
                     <!-- Minimal Texture -->
                     <div class="absolute inset-0 opacity-[0.2] bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
                 </div>
 
                 <!-- Modular Topbar -->
-                <Topbar 
-                    :title="title" 
+                <Topbar
+                    :title="title"
                     :subtitle="subtitle"
                     :isCollapsed="isCollapsed"
                     @toggle-sidebar="toggleSidebar"

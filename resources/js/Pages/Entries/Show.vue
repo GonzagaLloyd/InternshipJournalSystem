@@ -102,20 +102,20 @@ const vAutoResize = {
     <Head :title="entry.title" />
 
     <!-- Standalone View Container (Aligned with System Background) -->
-    <div class="text-[#C9B79C] py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center relative font-serif min-h-screen">
+    <div class="text-parchment py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center relative font-serif min-h-screen">
         
         <!-- Aligned Atmosphere (Matches Dashboard/Layout) -->
         <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <!-- Subtle Atmospheric Glow -->
-            <div class="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-[#8C6A4A]/5 blur-[120px] rounded-full"></div>
+            <div class="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-umber/5 blur-[120px] rounded-full"></div>
             <!-- Minimal Texture -->
             <div class="absolute inset-0 opacity-[0.1] bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
         </div>
 
         <!-- Header Navigation & Actions -->
         <div class="w-full max-w-4xl z-30 mb-8 flex flex-wrap justify-between items-center gap-4">
-             <a href="#" @click.prevent="handleReturn" class="inline-flex items-center gap-2 text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-colors duration-300 group">
-                <div class="w-8 h-8 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center group-hover:border-[#8C6A4A]/60 transition-all">
+             <a href="#" @click.prevent="handleReturn" class="inline-flex items-center gap-2 text-umber/60 hover:text-parchment transition-colors duration-300 group">
+                <div class="w-8 h-8 rounded-full border border-umber/20 flex items-center justify-center group-hover:border-umber/60 transition-all">
                     <svg class="w-3 h-3 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 </div>
                 <span class="text-[10px] font-cinzel tracking-[0.2em] uppercase whitespace-nowrap">Return to Ledger</span>
@@ -139,10 +139,10 @@ const vAutoResize = {
                 <button 
                     v-if="!isEditing" 
                     @click="isEditing = true" 
-                    class="inline-flex items-center gap-2 text-[#C9B79C]/40 hover:text-[#C9B79C] transition-colors duration-300 group"
+                    class="inline-flex items-center gap-2 text-parchment/40 hover:text-parchment transition-colors duration-300 group"
                 >
                     <span class="text-[10px] font-cinzel tracking-[0.2em] uppercase whitespace-nowrap">Amend Lore</span>
-                    <div class="w-8 h-8 rounded-full border border-[#C9B79C]/10 flex items-center justify-center group-hover:border-[#C9B79C]/40 transition-all bg-[#C9B79C]/5">
+                    <div class="w-8 h-8 rounded-full border border-parchment/10 flex items-center justify-center group-hover:border-parchment/40 transition-all bg-parchment/5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
@@ -175,29 +175,29 @@ const vAutoResize = {
         <TomeLoader :show="isReturning" message="Preserving to Ledger..." />
 
         <!-- Main Entry Container -->
-        <article class="w-full max-w-4xl relative z-30 bg-[#2D2D2D]/40 backdrop-blur-[2px] border border-white/5 p-6 sm:p-10 md:p-16 rounded-sm shadow-2xl animate-fade-in-up">
+        <article class="w-full max-w-4xl relative z-30 bg-[#2D2D2D]/40 backdrop-blur-[2px] border border-white/5 p-6 sm:p-10 md:p-16 rounded-sm shadow-2xl animate-fade-in-up group">
             
-            <!-- Ornamental Border Corners -->
-            <div class="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#8C6A4A]/20 rounded-tl-sm pointer-events-none"></div>
-            <div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-[#8C6A4A]/20 rounded-tr-sm pointer-events-none"></div>
-            <div class="absolute bottom-0 left-0 w-12 h-12 border-b border-l border-[#8C6A4A]/20 rounded-bl-sm pointer-events-none"></div>
-            <div class="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#8C6A4A]/20 rounded-tr-sm pointer-events-none"></div>
+            <!-- Ornamental Border Corners (Bronze Indication) -->
+            <div class="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#8B6D45]/30 rounded-tl-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
+            <div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-[#8B6D45]/30 rounded-tr-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
+            <div class="absolute bottom-0 left-0 w-12 h-12 border-b border-l border-[#8B6D45]/30 rounded-bl-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
+            <div class="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#8B6D45]/30 rounded-br-sm pointer-events-none group-hover:opacity-0 transition-opacity duration-700"></div>
 
             <!-- Header -->
             <header class="text-center mb-10 md:mb-16 relative">
                 <div class="mb-6 flex flex-col items-center gap-4">
-                     <div class="h-12 w-[1px] bg-gradient-to-b from-transparent via-[#8C6A4A]/40 to-transparent"></div>
+                     <div class="h-12 w-[1px] bg-gradient-to-b from-transparent via-umber/40 to-transparent"></div>
                      
                      <!-- Date Display/Input -->
                      <div class="relative group">
-                         <div v-if="!isEditing" class="text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-[#8C6A4A] uppercase bg-[#8C6A4A]/5 px-5 py-1.5 rounded-full border border-[#8C6A4A]/10 transition-all whitespace-nowrap">
+                         <div v-if="!isEditing" class="text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase bg-umber/5 px-5 py-1.5 rounded-full border border-umber/10 transition-all whitespace-nowrap">
                             {{ formatDate(entry.entry_date) }}
                          </div>
                          <input
                             v-else
                             v-model="form.entry_date"
                             type="date"
-                            class="bg-black/20 border border-[#8C6A4A]/20 focus:border-[#8C6A4A]/60 focus:ring-0 text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-[#8C6A4A] uppercase px-5 py-1.5 rounded-full text-center transition-all dark:[color-scheme:dark]"
+                            class="bg-black/20 border border-umber/20 focus:border-umber/60 focus:ring-0 text-[10px] sm:text-xs font-cinzel tracking-[0.4em] text-umber uppercase px-5 py-1.5 rounded-full text-center transition-all dark:[color-scheme:dark]"
                          >
                      </div>
                 </div>
@@ -206,7 +206,7 @@ const vAutoResize = {
                 <div class="relative">
                     <h1
                         v-if="!isEditing"
-                        class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-[#C9B79C] leading-tight tracking-tight drop-shadow-sm px-2 break-words text-center">
+                        class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment leading-tight tracking-tight drop-shadow-sm px-2 break-words text-center">
                         {{ entry.title }}
                     </h1>
                     <textarea
@@ -214,18 +214,18 @@ const vAutoResize = {
                         v-model="form.title"
                         rows="1"
                         v-auto-resize
-                        class="bg-transparent border-none focus:ring-0 w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-[#C9B79C] text-center leading-tight tracking-tight selection:bg-[#8C6A4A]/20 p-0 resize-none overflow-hidden placeholder:text-[#C9B79C]/20"
+                        class="bg-transparent border-none focus:ring-0 w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-parchment text-center leading-tight tracking-tight selection:bg-umber/20 p-0 resize-none overflow-hidden placeholder:text-parchment/20"
                         placeholder="Title of Lore..."
                     ></textarea>
                 </div>
 
-                <div class="mt-8 w-16 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-[#8C6A4A]/40 to-transparent mx-auto"></div>
+                <div class="mt-8 w-16 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-umber/40 to-transparent mx-auto"></div>
             </header>
 
             <!-- Content -->
-            <div class="prose prose-lg md:prose-xl prose-invert max-w-none text-[#C9B79C]/80 font-serif leading-relaxed tracking-wide text-justify selection:bg-[#8C6A4A]/20 mb-12 md:mb-20">
+            <div class="prose prose-lg md:prose-xl prose-invert max-w-none text-parchment/80 font-serif leading-relaxed tracking-wide text-justify selection:bg-umber/20 mb-12 md:mb-20">
                  <div class="relative min-h-[300px]">
-                    <div v-if="!isEditing" class="first-letter:text-5xl first-letter:font-cinzel first-letter:text-[#C9B79C] first-letter:mr-3 first-letter:float-left first-letter:leading-[0.8] break-words overflow-hidden">
+                    <div v-if="!isEditing" class="first-letter:text-5xl first-letter:font-cinzel first-letter:text-parchment first-letter:mr-3 first-letter:float-left first-letter:leading-[0.8] break-words overflow-hidden">
                         <p class="whitespace-pre-wrap text-[17px] sm:text-lg md:text-xl text-justify">{{ entry.content }}</p>
                     </div>
                     <textarea
@@ -242,9 +242,9 @@ const vAutoResize = {
             <EntryMedia :entry="entry" class="mb-12 md:mb-20" />
 
             <!-- Footer -->
-             <div class="pt-8 sm:pt-12 border-t border-[#8C6A4A]/10 flex flex-col items-center gap-6 md:gap-8">
+             <div class="pt-8 sm:pt-12 border-t border-umber/10 flex flex-col items-center gap-6 md:gap-8">
                 <div v-if="entry.file">
-                    <a :href="'/storage/' + entry.file" target="_blank" class="flex items-center gap-3 text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-all px-6 py-2.5 border border-[#8C6A4A]/10 hover:border-[#8C6A4A]/30 rounded-sm bg-[#8C6A4A]/5 group">
+                    <a :href="'/storage/' + entry.file" target="_blank" class="flex items-center gap-3 text-umber/60 hover:text-parchment transition-all px-6 py-2.5 border border-umber/10 hover:border-umber/30 rounded-sm bg-umber/5 group">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                         </svg>
@@ -254,11 +254,11 @@ const vAutoResize = {
                 
                 <div class="flex flex-col items-center opacity-30">
                     <div class="flex gap-2 mb-3">
-                         <div class="w-1.5 h-1.5 rounded-full bg-[#8C6A4A]"></div>
-                         <div class="w-1.5 h-1.5 rounded-full bg-[#8C6A4A]"></div>
-                         <div class="w-1.5 h-1.5 rounded-full bg-[#8C6A4A]"></div>
+                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
+                         <div class="w-1.5 h-1.5 rounded-full bg-umber"></div>
                     </div>
-                    <span class="text-[9px] font-cinzel uppercase tracking-[0.5em] text-[#8C6A4A]">Lore End</span>
+                    <span class="text-[9px] font-cinzel uppercase tracking-[0.5em] text-umber">Lore End</span>
                 </div>
             </div>
         </article>

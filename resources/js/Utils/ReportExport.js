@@ -1,6 +1,3 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
 /**
  * Report Export Utility
  * Handles PDF and Word document generation for reports
@@ -15,6 +12,10 @@ const COMPANY_NAME = "iTech Media Logic";
 
 export const exportToPDF = async ({ element, report, userName, userRole, companyName }) => {
     if (!element) return;
+
+    // Dynamically import heavy libraries for performance
+    const jsPDF = (await import('jspdf')).default;
+    const html2canvas = (await import('html2canvas')).default;
 
     // Show element briefly for capture
     const originalDisplay = element.style.display;

@@ -1,8 +1,10 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import ChronosDial from '@/Components/Calendar/ChronosDial.vue';
+import { defineAsyncComponent } from 'vue';
 import { useTabSync } from '@/Composables/useTabSync';
+
+const ChronosDial = defineAsyncComponent(() => import('@/Components/Calendar/ChronosDial.vue'));
 
 useTabSync(['events']);
 
@@ -15,10 +17,10 @@ const props = defineProps({
     <Head title="Celestial Horologium" />
 
     <AuthenticatedLayout 
-        title="Celestial <span class='text-[#8C6A4A]'>Horologium</span>"
+        title="Celestial <span class='text-brass'>Horologium</span>"
         subtitle="The Tapestry of Time"
     >
-        <div class="xl:h-[calc(100vh-5rem)] xl:overflow-hidden flex flex-col relative font-serif text-[#E3D5C1]">
+        <div class="xl:h-[calc(100vh-5rem)] xl:overflow-hidden flex flex-col relative font-serif text-cream">
             <main class="flex-1 flex flex-col relative z-20 px-4 md:px-8 xl:px-12 py-6 xl:py-8 xl:min-h-0">
                 <div class="max-w-[1700px] mx-auto w-full flex-1 flex flex-col xl:min-h-0">
                     

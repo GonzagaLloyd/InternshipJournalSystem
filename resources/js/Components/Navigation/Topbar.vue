@@ -9,14 +9,14 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
 </script>
 
 <template>
-    <header class="sticky top-0 h-20 flex items-center justify-between px-6 lg:px-12 z-30 shrink-0 bg-[#1B1B1B]/90 backdrop-blur-xl border-b border-[#3d3d3d]/20 shadow-2xl">
+    <header class="sticky top-0 h-20 flex items-center justify-between px-6 lg:px-12 z-30 shrink-0 bg-void/90 backdrop-blur-xl border-b border-coal/20 shadow-2xl">
         <div class="flex items-center gap-8">
             <div class="flex items-center">
                 <!-- Mobile Menu Button -->
                 <button 
                     @click="$emit('open-mobile-menu')" 
                     type="button" 
-                    class="lg:hidden p-2 rounded-xl text-[#8C6A4A] hover:text-[#C9B79C] transition-all shrink-0"
+                    class="lg:hidden p-2 rounded-xl text-umber hover:text-parchment transition-all shrink-0"
                 >
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -27,7 +27,7 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
                 <button 
                     @click="$emit('toggle-sidebar')"
                     type="button"
-                    class="hidden lg:flex p-2 rounded-xl text-[#8C6A4A]/60 hover:text-[#C9B79C] transition-all focus:outline-none shrink-0"
+                    class="hidden lg:flex p-2 rounded-xl text-umber/60 hover:text-parchment transition-all focus:outline-none shrink-0"
                 >
                     <svg 
                         :class="['h-6 w-6 transition-transform duration-500', isCollapsed ? 'rotate-180' : '']" 
@@ -46,8 +46,8 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
                     <span v-html="title"></span>
                 </h2>
                 <div class="flex items-center gap-3 mt-1.5">
-                    <div class="h-[1px] w-4 bg-[#A68B6A]/40"></div>
-                    <p v-if="subtitle" class="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-[#A68B6A] font-black">
+                    <div class="h-[1px] w-4 bg-brass/40"></div>
+                    <p v-if="subtitle" class="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-brass font-black">
                         {{ subtitle }}
                     </p>
                 </div>

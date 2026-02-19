@@ -47,7 +47,7 @@ const managementItems = [
     <aside 
         :class="[
             isCollapsed ? 'w-24' : 'w-72',
-            'hidden lg:flex flex-col border-r border-white/[0.03] bg-[#1B1B1B] fixed h-screen transition-all duration-300 ease-in-out z-40 text-[#E3D5C1] shadow-2xl overflow-hidden'
+            'hidden lg:flex flex-col border-r border-white/[0.03] bg-void fixed h-screen transition-all duration-300 ease-in-out z-40 text-cream shadow-2xl overflow-hidden'
         ]"
     >
         <!-- Logo Section -->
@@ -56,7 +56,7 @@ const managementItems = [
                 <div class="flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
                     <ApplicationLogo :class="[isCollapsed ? 'h-11' : 'h-16', 'w-auto opacity-90 group-hover:opacity-100 transition-all brightness-[0.9] sepia-[0.2]']" />
                 </div>
-                <span v-if="!isCollapsed" class="text-2xl font-cinzel font-black tracking-widest text-[#A68B6A] uppercase italic">OJT</span>
+                <span v-if="!isCollapsed" class="text-2xl font-cinzel font-black tracking-widest text-brass uppercase italic">OJT</span>
             </Link>
         </div>
 
@@ -68,17 +68,23 @@ const managementItems = [
                     :key="item.name"
                     :href="item.routeName === '#' ? '#' : route(item.routeName)"
                     :class="[
-                        route().current(item.routeName) ? 'bg-[#3d3d3d] text-[#E3D5C1] shadow-xl border border-white/5' : 'text-[#A68B6A]/70 hover:bg-[#333333] hover:text-[#E3D5C1]',
-                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
-                        'flex items-center transition-all duration-300 group relative'
+                        route().current(item.routeName) ? 'bg-coal text-cream shadow-2xl border-l-[3px] border-l-brass' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream',
+                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-r-3xl',
+                        'flex items-center transition-all duration-500 group relative overflow-hidden'
                     ]"
                 >
-                    <div :class="[isCollapsed ? '' : 'mr-5']">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Active Ambient Glow -->
+                    <div v-if="route().current(item.routeName)" class="absolute inset-0 bg-brass/5 blur-xl pointer-events-none"></div>
+                    
+                    <div :class="[isCollapsed ? '' : 'mr-5']" class="relative z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" :class="route().current(item.routeName) ? 'scale-110 shadow-[0_0_10px_var(--color-accent-brass)]' : ''" class="h-6 w-6 transition-transform duration-500 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                         </svg>
                     </div>
-                    <span v-if="!isCollapsed" class="text-lg font-bold truncate font-cormorant tracking-wide">{{ item.name }}</span>
+                    <span v-if="!isCollapsed" class="text-lg font-bold truncate font-cormorant tracking-wide relative z-10">{{ item.name }}</span>
+                    
+                    <!-- Feather Pointer Indicator -->
+                    <div v-if="route().current(item.routeName) && !isCollapsed" class="absolute right-4 w-1.5 h-1.5 rounded-full bg-brass animate-pulse shadow-[0_0_8px_var(--color-accent-brass)]"></div>
                 </Link>
             </div>
 
@@ -90,17 +96,23 @@ const managementItems = [
                     :key="sub.name"
                     :href="sub.routeName === '#' ? '#' : route(sub.routeName)"
                     :class="[
-                        route().current(sub.routeName) ? 'bg-[#3d3d3d] text-[#E3D5C1] shadow-xl border border-white/5' : 'text-[#A68B6A]/70 hover:bg-[#333333] hover:text-[#E3D5C1]',
-                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-[1.5rem]',
-                        'flex items-center transition-all duration-300 group'
+                        route().current(sub.routeName) ? 'bg-coal text-cream shadow-2xl border-l-[3px] border-l-brass' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream',
+                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-r-3xl',
+                        'flex items-center transition-all duration-500 group relative overflow-hidden'
                     ]"
                 >
-                    <div :class="[isCollapsed ? '' : 'mr-5']">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <!-- Active Ambient Glow -->
+                    <div v-if="route().current(sub.routeName)" class="absolute inset-0 bg-brass/5 blur-xl pointer-events-none"></div>
+
+                    <div :class="[isCollapsed ? '' : 'mr-5']" class="relative z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" :class="route().current(sub.routeName) ? 'scale-110' : ''" class="h-6 w-6 transition-transform duration-500 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="sub.icon" />
                         </svg>
                     </div>
-                    <span v-if="!isCollapsed" class="text-lg font-bold truncate font-cormorant tracking-wide">{{ sub.name }}</span>
+                    <span v-if="!isCollapsed" class="text-lg font-bold truncate font-cormorant tracking-wide relative z-10">{{ sub.name }}</span>
+
+                    <!-- Feather Pointer Indicator -->
+                    <div v-if="route().current(sub.routeName) && !isCollapsed" class="absolute right-4 w-1.5 h-1.5 rounded-full bg-brass animate-pulse shadow-[0_0_8px_var(--color-accent-brass)]"></div>
                 </Link>
             </div>
         </div>
@@ -112,8 +124,8 @@ const managementItems = [
                     {{ user.name.charAt(0) }}
                 </div>
                 <div v-if="!isCollapsed" class="ml-4 flex-1 min-w-0">
-                    <p class="text-[14px] font-bold text-[#E3D5C1] truncate tracking-tight font-cormorant">{{ user.name }}</p>
-                    <p class="text-[10px] font-bold text-[#A68B6A]/80 truncate group-hover:text-[#E3D5C1] transition-colors uppercase tracking-widest font-cinzel">Scribe Active</p>
+                    <p class="text-[14px] font-bold text-cream truncate tracking-tight font-cormorant">{{ user.name }}</p>
+                    <p class="text-[10px] font-bold text-brass/80 truncate group-hover:text-cream transition-colors uppercase tracking-widest font-cinzel">Scribe Active</p>
                 </div>
                 <button 
                     v-if="!isCollapsed"

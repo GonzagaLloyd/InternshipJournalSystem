@@ -99,7 +99,7 @@ const saveReport = async () => {
         const reportId = props.report.id || props.report._id;
 
         if (reportId) {
-             response = await axios.put(route('reports.update', reportId), {
+             response = await axios.patch(route('reports.update', reportId), {
                 report: rawMarkdown.value,
                 report_title: reportTitle.value,
                 user_name: editableUserName.value,

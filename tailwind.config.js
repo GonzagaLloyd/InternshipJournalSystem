@@ -17,6 +17,16 @@ export default {
                 cinzel: ['Cinzel', 'serif'],
                 cormorant: ['Cormorant Garamond', 'serif'],
             },
+            colors: {
+                // Scriptorium Custom Palette
+                brass: 'var(--color-accent-brass)',
+                umber: 'var(--color-accent-umber)',
+                parchment: 'var(--color-text-parchment)',
+                cream: 'var(--color-text-cream)',
+                void: 'var(--color-background-void)',
+                obsidian: 'var(--color-background-obsidian)',
+                coal: 'var(--color-background-coal)',
+            }
         },
     },
 

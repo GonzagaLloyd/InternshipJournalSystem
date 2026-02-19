@@ -29,6 +29,15 @@ const isNavigating = ref(false);
 const showDeleteModal = ref(false);
 const entryToDelete = ref(null);
 const isLoadingMore = ref(false);
+const searchInput = ref(null);
+
+const handleGlobalKeydown = (e) => {
+    // Ctrl+K to focus search
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.value?.focus();
+    }
+};
 
 // Local list for infinite scroll
 const allEntries = ref(props.entries?.data ? [...props.entries.data] : []);
@@ -80,10 +89,12 @@ onMounted(() => {
     }, { threshold: 0.1 });
 
     if (loaderTarget.value) observer.observe(loaderTarget.value);
+    window.addEventListener('keydown', handleGlobalKeydown);
 });
 
 onUnmounted(() => {
     if (observer) observer.disconnect();
+    window.removeEventListener('keydown', handleGlobalKeydown);
 });
 
 const handleEntryClick = (id) => {
@@ -137,28 +148,38 @@ const deleteEntry = async () => {
         subtitle="Lore of your journeys"
     >
         <div class="p-4 md:p-6 lg:p-8 flex flex-col font-serif relative">
-            <!-- Search & Count Bar (Fixed at top of content) -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 relative z-10">
-                <div class="relative w-full max-w-md group">
-                    <input 
-                        v-model="searchQuery"
-                        type="search" 
-                        placeholder="Seek through the echoes..."
-                        class="w-full bg-[#1B1B1B]/40 border border-[#8C6A4A]/20 rounded-sm px-10 py-3 text-[#C9B79C] placeholder-[#8C6A4A]/40 focus:border-[#8C6A4A]/60 focus:ring-0 transition-all font-serif italic"
-                    >
-                    <svg class="absolute left-3 top-3.5 h-4 w-4 text-[#8C6A4A]/40 group-focus-within:text-[#8C6A4A] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <!-- Search & Count Bar (Zen Simplicity) -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-16 relative z-10">
+                <div class="relative w-full max-w-lg group">
+                    <div class="relative flex items-center">
+                        <input 
+                            ref="searchInput"
+                            v-model="searchQuery"
+                            type="search" 
+                            placeholder="Seek through the echoes..."
+                            class="w-full bg-void/20 border border-brass/10 rounded-lg px-12 py-3 text-parchment placeholder-brass/20 focus:border-brass/40 focus:ring-0 transition-all font-serif italic text-base"
+                        >
+                        <svg class="absolute left-4 h-4 w-4 text-brass/20 group-focus-within:text-brass/60 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        
+                        <!-- Shortcut Indicator -->
+                        <div class="absolute right-4 px-1.5 py-0.5 rounded border border-brass/10 bg-white/5 text-[8px] text-brass/30 font-cinzel tracking-widest pointer-events-none group-focus-within:opacity-0 transition-opacity uppercase">
+                            Ctrl K
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-4 text-[#8C6A4A]">
-                    <span class="text-[10px] uppercase font-black tracking-widest">{{ props.entries.total }} Chronicles Found</span>
-                    <div class="h-4 w-[1px] bg-[#8C6A4A]/20"></div>
+                <div class="flex items-center gap-4 text-brass/40">
+                    <div class="h-[1px] w-8 bg-brass/20"></div>
+                    <span class="text-[10px] font-cinzel uppercase tracking-[0.4em]">{{ props.entries.total }} Chronicles</span>
                 </div>
             </div>
 
             <!-- Entries Grid -->
             <div class="flex-1 overflow-y-auto pr-0 md:pr-2 scrollbar-hide relative z-10">
                 <template v-if="allEntries.length > 0">
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 pb-20">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12 pb-24">
                         <JournalCard 
                             v-for="entry in allEntries" 
                             :key="entry.id || entry._id"
@@ -172,39 +193,38 @@ const deleteEntry = async () => {
                     <div 
                         ref="loaderTarget" 
                         id="infinite-sentinel"
-                        class="w-full py-12 flex flex-col items-center justify-center gap-4 transition-all duration-500"
+                        class="w-full py-16 flex flex-col items-center justify-center gap-4 transition-all duration-1000"
                         :class="isLoadingMore ? 'opacity-100' : 'opacity-0'"
                     >
-                        <div class="relative w-10 h-10">
-                            <div class="absolute inset-0 border border-[#8C6A4A]/20 rounded-full animate-[spin_3s_linear_infinite]"></div>
-                            <div class="absolute inset-1 border border-dashed border-[#8C6A4A]/40 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
+                        <div class="relative w-8 h-8">
+                            <div class="absolute inset-0 border border-brass/10 rounded-full animate-spin-slow"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-1 h-1 bg-brass/40 rounded-full animate-pulse"></div>
+                            </div>
                         </div>
-                        <p class="text-[9px] font-cinzel text-[#8C6A4A] uppercase tracking-[0.3em] animate-pulse">
-                            Whispering to the void...
+                        <p class="text-[9px] font-cinzel text-brass/30 uppercase tracking-[0.5em]">
+                            Consulting the void...
                         </p>
                     </div>
                 </template>
 
-                <!-- Empty State -->
+                <!-- Empty State (Zen Style) -->
                 <div v-else class="flex-1 flex flex-col items-center justify-center py-40 text-center relative z-10">
-                    <div class="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none">
-                        <svg class="w-[500px] h-[500px] text-[#C9B79C] animate-pulse-slow" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                        </svg>
-                    </div>
                     <div class="relative">
-                        <div class="h-24 w-24 rounded-full border border-[#8C6A4A]/20 flex items-center justify-center mb-10 mx-auto group">
-                            <svg class="w-12 h-12 text-[#8C6A4A]/40 group-hover:text-[#8C6A4A] transition-all duration-1000" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="h-24 w-24 rounded-full border border-brass/5 flex items-center justify-center mb-10 mx-auto group">
+                            <svg class="w-10 h-10 text-brass/10 group-hover:text-brass/20 transition-all duration-1000" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5S19.832 5.477 21 6.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
-                        <h3 class="text-[#C9B79C] text-5xl font-cinzel font-bold mb-4 tracking-tight">The Ledger is Silent</h3>
-                        <p class="text-[#8C6A4A] text-sm uppercase tracking-[0.5em] font-serif opacity-40">No echoes found in this search</p>
+                        <h3 class="text-cream text-4xl font-cinzel font-medium mb-4 tracking-wider opacity-80">The Ledger is Silent</h3>
+                        <p class="text-brass/30 text-[10px] uppercase tracking-[0.6em] font-serif">No echoes found in this search</p>
                     </div>
                 </div>
             </div>
         </div>
     </AuthenticatedLayout>
+
+
     <TomeLoader :show="isNavigating" message="Consulting the Archives..." />
 
     <!-- Confirmation Modal for Deletion -->

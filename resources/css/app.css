@@ -3,9 +3,36 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        /* Colors: The "Ancient Library" Palette */
+        --color-background-void: #1B1B1B;
+        --color-background-obsidian: #161616;
+        --color-background-coal: #2D2D2D;
+
+        --color-text-parchment: #C9B79C;
+        --color-text-cream: #E3D5C1;
+
+        --color-accent-umber: #8C6A4A;
+        --color-accent-brass: #A68B6A;
+
+        --color-error: #F87171;
+        /* red-400 */
+        --color-success: #34D399;
+        /* emerald-400 */
+
+        /* Transparencies */
+        --glass-opacity-light: rgba(255, 255, 255, 0.04);
+        --glass-opacity-medium: rgba(255, 255, 255, 0.08);
+
+        /* Transitions */
+        --transition-premium: cubic-bezier(0.16, 1, 0.3, 1);
+        --transition-standard: 0.3s var(--transition-premium);
+    }
+
     body {
-        @apply antialiased bg-[#1B1B1B] text-[#C9B79C];
-        background-color: #1B1B1B;
+        @apply antialiased font-serif;
+        background-color: var(--color-background-void);
+        color: var(--color-text-parchment);
         background-image:
             radial-gradient(circle at 50% 50%, rgba(140, 106, 74, 0.05) 0%, transparent 100%);
         background-size: cover;
@@ -14,21 +41,44 @@
     }
 
     ::selection {
-        @apply bg-[#8C6A4A]/30 text-[#C9B79C];
+        background-color: rgba(140, 106, 74, 0.3);
+        color: var(--color-text-parchment);
     }
 }
 
 @layer components {
     .glass-sidebar {
-        @apply bg-[#2D2D2D]/95 border-r border-white/[0.03] shadow-2xl backdrop-blur-xl;
+        background-color: rgba(45, 45, 45, 0.95);
+        border-right: 1px solid rgba(255, 255, 255, 0.03);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(24px);
     }
 
     .glass-card {
-        @apply bg-[#2D2D2D]/40 border border-white/[0.05] rounded-[2rem] shadow-2xl transition-all duration-700 hover:border-[#8C6A4A]/20 backdrop-blur-sm;
+        background-color: rgba(45, 45, 45, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        transition: all var(--transition-premium) 0.7s;
+        backdrop-filter: blur(4px);
+    }
+
+    .glass-card:hover {
+        border-color: rgba(140, 106, 74, 0.2);
     }
 
     .glass-input {
-        @apply bg-black/20 border border-white/5 focus:border-[#8C6A4A]/40 focus:ring-0 transition-all duration-500 rounded-2xl text-[#C9B79C];
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        color: var(--color-text-parchment);
+        transition: all var(--transition-premium) 0.5s;
+    }
+
+    .glass-input:focus {
+        border-color: rgba(166, 139, 106, 0.4);
+        outline: none;
+        ring: 0;
     }
 }
 

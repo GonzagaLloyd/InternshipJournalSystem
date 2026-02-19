@@ -53,10 +53,10 @@ const heatmapData = computed(() => {
 
 const getIntensityClass = (level) => {
     switch (level) {
-        case 1: return 'bg-[#8C6A4A]/20 shadow-[0_0_5px_rgba(140,106,74,0.1)]';
-        case 2: return 'bg-[#8C6A4A]/40 shadow-[0_0_8px_rgba(140,106,74,0.2)]';
-        case 3: return 'bg-[#8C6A4A]/70 shadow-[0_0_12px_rgba(140,106,74,0.3)]';
-        case 4: return 'bg-[#C9B79C] shadow-[0_0_15px_rgba(201,183,156,0.4)]';
+        case 1: return 'bg-umber/20 shadow-[0_0_5px_var(--color-accent-umber)]/10';
+        case 2: return 'bg-umber/40 shadow-[0_0_8px_var(--color-accent-umber)]/20';
+        case 3: return 'bg-umber/70 shadow-[0_0_12px_var(--color-accent-umber)]/30';
+        case 4: return 'bg-parchment shadow-[0_0_15px_var(--color-text-parchment)]/40';
         default: return 'bg-white/5';
     }
 };
@@ -66,15 +66,15 @@ const getIntensityClass = (level) => {
 <template>
     <div class="space-y-4">
         <div class="flex items-center justify-between">
-            <h4 class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">
-                Lore Continuity <span class="text-[#C9B79C]/40 font-serif lowercase italic tracking-normal ml-2">(Last 365 cycles)</span>
+            <h4 class="text-[10px] uppercase tracking-[0.4em] text-umber font-black">
+                Lore Continuity <span class="text-parchment/40 font-serif lowercase italic tracking-normal ml-2">(Last 365 cycles)</span>
             </h4>
             <div class="flex items-center gap-2">
-                <span class="text-[8px] uppercase tracking-widest text-[#8C6A4A]/40">Void</span>
+                <span class="text-[8px] uppercase tracking-widest text-umber/40">Void</span>
                 <div class="flex gap-1">
                     <div v-for="i in 5" :key="i" :class="getIntensityClass(i-1)" class="w-2 h-2 rounded-[1px]"></div>
                 </div>
-                <span class="text-[8px] uppercase tracking-widest text-[#C9B79C]/60">Full Bloom</span>
+                <span class="text-[8px] uppercase tracking-widest text-parchment/60">Full Bloom</span>
             </div>
         </div>
 
@@ -93,12 +93,12 @@ const getIntensityClass = (level) => {
                         >
                             <!-- Tooltip -->
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                <div class="bg-[#1B1B1B] border border-[#8C6A4A]/40 px-2 py-1 rounded-sm whitespace-nowrap shadow-2xl">
-                                    <p class="text-[9px] font-cinzel text-[#C9B79C]">
+                                <div class="bg-void border border-umber/40 px-2 py-1 rounded-sm whitespace-nowrap shadow-2xl">
+                                    <p class="text-[9px] font-cinzel text-parchment">
                                         {{ day.count }} Fragments · {{ new Date(day.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) }}
                                     </p>
                                 </div>
-                                <div class="w-1.5 h-1.5 bg-[#1B1B1B] border-r border-b border-[#8C6A4A]/40 rotate-45 mx-auto -mt-[5px]"></div>
+                                <div class="w-1.5 h-1.5 bg-void border-r border-b border-umber/40 rotate-45 mx-auto -mt-[5px]"></div>
                             </div>
                         </div>
                     </div>
@@ -107,13 +107,13 @@ const getIntensityClass = (level) => {
 
             <!-- Month Labels -->
             <div class="flex justify-between mt-2 px-1">
-                <span v-for="month in months" :key="month" class="text-[8px] uppercase tracking-tighter text-[#8C6A4A]/40 font-cinzel">
+                <span v-for="month in months" :key="month" class="text-[8px] uppercase tracking-tighter text-umber/40 font-cinzel">
                     {{ month }}
                 </span>
             </div>
 
             <!-- Ritual Aura -->
-            <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-tr from-[#8C6A4A]/5 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-tr from-umber/5 via-transparent to-transparent"></div>
         </div>
     </div>
 </template>

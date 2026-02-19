@@ -3,20 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Services\TaskService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TaskController extends Controller
 {
+    protected $taskService;
+
+    public function __construct(TaskService $taskService)
+    {
+        $this->taskService = $taskService;
+    }
+
     /**
      * Display a listing of the tasks.
      */
     public function index()
     {
-        $tasks = Task::where('user_id', auth()->id())->latest()->get();
-        
         return Inertia::render('Tasks/Index', [
-            'tasks' => $tasks->toArray()
+            'tasks' => $this->taskService->getUserTasks(auth()->user())->toArray()
         ]);
     }
 
@@ -31,13 +37,7 @@ class TaskController extends Controller
             'priority' => 'nullable|string|in:low,medium,high',
         ]);
 
-        Task::create([
-            'user_id' => auth()->id(),
-            'name' => $validated['name'],
-            'completed' => false,
-            'due_date' => $validated['due_date'] ?? null,
-            'priority' => $validated['priority'] ?? 'medium',
-        ]);
+        $this->taskService->storeTask(auth()->user(), $validated);
 
         return back()->with('success', 'Decree successfully sealed in the ledger.');
     }
@@ -47,18 +47,15 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        // Ensure user owns the task
-        if ($task->user_id !== auth()->id()) {
-            abort(403);
-        }
+        if ($task->user_id !== auth()->id()) abort(403);
 
-        $validate = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'due_date' => 'nullable|date',
             'priority' => 'nullable|string|in:low,medium,high',
         ]);
 
-        $task->update($validate);
+        $this->taskService->updateTask($task, $validated);
 
         return back()->with('success', 'Decree successfully amended.');
     }
@@ -68,12 +65,9 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        // Ensure user owns the task
-        if ($task->user_id !== auth()->id()) {
-            abort(403);
-        }
+        if ($task->user_id !== auth()->id()) abort(403);
 
-        $task->delete();
+        $this->taskService->deleteTask($task);
 
         return back()->with('success', 'The decree has been banished to the Sunken Vault.');
     }
@@ -83,13 +77,9 @@ class TaskController extends Controller
      */
     public function toggle(Task $task)
     {
-        if ($task->user_id !== auth()->id()) {
-            abort(403);
-        }
+        if ($task->user_id !== auth()->id()) abort(403);
 
-        $task->update([
-            'completed' => !$task->completed
-        ]);
+        $this->taskService->toggleTask($task);
 
         $status = $task->completed ? 'completed' : 'reopened';
         return back()->with('success', "Mandate has been marked as {$status}.");

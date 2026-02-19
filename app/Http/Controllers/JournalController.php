@@ -5,140 +5,74 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\JournalEntry;
+use App\Services\JournalService;
 
 class JournalController extends Controller
 {
+    protected $journalService;
+
+    public function __construct(JournalService $journalService)
+    {
+        $this->journalService = $journalService;
+    }
+
     public function index()
     {
-        $userId = auth()->id();
-        
-        // Fetch activity data for heatmap (last 365 days)
-        $activity = JournalEntry::where('user_id', $userId)
-            ->where('entry_date', '>=', now()->subDays(365)->format('Y-m-d'))
-            ->get(['entry_date'])
-            ->groupBy('entry_date')
-            ->map(fn($group) => $group->count());
-
-        return Inertia::render('Dashboard', [
-            'entryCount' => JournalEntry::where('user_id', $userId)->count(),
-            'tasks' => \App\Models\Task::where('user_id', $userId)->latest()->get(),
-            'activity' => $activity,
-        ]);
+        return Inertia::render('Dashboard', $this->journalService->getDashboardData(auth()->user()));
     }
 
     public function entries(Request $request)
     {
-        $query = JournalEntry::where('user_id', auth()->id());
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
-            });
-        }
-
-        $entries = $query->orderBy('entry_date', 'desc')
-            ->paginate(12)
-            ->withQueryString();
-
         return Inertia::render('Entries/Index', [
-            'entries' => $entries,
+            'entries' => $this->journalService->getPaginatedEntries(auth()->user(), $request->search)->withQueryString(),
             'filters' => $request->only(['search'])
         ]);
     }
 
     public function store(Request $request)
     {
-        // 1. Validate the data
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'nullable|string|max:255',
             'content' => 'required|string|min:3',
             'entry_date' => 'required|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
-            'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480',      // 20MB
-            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',     // 10MB
-            'file' => 'nullable|file|mimes:pdf,doc,docx,zip|max:10240', // 10MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480',
+            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,zip|max:10240',
         ]);
 
-        // 2. Handle File Uploads
-        $paths = [
-            'image' => $request->hasFile('image') ? $request->file('image')->store('journal/images', 'public') : null,
-            'video' => $request->hasFile('video') ? $request->file('video')->store('journal/videos', 'public') : null,
-            'audio' => $request->hasFile('audio') ? $request->file('audio')->store('journal/audio', 'public') : null,
-            'file' => $request->hasFile('file') ? $request->file('file')->store('journal/documents', 'public') : null,
-        ];
-
-        // 3. Save to MongoDB
-        JournalEntry::create([
-            'user_id' => auth()->id(),
-            'title' => $validated['title'] ?? 'Daily Entry - ' . now()->format('M d, Y'),
-            'content' => $validated['content'],
-            'entry_date' => $validated['entry_date'],
-            'image' => $paths['image'],
-            'video' => $paths['video'],
-            'audio' => $paths['audio'],
-            'file' => $paths['file'],
-        ]);
-
+        $this->journalService->saveEntry(auth()->user(), $request->all());
         return back()->with('success', 'New lore has been inscribed in the ledger.');
     }
+
     public function show($id)
     {
         $entry = JournalEntry::where('user_id', auth()->id())->findOrFail($id);
-        
         return Inertia::render('Entries/Show', [
             'entry' => $entry,
         ]);
     }
     
-    public function update(Request $request, JournalEntry $entry){
-        
-        if($entry->user_id !== auth()->id()){
-            abort(403);
-        }
-
-           $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'content' => 'required|string|min:3',
-            'entry_date' => 'required|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
-            'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480',      // 20MB
-            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',     // 10MB
-            'file' => 'nullable|file|mimes:pdf,doc,docx,zip|max:10240', // 10MB
-           ]);
-
-           $paths = [
-            'image' => $request->hasFile('image') ? $request->file('image')->store('journal/images', 'public') : $entry->image,
-            'video' => $request->hasFile('video') ? $request->file('video')->store('journal/videos', 'public') : $entry->video,
-            'audio' => $request->hasFile('audio') ? $request->file('audio')->store('journal/audio', 'public') : $entry->audio,
-            'file' => $request->hasFile('file') ? $request->file('file')->store('journal/documents', 'public') : $entry->file,
-        ];
-
-        $entry->update([
-            'title' => $validated['title'] ?? 'Daily Entry - ' . now()->format('M d, Y'),
-            'content' => $validated['content'],
-            'entry_date' => $validated['entry_date'],
-            'image' => $paths['image'],
-            'video' => $paths['video'],
-            'audio' => $paths['audio'],
-            'file' => $paths['file'],
-        ]);
-
-        return back()->with('success', 'Lore successfully sealed in the ledger.');
-    }
-
-    public function destroy(JournalEntry $entry)
+    public function update(Request $request, JournalEntry $entry)
     {
         if ($entry->user_id !== auth()->id()) {
             abort(403);
         }
 
-        // Optional: Delete physical files from storage
-        // \Storage::disk('public')->delete([$entry->image, $entry->video, $entry->audio, $entry->file]);
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'content' => 'required|string|min:3',
+            'entry_date' => 'required|date',
+        ]);
 
-        $entry->delete();
- 
+        $this->journalService->saveEntry(auth()->user(), $request->all(), $entry);
+        return back()->with('success', 'Lore successfully sealed in the ledger.');
+    }
+
+    public function destroy(JournalEntry $entry)
+    {
+        if ($entry->user_id !== auth()->id()) abort(403);
+        $this->journalService->deleteEntry($entry);
         return redirect()->route('journal.index')->with('success', 'The record has been banished to the Sunken Vault.');
     }
 }

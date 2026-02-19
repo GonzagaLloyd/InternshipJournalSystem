@@ -5,44 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\JournalEntry;
 use App\Models\Task;
 use App\Models\Report;
+use App\Services\VaultService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
 class VaultController extends Controller
 {
+    protected $vaultService;
+
+    public function __construct(VaultService $vaultService)
+    {
+        $this->vaultService = $vaultService;
+    }
+
     /**
      * Display the Vault (soft-deleted items).
      */
     public function index()
     {
-        $trashedEntries = JournalEntry::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->latest('deleted_at')
-            ->get();
-
-        $trashedTasks = Task::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->latest('deleted_at')
-            ->get();
-
-        $trashedReports = Report::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->latest('deleted_at')
-            ->get()
-            ->map(function ($report) {
-                return [
-                    'id' => $report->id,
-                    '_id' => $report->_id,
-                    'period' => $report->period,
-                    'deleted_at' => $report->deleted_at->format('M d, Y H:i'),
-                ];
-            });
-
-        return Inertia::render('Vault/Index', [
-            'entries' => $trashedEntries,
-            'tasks' => $trashedTasks,
-            'reports' => $trashedReports
-        ]);
+        return Inertia::render('Vault/Index', $this->vaultService->getTrashedItems(auth()->user()));
     }
 
     /**
@@ -50,12 +31,7 @@ class VaultController extends Controller
      */
     public function restoreEntry($id)
     {
-        $entry = JournalEntry::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        $entry->restore();
-
+        $this->vaultService->restoreItem(JournalEntry::class, $id, auth()->user());
         return back()->with('success', 'The record has been restored from the ashes.');
     }
 
@@ -64,18 +40,7 @@ class VaultController extends Controller
      */
     public function forceDeleteEntry($id)
     {
-        $entry = JournalEntry::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        // Delete physical files if they exist
-        $files = array_filter([$entry->image, $entry->video, $entry->audio, $entry->file]);
-        if (!empty($files)) {
-            \Storage::disk('public')->delete($files);
-        }
-
-        $entry->forceDelete();
-
+        $this->vaultService->permanentlyDeleteItem(JournalEntry::class, $id, auth()->user());
         return back()->with('success', 'The record has been permanently erased from history.');
     }
 
@@ -84,12 +49,7 @@ class VaultController extends Controller
      */
     public function restoreTask($id)
     {
-        $task = Task::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        $task->restore();
-
+        $this->vaultService->restoreItem(Task::class, $id, auth()->user());
         return back()->with('success', 'The decree has been restored to the ledger.');
     }
 
@@ -98,12 +58,7 @@ class VaultController extends Controller
      */
     public function forceDeleteTask($id)
     {
-        $task = Task::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        $task->forceDelete();
-
+        $this->vaultService->permanentlyDeleteItem(Task::class, $id, auth()->user());
         return back()->with('success', 'The mandate has been permanently struck from records.');
     }
 
@@ -112,12 +67,7 @@ class VaultController extends Controller
      */
     public function restoreReport($id)
     {
-        $report = Report::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        $report->restore();
-
+        $this->vaultService->restoreItem(Report::class, $id, auth()->user());
         return back()->with('success', 'The report has been restored from the vault.');
     }
 
@@ -126,12 +76,7 @@ class VaultController extends Controller
      */
     public function forceDeleteReport($id)
     {
-        $report = Report::onlyTrashed()
-            ->where('user_id', auth()->id())
-            ->findOrFail($id);
-
-        $report->forceDelete();
-
+        $this->vaultService->permanentlyDeleteItem(Report::class, $id, auth()->user());
         return back()->with('success', 'The report has been permanently erased from the vault.');
     }
 }
