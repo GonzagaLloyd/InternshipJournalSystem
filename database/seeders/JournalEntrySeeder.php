@@ -66,3 +66,8 @@ class JournalEntrySeeder extends Seeder
         }
     }
 }
+
+
+// During my first six days as an intern, I successfully completed the foundational phase of the Journal Management System (JMS) while integrating with the company’s official tech stack of Laravel, Inertia.js, Vue.js, and MongoDB. The initial period involved professional onboarding and environment configuration, followed by technical deep dives into mastering framework synergy and data transformation using Laravel Resource classes. I then transitioned into the architecture and development of the JMS, where I designed NoSQL database schemas and implemented robust backend logic, including server-side validation through Laravel Form Requests and asynchronous form handling via Inertia hooks.
+
+// To enhance user interaction, I developed a custom component architecture featuring reusable Vue.js elements, such as the "JournalCard" and "TaskWidget," which incorporated advanced CSS animations and a premium "Ancient Parchment" aesthetic. The phase concluded with the engineering of a specialized reporting engine for automated weekly progress tracking, alongside comprehensive integration testing and session persistence troubleshooting to ensure a stable and professional user experience.
