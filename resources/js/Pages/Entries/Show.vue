@@ -2,7 +2,7 @@
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import EntryMedia from '@/Components/Journal/EntryMedia.vue';
-import TomeLoader from '@/Components/UI/TomeLoader.vue';
+
 import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Toast from '@/Components/UI/Toast.vue';
@@ -17,18 +17,11 @@ const props = defineProps({
     }
 });
 
-const isReturning = ref(false);
 const isEditing = ref(false);
 const showDeleteModal = ref(false);
 
 const handleReturn = () => {
-    console.log("Navigating back to ledger...");
-    isReturning.value = true;
-    
-    // Explicit 1.5s delay to ensure the premium animation is witnessed
-    setTimeout(() => {
-        router.visit(route('journal.index'));
-    }, 1500);
+    router.visit(route('journal.index'));
 };
 
 const formatDate = (dateString) => {
@@ -83,7 +76,6 @@ const deleteEntry = async () => {
         await new Promise(resolve => setTimeout(resolve, 300));
 
         showDeleteModal.value = false;
-        isReturning.value = true; // Show the 'Preserving to Ledger' loader for instant feedback
         
         router.delete(route('journal.destroy', props.entry.id), {
             onFinish: () => {
@@ -186,8 +178,7 @@ const vAutoResize = {
             </div>
         </div>
 
-        <!-- Global Tome Loader -->
-        <TomeLoader :show="isReturning" message="Preserving to Ledger..." />
+
 
         <!-- Main Entry Container -->
         <article class="w-full max-w-4xl relative z-30 bg-[#2D2D2D]/40 backdrop-blur-[2px] border border-white/5 p-6 sm:p-10 md:p-16 rounded-sm shadow-2xl animate-fade-in-up group">

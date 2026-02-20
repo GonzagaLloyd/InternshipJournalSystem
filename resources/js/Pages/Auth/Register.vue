@@ -53,7 +53,7 @@ const submit = () => {
                             v-model="form.email"
                             required
                             autocomplete="username"
-                            placeholder="your@echo.com"
+                            placeholder="your@gmail.com"
                         />
                     </div>
                     <InputError :message="form.errors.email" />

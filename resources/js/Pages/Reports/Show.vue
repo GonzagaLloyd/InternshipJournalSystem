@@ -3,7 +3,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ReportPreview from '@/Components/Reports/ReportPreview.vue';
-import TomeLoader from '@/Components/UI/TomeLoader.vue';
+
 import SkeletonLoader from '@/Components/UI/SkeletonLoader.vue';
 import ConfirmationModal from '@/Components/UI/ConfirmationModal.vue';
 import Toast from '@/Components/UI/Toast.vue';
@@ -17,7 +17,6 @@ const props = defineProps({
 });
 
 const previewRef = ref(null);
-const isReturning = ref(false);
 const showDeleteModal = ref(false);
 const isScrolled = ref(false);
 
@@ -27,10 +26,7 @@ const isSaving = computed(() => previewRef.value?.isSaving || false);
 const isExporting = computed(() => previewRef.value?.isExporting || false);
 
 const handleReturn = () => {
-    isReturning.value = true;
-    setTimeout(() => {
-        router.visit(route('reports.index'));
-    }, 1500);
+    router.visit(route('reports.index'));
 };
 
 const handleEdit = () => previewRef.value?.toggleEdit();
@@ -86,7 +82,7 @@ onUnmounted(() => {
             <div class="absolute inset-0 opacity-[0.1] bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
         </div>
 
-        <TomeLoader :show="isReturning" message="Returning to Library..." />
+
 
         <!-- Header Navigation & Actions (High Performance Fixed Header) -->
         <div class="sticky top-0 w-full z-40 flex justify-center h-24 pointer-events-none">
