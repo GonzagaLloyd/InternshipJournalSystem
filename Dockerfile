@@ -1,4 +1,4 @@
-FROM php:8.1-apache-bullseye
+FROM php:8.2-apache
 
 # 1. Install system dependencies and CA certificates
 RUN apt-get update && apt-get install -y \
@@ -42,7 +42,7 @@ COPY . /var/www/html
 # 9. Install Composer dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader
 
 # 11. Ensure storage directories exist
 RUN mkdir -p storage/framework/sessions \
