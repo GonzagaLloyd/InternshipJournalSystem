@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.1-apache-bullseye
 
 # 1. Install system dependencies and CA certificates
 RUN apt-get update && apt-get install -y \
@@ -21,31 +21,28 @@ RUN pecl install mongodb-1.21.1 \
 # 3. Install other PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# 4. Fix OpenSSL 3.0 TLS compatibility with MongoDB Atlas
-RUN sed -i 's/@SECLEVEL=2/@SECLEVEL=1/g' /etc/ssl/openssl.cnf 2>/dev/null || true
-
-# 5. Install Node.js (LTS version) for frontend build
+# 4. Install Node.js (LTS version) for frontend build
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# 6. Enable Apache mod_rewrite
+# 5. Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# 7. Configure Apache DocumentRoot to point to /public
+# 6. Configure Apache DocumentRoot to point to /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# 8. Set working directory
+# 7. Set working directory
 WORKDIR /var/www/html
 
-# 9. Copy application code
+# 8. Copy application code
 COPY . /var/www/html
 
-# 10. Install Composer dependencies
+# 9. Install Composer dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # 11. Ensure storage directories exist
 RUN mkdir -p storage/framework/sessions \
