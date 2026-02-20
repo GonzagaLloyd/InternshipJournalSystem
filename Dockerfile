@@ -49,16 +49,13 @@ RUN npm run build
 # 10. Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 11. Handle Render's dynamic PORT
-# Render provides a $PORT environment variable. Apache must listen on it.
-# We create a script to update ports.conf at runtime.
-RUN echo '#!/bin/bash\n\
-sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-exec apache2-foreground' > /usr/local/bin/start-container.sh
-RUN chmod +x /usr/local/bin/start-container.sh
+# 11. Configure PHP for Low Memory (512MB Limit)
+RUN echo "memory_limit = 128M" > /usr/local/etc/php/conf.d/memory-limit.ini
+RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "opcache.memory_consumption=32" >> /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "opcache.interned_strings_buffer=4" >> /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "opcache.max_accelerated_files=2000" >> /usr/local/etc/php/conf.d/opcache.ini
 
-# 12. Define Entrypoint
-CMD ["/usr/local/bin/start-container.sh"]
+# 12. Handle Render's dynamic PORT & Start Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && php artisan config:cache && php artisan route:cache && php artisan view:cache && exec apache2-foreground
