@@ -123,6 +123,11 @@ return [
             'password' => env('DB_PASSWORD', ''),
             'options' => [
                 'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+                'tls' => true,
+                'tlsAllowInvalidCertificates' => true,
+            ],
+            'driver_options' => [
+                'serverApi' => ['version' => '1'],
             ],
         ],
 
