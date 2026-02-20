@@ -76,4 +76,4 @@ RUN echo "StartServers 1" > /etc/apache2/conf-available/mpm-tuning.conf \
 
 # 14. Handle Render's dynamic PORT & Start Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && php artisan config:cache && php artisan route:cache && exec apache2-foreground
+CMD sed -i "s/Listen 80/Listen 0.0.0.0:$PORT/" /etc/apache2/ports.conf && sed -i "s/*:80/*:$PORT/" /etc/apache2/sites-available/000-default.conf && php artisan config:cache && php artisan route:cache && exec apache2-foreground
