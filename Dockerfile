@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # 1. Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -37,7 +37,7 @@ COPY . /var/www/html
 
 # 8. Install Composer dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # 9. Build Frontend Assets
 RUN npm install
