@@ -91,6 +91,8 @@ RUN echo '#!/bin/bash' > /usr/local/bin/start.sh && \
     echo 'sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf' >> /usr/local/bin/start.sh && \
     echo 'php artisan config:cache' >> /usr/local/bin/start.sh && \
     echo 'php artisan route:cache' >> /usr/local/bin/start.sh && \
+    echo 'php artisan migrate --force 2>&1 || true' >> /usr/local/bin/start.sh && \
+    echo 'php artisan db:seed --force 2>&1 || true' >> /usr/local/bin/start.sh && \
     echo 'exec apache2-foreground' >> /usr/local/bin/start.sh && \
     chmod +x /usr/local/bin/start.sh
 
