@@ -123,11 +123,9 @@ return [
             'password' => env('DB_PASSWORD', ''),
             'options' => [
                 'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
-                'tls' => true,
-                'tlsAllowInvalidCertificates' => true,
-            ],
-            'driver_options' => [
-                'serverApi' => ['version' => '1'],
+                'connectTimeoutMS' => 5000,
+                'serverSelectionTimeoutMS' => 5000,
+                'socketTimeoutMS' => 10000,
             ],
         ],
 
