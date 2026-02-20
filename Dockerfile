@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
+    git \
     libssl-dev \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
@@ -37,7 +38,9 @@ COPY . /var/www/html
 
 # 8. Install Composer dependencies
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+ENV COMPOSER_MEMORY_LIMIT=-1
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
+
 
 # 9. Build Frontend Assets
 RUN npm install
