@@ -58,4 +58,4 @@ RUN echo "opcache.max_accelerated_files=2000" >> /usr/local/etc/php/conf.d/opcac
 
 # 12. Handle Render's dynamic PORT & Start Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && php artisan config:cache && php artisan route:cache && php artisan view:cache && exec apache2-foreground
+CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && php artisan config:clear && php artisan optimize && exec apache2-foreground
