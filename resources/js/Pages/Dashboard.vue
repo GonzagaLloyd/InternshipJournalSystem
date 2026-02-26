@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref, defineAsyncComponent } from 'vue';
+import { ref, defineAsyncComponent, computed } from 'vue';
 import { useTabSync } from '@/Composables/useTabSync';
 
 // Async components for performance optimization
@@ -9,13 +9,8 @@ const JournalEditor = defineAsyncComponent(() => import('@/Components/Journal/Jo
 const TaskWidget = defineAsyncComponent(() => import('@/Components/Tasks/TaskWidget.vue'));
 const ActivityHeatmap = defineAsyncComponent(() => import('@/Components/UI/ActivityHeatmap.vue'));
 
-useTabSync([]); // Reload all props
-
-const formattedDate = new Intl.DateTimeFormat('en-US', {
-    weekday: 'long',
-    month: 'short',
-    day: '2-digit'
-}).format(new Date());
+// Setup tab sync for specific dashboard data (Dynamic Sync enabled)
+useTabSync(['tasks', 'entryCount', 'activity'], true); 
 
 const props = defineProps({
     entryCount: Number,
@@ -33,6 +28,18 @@ const form = useForm({
     file: null,
 })
 
+const formattedDate = computed(() => {
+    if (!form.entry_date) return '';
+    // Use UTC for the date to avoid timezone shifts when picking a date
+    const [year, month, day] = form.entry_date.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return new Intl.DateTimeFormat('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: '2-digit'
+    }).format(date);
+});
+
 const submitEntry = () => {
     form.post(route('journal.store'), {
         onSuccess: () => form.reset(),
@@ -49,13 +56,13 @@ const submitEntry = () => {
     >
         <!-- Responsive Layout Logic: Locked on Desktop, Scrollable on Mobile -->
         <div class="xl:h-[calc(100vh-5rem)] xl:overflow-hidden flex flex-col relative font-serif text-cream">
-            <main class="flex-1 flex flex-col relative z-20 px-4 md:px-8 xl:px-12 py-6 xl:py-8 xl:min-h-0">
+            <main class="flex-1 flex flex-col relative z-20 px-2 sm:px-4 md:px-8 xl:px-12 py-3 sm:py-6 xl:py-8 xl:min-h-0">
                 <div class="max-w-[1700px] mx-auto w-full flex-1 flex flex-col xl:min-h-0">
                     
                     <!-- Dynamic Layout: Vertical stack on mobile, horizontal locked on desktop -->
-                    <div class="flex-1 flex flex-col xl:flex-row gap-8 xl:gap-20 relative xl:min-h-0">
+                    <div class="flex-1 flex flex-col xl:flex-row gap-6 sm:gap-8 xl:gap-20 relative xl:min-h-0">
                         <!-- Focused Writing Area (Editor) - Top on Mobile, Right on Desktop -->
-                        <div class="flex-1 flex flex-col order-1 xl:order-2 xl:pl-16 min-w-0 xl:min-h-0 min-h-[600px] xl:min-h-0">
+                        <div class="flex-1 flex flex-col order-1 xl:order-2 xl:pl-16 min-w-0 xl:min-h-0 min-h-[400px] sm:min-h-[500px] xl:min-h-0">
                             <JournalEditor 
                                 :form="form" 
                                 :formattedDate="formattedDate"

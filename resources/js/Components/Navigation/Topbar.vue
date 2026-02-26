@@ -9,8 +9,8 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
 </script>
 
 <template>
-    <header class="sticky top-0 h-20 flex items-center justify-between px-6 lg:px-12 z-30 shrink-0 bg-void/90 backdrop-blur-xl border-b border-coal/20 shadow-2xl">
-        <div class="flex items-center gap-8">
+    <header class="sticky top-0 h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6 lg:px-12 z-30 shrink-0 bg-void/90 backdrop-blur-xl border-b border-coal/20 shadow-2xl">
+        <div class="flex items-center gap-3 sm:gap-8 min-w-0 pr-2">
             <div class="flex items-center">
                 <!-- Mobile Menu Button -->
                 <button 
@@ -41,13 +41,13 @@ defineEmits(['toggle-sidebar', 'open-mobile-menu']);
             </div>
 
             <!-- Dynamic Page Title (WIP Aesthetic) -->
-            <div v-if="title" class="flex flex-col">
-                <h2 class="text-lg md:text-2xl font-cinzel font-bold text-[#E3D5C1] tracking-[0.05em] uppercase leading-none">
+            <div v-if="title" class="flex flex-col min-w-0 truncate">
+                <h2 class="text-[15px] sm:text-lg md:text-2xl font-cinzel font-bold text-[#E3D5C1] tracking-[0.05em] uppercase leading-tight md:leading-none truncate">
                     <span v-html="title"></span>
                 </h2>
-                <div class="flex items-center gap-3 mt-1.5">
-                    <div class="h-[1px] w-4 bg-brass/40"></div>
-                    <p v-if="subtitle" class="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-brass font-black">
+                <div class="flex items-center gap-2 sm:gap-3 mt-0.5 sm:mt-1.5">
+                    <div class="hidden sm:block h-[1px] w-3 sm:w-4 bg-brass/40 shrink-0"></div>
+                    <p v-if="subtitle" class="text-[8px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.4em] text-brass font-black truncate">
                         {{ subtitle }}
                     </p>
                 </div>

@@ -72,16 +72,21 @@ class TaskController extends Controller
         return back()->with('success', 'The decree has been banished to the Sunken Vault.');
     }
 
-    /**
-     * Toggle the completed status of the task.
-     */
     public function toggle(Task $task)
     {
         if ($task->user_id !== auth()->id()) abort(403);
 
         $this->taskService->toggleTask($task);
 
-        $status = $task->completed ? 'completed' : 'reopened';
-        return back()->with('success', "Mandate has been marked as {$status}.");
+        return back()->with('success', "Mandate has been transitioned successfully.");
+    }
+
+    public function pause(Task $task)
+    {
+        if ($task->user_id !== auth()->id()) abort(403);
+
+        $this->taskService->pauseTask($task);
+
+        return back()->with('success', "Ritual has been paused. Progress is preserved.");
     }
 }

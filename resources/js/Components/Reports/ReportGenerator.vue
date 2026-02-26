@@ -110,7 +110,7 @@ const generateReport = () => {
 
 <template>
     <div class="relative group/generator flex flex-col h-full min-h-0">
-        <div class="relative p-10 flex flex-col h-full min-h-0 space-y-8">
+        <div class="relative p-6 md:p-10 flex flex-col h-full min-h-0 space-y-6 md:space-y-8">
             <!-- Compact Header -->
             <div class="space-y-1 shrink-0">
                 <div class="flex items-center gap-2">
@@ -123,7 +123,7 @@ const generateReport = () => {
 
             <!-- Selection Control -->
             <div class="flex-1 flex flex-col min-h-0 space-y-4">
-                <div class="flex justify-between items-center px-1 shrink-0">
+                <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-start sm:items-center gap-3 sm:gap-0 px-1 shrink-0">
                     <label class="text-[10px] uppercase tracking-[0.2em] text-[#A68B6A]/50 font-black font-sans">Archived Fragments</label>
                     <button 
                         @click="toggleAll"
@@ -172,15 +172,15 @@ const generateReport = () => {
                                      :class="selectedIds.includes(entry.id) ? 'bg-[#A68B6A]' : 'bg-transparent'"></div>
 
                                 <div class="relative z-10 space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-[#A68B6A]/30 group-hover/entry:bg-[#A68B6A] transition-colors"></div>
-                                            <span class="text-[10px] uppercase tracking-[0.3em] font-bold text-[#A68B6A]/60 group-hover/entry:text-[#A68B6A] transition-colors">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <div class="flex items-start gap-3 flex-1 min-w-0 pt-0.5">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-[#A68B6A]/30 group-hover/entry:bg-[#A68B6A] transition-colors shrink-0 mt-1.5"></div>
+                                            <span class="text-[9.5px] md:text-[10px] uppercase tracking-[0.15em] lg:tracking-[0.3em] font-bold text-[#A68B6A]/60 group-hover/entry:text-[#A68B6A] transition-colors leading-[1.6] break-words">
                                                 {{ entry.title }}
                                             </span>
                                         </div>
                                         <div 
-                                            class="w-4 h-4 rounded-full border border-[#A68B6A]/30 flex items-center justify-center transition-all duration-500"
+                                            class="w-4 h-4 rounded-full border border-[#A68B6A]/30 flex items-center justify-center transition-all duration-500 shrink-0 mt-0.5"
                                             :class="{'bg-[#A68B6A] border-[#A68B6A] shadow-[0_0_15px_rgba(166,139,106,0.5)]': selectedIds.includes(entry.id)}"
                                         >
                                             <svg v-if="selectedIds.includes(entry.id)" class="w-2.5 h-2.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -84,6 +84,13 @@ const handleKeydown = (e) => {
     }
 };
 
+const dateInput = ref(null);
+const triggerDatePicker = () => {
+    if (dateInput.value) {
+        dateInput.value.showPicker();
+    }
+};
+
 onMounted(() => {
     window.addEventListener('keydown', handleKeydown);
     updateWordCount();
@@ -109,10 +116,27 @@ onBeforeUnmount(() => {
         <div class="absolute inset-0 border border-white/[0.05] rounded-[2rem] pointer-events-none z-30"></div>
         
         <!-- Header -->
-        <div class="px-4 md:px-10 lg:px-12 py-5 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6 relative z-20 border-b border-white/[0.04] shrink-0">
-            <div class="flex-shrink-0 min-w-0 max-w-full">
-                <p class="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-brass/60 font-bold mb-0.5 md:mb-1">Codex Entry</p>
-                <h2 class="text-lg md:text-2xl font-bold text-cream font-cinzel italic truncate max-w-[200px] sm:max-w-[300px] md:max-w-none">{{ formattedDate }}</h2>
+        <div class="px-4 md:px-10 lg:px-12 py-4 md:py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 relative z-20 border-b border-white/[0.04] shrink-0">
+            <div 
+                class="flex-shrink-0 min-w-0 max-w-full w-full md:w-auto group/date-picker relative cursor-pointer"
+                @click="triggerDatePicker"
+                title="Change Chronicle Date"
+            >
+                <div class="flex items-center gap-2 mb-0.5 md:mb-1">
+                    <p class="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-brass/60 font-bold">Codex Entry</p>
+                    <svg class="w-2.5 h-2.5 text-brass/40 group-hover/date-picker:text-brass transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+                <h2 class="text-[17px] sm:text-lg md:text-2xl font-bold text-cream font-cinzel italic truncate w-full group-hover/date-picker:text-brass transition-colors">{{ formattedDate }}</h2>
+                
+                <input 
+                    ref="dateInput"
+                    type="date"
+                    v-model="form.entry_date"
+                    class="absolute inset-0 w-0 h-0 opacity-0 overflow-hidden pointer-events-none"
+                    @click.stop
+                />
             </div>
             
             <div class="flex flex-row flex-wrap items-center gap-3 md:gap-4 w-full md:w-auto">
@@ -151,7 +175,7 @@ onBeforeUnmount(() => {
 
         <!-- Centered Writing Area -->
         <div class="flex-1 overflow-y-auto relative z-10 scrollbar-hide">
-            <div class="max-w-3xl mx-auto w-full px-6 md:px-12 pt-10 pb-20 relative">
+            <div class="max-w-3xl mx-auto w-full pl-5 pr-14 sm:px-12 pt-6 sm:pt-10 pb-20 relative">
                 <!-- Title -->
                 <div class="mb-10 group/title">
                     <input 
@@ -170,7 +194,7 @@ onBeforeUnmount(() => {
                     @focus="isFocused = true"
                     @blur="isFocused = false"
                     placeholder="Inscribe the day's lore..."
-                    class="w-full bg-transparent border-none focus:ring-0 p-0 text-base md:text-lg leading-[2.2] text-cream/70 placeholder:text-cream/10 resize-none font-serif min-h-[500px]"
+                    class="w-full bg-transparent border-none focus:ring-0 p-0 text-[15px] sm:text-base md:text-lg leading-[2.2] text-cream/70 placeholder:text-cream/10 resize-none font-serif min-h-[250px] sm:min-h-[350px] md:min-h-[500px]"
                     :class="{'text-cream': isFocused}"
                 ></textarea>
                 

@@ -48,19 +48,19 @@ export function useToast() {
     const processInertiaFlash = (flash) => {
         if (!flash || (Object.keys(flash).length === 0)) return;
 
-        // Use a stringified version as the key
+        // Use a stringified version as the key to track this specific flash state
         const flashKey = JSON.stringify(flash);
-
-        // If we've already shown this exact flash object in this "session", skip it
-        // Note: Inertia clears flash on next request, so a new identical flash
-        // will likely happen in a new context or with a different timestamp if we cared,
-        // but for now simple seen check is best to stop navigation-mount double-triggers.
         if (seenFlashes.has(flashKey)) return;
-
         seenFlashes.add(flashKey);
 
-        if (flash.success) addToast(flash.success, 'success');
-        if (flash.error) addToast(flash.error, 'error');
+        // Deduplicate: check if we already have this exact message in the active toasts
+        // This handles cases where multiple components might call this simultaneously
+        if (flash.success && !toasts.value.some(t => t.message === flash.success)) {
+            addToast(flash.success, 'success');
+        }
+        if (flash.error && !toasts.value.some(t => t.message === flash.error)) {
+            addToast(flash.error, 'error');
+        }
     };
 
     return {

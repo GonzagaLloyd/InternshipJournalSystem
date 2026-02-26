@@ -83,18 +83,22 @@ const submitTask = () => {
                                     <label class="text-[10px] uppercase tracking-[0.3em] text-[#8C6A4A] font-bold px-1 font-serif">Urgency</label>
                                     <div class="flex p-1 bg-black/40 border border-white/5 rounded-2xl gap-1">
                                         <button 
-                                            v-for="p in ['low', 'medium', 'high']" 
-                                            :key="p"
+                                            v-for="p in [
+                                                { id: 'low', color: 'bg-[#8C6A4A]/20 text-[#8C6A4A]', active: 'bg-[#8C6A4A] text-void shadow-[0_0_20px_rgba(140,106,74,0.4)]' },
+                                                { id: 'medium', color: 'bg-[#B07D4E]/10 text-[#B07D4E]/80', active: 'bg-[#B07D4E] text-void shadow-[0_0_20px_rgba(176,125,78,0.4)]' },
+                                                { id: 'high', color: 'bg-[#AF4B4B]/10 text-[#AF4B4B]/80', active: 'bg-[#AF4B4B] text-void shadow-[0_0_20px_rgba(175,75,75,0.4)]' }
+                                            ]" 
+                                            :key="p.id"
                                             type="button"
-                                            @click="form.priority = p"
+                                            @click="form.priority = p.id"
                                             :class="[
-                                                form.priority === p 
-                                                    ? 'bg-[#8C6A4A] text-[#1B1B1B] shadow-[0_0_20px_rgba(140,106,74,0.3)]' 
-                                                    : 'text-[#8C6A4A]/60 hover:bg-white/5',
+                                                form.priority === p.id 
+                                                    ? p.active 
+                                                    : p.color + ' hover:brightness-125 hover:bg-white/5',
                                                 'flex-1 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-black transition-all active:scale-95 capitalize font-serif'
                                             ]"
                                         >
-                                            {{ p }}
+                                            {{ p.id }}
                                         </button>
                                     </div>
                                 </div>
@@ -116,18 +120,18 @@ const submitTask = () => {
                             <div class="pt-8 flex flex-col sm:flex-row gap-5">
                                 <button 
                                     type="submit"
-                                    class="flex-[2] relative overflow-hidden group/btn bg-[#8C6A4A] py-5 rounded-2xl transition-all active:scale-[0.98]"
+                                    class="flex-[2] relative overflow-hidden group/btn bg-brass py-5 rounded-2xl transition-all active:scale-[0.98] shadow-[0_20px_40px_-10px_rgba(166,139,106,0.2)]"
                                     :disabled="form.processing"
                                 >
                                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
-                                    <span class="relative z-10 text-[#1B1B1B] font-black text-[11px] uppercase tracking-[0.4em] font-serif">
+                                    <span class="relative z-10 text-void font-black text-[11px] uppercase tracking-[0.4em] font-serif">
                                         {{ form.processing ? 'Sealing...' : 'Confirm Decree' }}
                                     </span>
                                 </button>
                                 <button 
                                     type="button" 
                                     @click="$emit('close')"
-                                    class="flex-1 border border-white/10 text-[#8C6A4A]/60 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] hover:bg-white/5 hover:text-[#C9B79C] transition-all font-serif"
+                                    class="flex-1 border border-white/10 text-umber/60 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] hover:bg-white/5 hover:text-parchment transition-all font-serif"
                                 >
                                     Discard
                                 </button>

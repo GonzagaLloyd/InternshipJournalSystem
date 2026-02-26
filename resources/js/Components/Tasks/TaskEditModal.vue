@@ -9,6 +9,14 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
+const handleClose = () => {
+    if (form.processing) {
+        form.cancel();
+    }
+    form.reset();
+    emit('close');
+};
+
 // The user will implement the actual Inertia form logic here
 const form = useForm({
     name: '',
@@ -16,12 +24,15 @@ const form = useForm({
     due_date: '',
 });
 
-// Logic Guide: Use a watcher or onMounted to populate the form when the task prop changes
+// Populate the form using defaults so .isDirty works correctly
 watch(() => props.task, (newTask) => {
     if (newTask) {
-        form.name = newTask.name;
-        form.priority = newTask.priority;
-        form.due_date = newTask.due_date ? newTask.due_date.substring(0, 10) : '';
+        form.defaults({
+            name: newTask.name,
+            priority: newTask.priority,
+            due_date: newTask.due_date ? newTask.due_date.substring(0, 10) : ''
+        });
+        form.reset();
     }
 }, { immediate: true });
 
@@ -43,7 +54,7 @@ const updateTask = () => {
         >
             <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
                 <!-- Overlay -->
-                <div class="absolute inset-0 bg-[#0a0908]/95 backdrop-blur-md" @click="$emit('close')"></div>
+                <div class="absolute inset-0 bg-[#0a0908]/95 backdrop-blur-md" @click="handleClose"></div>
                 
                 <!-- Content -->
                 <div class="relative w-full max-w-xl bg-[#2D2D2D] border border-white/5 rounded-[2.5rem] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] overflow-hidden group">
@@ -57,7 +68,7 @@ const updateTask = () => {
                         <!-- Header Section -->
                         <div class="text-center mb-10 md:mb-12 relative">
                             <h2 class="text-3xl md:text-5xl font-cinzel font-bold text-[#C9B79C] mb-4 tracking-wider uppercase">
-                                Re-Codify
+                                Amend Mandate
                             </h2>
                             <div class="flex items-center justify-center gap-4">
                                 <div class="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#8C6A4A]/40"></div>
@@ -89,18 +100,22 @@ const updateTask = () => {
                                     <label class="text-[10px] uppercase tracking-[0.3em] text-[#8C6A4A] font-bold px-1 font-serif">Urgency</label>
                                     <div class="flex p-1 bg-black/40 border border-white/5 rounded-2xl gap-1">
                                         <button 
-                                            v-for="p in ['low', 'medium', 'high']" 
-                                            :key="p"
+                                            v-for="p in [
+                                                { id: 'low', color: 'bg-[#8C6A4A]/20 text-[#8C6A4A]', active: 'bg-[#8C6A4A] text-void shadow-[0_0_20px_rgba(140,106,74,0.4)]' },
+                                                { id: 'medium', color: 'bg-[#B07D4E]/10 text-[#B07D4E]/80', active: 'bg-[#B07D4E] text-void shadow-[0_0_20px_rgba(176,125,78,0.4)]' },
+                                                { id: 'high', color: 'bg-[#AF4B4B]/10 text-[#AF4B4B]/80', active: 'bg-[#AF4B4B] text-void shadow-[0_0_20px_rgba(175,75,75,0.4)]' }
+                                            ]" 
+                                            :key="p.id"
                                             type="button"
-                                            @click="form.priority = p"
+                                            @click="form.priority = p.id"
                                             :class="[
-                                                form.priority === p 
-                                                    ? 'bg-[#8C6A4A] text-[#1B1B1B] shadow-[0_0_20px_rgba(140,106,74,0.3)]' 
-                                                    : 'text-[#8C6A4A]/60 hover:bg-white/5',
+                                                form.priority === p.id 
+                                                    ? p.active 
+                                                    : p.color + ' hover:brightness-125 hover:bg-white/5',
                                                 'flex-1 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-black transition-all active:scale-95 capitalize font-serif'
                                             ]"
                                         >
-                                            {{ p }}
+                                            {{ p.id }}
                                         </button>
                                     </div>
                                 </div>
@@ -122,16 +137,25 @@ const updateTask = () => {
                             <div class="pt-8 flex flex-col sm:flex-row gap-5">
                                 <button 
                                     type="submit"
-                                    class="flex-[2] relative overflow-hidden group/btn bg-[#8C6A4A] py-5 rounded-2xl transition-all active:scale-[0.98]"
+                                    :disabled="!form.isDirty || form.processing"
+                                    :class="[
+                                        'flex-[2] relative overflow-hidden group/btn py-5 rounded-2xl transition-all',
+                                        (form.isDirty && !form.processing) ? 'bg-[#8C6A4A] active:scale-[0.98]' : 'bg-white/5 cursor-not-allowed'
+                                    ]"
                                 >
-                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
-                                    <span class="relative z-10 text-[#1B1B1B] font-black text-[11px] uppercase tracking-[0.4em] font-serif">
-                                        Update Decree
+                                    <div v-if="form.isDirty && !form.processing" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
+                                    <span 
+                                        :class="[
+                                            'relative z-10 font-black text-[11px] uppercase tracking-[0.4em] font-serif transition-colors',
+                                            (form.isDirty && !form.processing) ? 'text-[#1B1B1B]' : 'text-[#8C6A4A]/40'
+                                        ]"
+                                    >
+                                        {{ form.processing ? 'Sealing...' : 'Update Decree' }}
                                     </span>
                                 </button>
                                 <button 
                                     type="button" 
-                                    @click="$emit('close')"
+                                    @click="handleClose"
                                     class="flex-1 border border-white/10 text-[#8C6A4A]/60 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] hover:bg-white/5 hover:text-[#C9B79C] transition-all font-serif"
                                 >
                                     Discard

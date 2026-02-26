@@ -62,21 +62,21 @@ const managementItems = [
 
         <!-- Navigation -->
         <div class="flex-1 overflow-y-auto py-4 scrollbar-hide">
-            <div class="px-4 space-y-2">
+            <div class="px-5 space-y-2">
                 <Link 
                     v-for="item in menuItems"
                     :key="item.name"
                     :href="item.routeName === '#' ? '#' : route(item.routeName)"
                     :class="[
-                        route().current(item.routeName) ? 'bg-coal text-cream shadow-2xl border-l-[3px] border-l-brass' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream',
-                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-r-3xl',
-                        'flex items-center transition-all duration-500 group relative overflow-hidden'
+                        route().current(item.routeName) ? 'bg-coal text-cream shadow-lg rounded-xl border border-brass/20' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream rounded-xl',
+                        isCollapsed ? 'h-12 w-12 mx-auto justify-center p-0' : 'px-4 py-3.5',
+                        'flex items-center transition-all duration-300 group relative overflow-hidden'
                     ]"
                 >
                     <!-- Active Ambient Glow -->
                     <div v-if="route().current(item.routeName)" class="absolute inset-0 bg-brass/5 blur-xl pointer-events-none"></div>
                     
-                    <div :class="[isCollapsed ? '' : 'mr-5']" class="relative z-10">
+                    <div :class="[isCollapsed ? '' : 'mr-4']" class="relative z-10">
                         <svg xmlns="http://www.w3.org/2000/svg" :class="route().current(item.routeName) ? 'scale-110 shadow-[0_0_10px_var(--color-accent-brass)]' : ''" class="h-6 w-6 transition-transform duration-500 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon" />
                         </svg>
@@ -90,21 +90,21 @@ const managementItems = [
 
             <div class="my-6 border-t border-white/[0.05] mx-8" v-show="!isCollapsed"></div>
 
-            <div class="px-4 space-y-2">
+            <div class="px-5 space-y-2">
                 <Link 
                     v-for="sub in managementItems"
                     :key="sub.name"
                     :href="sub.routeName === '#' ? '#' : route(sub.routeName)"
                     :class="[
-                        route().current(sub.routeName) ? 'bg-coal text-cream shadow-2xl border-l-[3px] border-l-brass' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream',
-                        isCollapsed ? 'h-12 w-12 mx-auto justify-center rounded-xl p-0' : 'px-5 py-4 rounded-r-3xl',
-                        'flex items-center transition-all duration-500 group relative overflow-hidden'
+                        route().current(sub.routeName) ? 'bg-coal text-cream shadow-lg rounded-xl border border-brass/20' : 'text-brass/70 hover:bg-white/[0.03] hover:text-cream rounded-xl',
+                        isCollapsed ? 'h-12 w-12 mx-auto justify-center p-0' : 'px-4 py-3.5',
+                        'flex items-center transition-all duration-300 group relative overflow-hidden'
                     ]"
                 >
                     <!-- Active Ambient Glow -->
                     <div v-if="route().current(sub.routeName)" class="absolute inset-0 bg-brass/5 blur-xl pointer-events-none"></div>
 
-                    <div :class="[isCollapsed ? '' : 'mr-5']" class="relative z-10">
+                    <div :class="[isCollapsed ? '' : 'mr-4']" class="relative z-10">
                         <svg xmlns="http://www.w3.org/2000/svg" :class="route().current(sub.routeName) ? 'scale-110' : ''" class="h-6 w-6 transition-transform duration-500 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="sub.icon" />
                         </svg>
@@ -119,7 +119,7 @@ const managementItems = [
 
         <!-- Footer / User Profile -->
         <div class="p-6 mt-auto border-t border-white/[0.05] bg-black/20">
-            <div :class="['flex items-center transition-all hover:bg-[#333333] cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-white/[0.05] p-3']">
+            <div @click="handleLogout" :class="['flex items-center transition-all hover:bg-[#333333]/90 cursor-pointer group', isCollapsed ? 'justify-center h-10 w-10 mx-auto rounded-lg' : 'rounded-2xl border border-white/[0.05] p-3 shadow-md']">
                 <div :class="[isCollapsed ? 'h-8 w-8' : 'h-10 w-10', 'bg-[#A68B6A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#1B1B1B] font-black text-xs shadow-lg transform transition-transform group-hover:scale-105']">
                     {{ user.name.charAt(0) }}
                 </div>
@@ -127,13 +127,12 @@ const managementItems = [
                     <p class="text-[14px] font-bold text-cream truncate tracking-tight font-cormorant">{{ user.name }}</p>
                     <p class="text-[10px] font-bold text-brass/80 truncate group-hover:text-cream transition-colors uppercase tracking-widest font-cinzel">Scribe Active</p>
                 </div>
-                <button 
+                <div 
                     v-if="!isCollapsed"
-                    @click="handleLogout"
-                    class="ml-2 p-2 text-[#A68B6A] hover:text-[#E3D5C1] transition-colors"
+                    class="ml-2 p-2 text-[#A68B6A] group-hover:text-[#E3D5C1] transition-colors"
                 >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                </button>
+                </div>
             </div>
         </div>
     </aside>
@@ -187,20 +186,19 @@ const managementItems = [
 
             <!-- Mobile Footer / User Profile -->
             <div class="mt-8 border-t border-white/[0.05] pt-8">
-                <div class="flex items-center p-4 rounded-2xl bg-black/20 border border-white/[0.05] relative overflow-hidden">
-                    <div class="h-10 w-10 bg-[#8C6A4A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#1B1B1B] font-black text-xs shadow-lg">
+                <div @click="handleLogout" class="flex items-center p-4 rounded-2xl bg-black/20 border border-white/[0.05] relative overflow-hidden group hover:bg-[#333333]/90 cursor-pointer transition-all shadow-md">
+                    <div class="h-10 w-10 bg-[#8C6A4A] rounded-lg flex-shrink-0 flex items-center justify-center text-[#1B1B1B] font-black text-xs shadow-lg transform transition-transform group-hover:scale-105">
                         {{ user.name.charAt(0) }}
                     </div>
                     <div class="ml-4 flex-1 min-w-0">
                         <p class="text-sm font-black text-[#C9B79C] truncate font-cormorant">{{ user.name }}</p>
-                        <p class="text-[10px] font-bold text-[#8C6A4A]/60 uppercase tracking-widest font-cinzel">Scribe Active</p>
+                        <p class="text-[10px] font-bold text-[#8C6A4A]/80 truncate group-hover:text-[#C9B79C] uppercase tracking-widest font-cinzel transition-colors">Scribe Active</p>
                     </div>
-                    <button 
-                        @click="handleLogout"
-                        class="p-2 text-[#8C6A4A]/60 hover:text-[#8C6A4A] transition-colors"
+                    <div 
+                        class="p-2 text-[#8C6A4A]/60 group-hover:text-[#C9B79C] transition-colors"
                     >
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    </button>
+                    </div>
                 </div>
             </div>
         </aside>

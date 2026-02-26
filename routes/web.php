@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
+    Route::patch('/tasks/{task}/pause', [TaskController::class, 'pause'])->name('tasks.pause');
 
     // Vault Routes
     Route::get('/vault', [VaultController::class, 'index'])->name('vault.index');

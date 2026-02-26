@@ -26,7 +26,12 @@ class JournalService
             return [
                 'entryCount' => JournalEntry::where('user_id', $user->id)->count(),
                 // Limit tasks to a reasonable number for dashboard overview or use latest
-                'tasks' => Task::where('user_id', $user->id)->latest()->limit(20)->get(), 
+                'tasks' => Task::where('user_id', $user->id)
+                    ->where('status', '!=', 'completed')
+                    ->orderBy('status', 'desc') // Simple sort: puts in_progress/todo before others
+                    ->latest()
+                    ->limit(50)
+                    ->get(), 
                 'activity' => $activity,
             ];
         });
@@ -59,7 +64,7 @@ class JournalService
 
         $data = [
             'user_id' => $user->id,
-            'title' => $validated['title'] ?? 'Daily Entry - ' . now()->format('M d, Y'),
+            'title' => $validated['title'] ?? 'Daily Entry - ' . \Illuminate\Support\Carbon::parse($validated['entry_date'])->format('M d, Y'),
             'content' => $validated['content'],
             'entry_date' => $validated['entry_date'],
             'image' => $paths['image'],

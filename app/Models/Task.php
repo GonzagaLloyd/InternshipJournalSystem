@@ -15,7 +15,11 @@ class Task extends Model
         '_id',
         'user_id',
         'name',
-        'completed',
+        'status', // todo, in_progress, completed
+        'completed', // Boolean for simple lists
+        'completed_at',
+        'started_at',
+        'total_time_ms',
         'due_date',
         'priority', // low, medium, high
     ];
@@ -29,7 +33,11 @@ class Task extends Model
         'id',
         'user_id',
         'name',
+        'status',
         'completed',
+        'completed_at',
+        'started_at',
+        'total_time_ms',
         'due_date',
         'priority',
         'created_at',
@@ -38,6 +46,9 @@ class Task extends Model
 
     protected $casts = [
         'completed' => 'boolean',
+        'completed_at' => 'datetime',
+        'started_at' => 'datetime',
+        'total_time_ms' => 'integer',
         'due_date' => 'date',
     ];
 

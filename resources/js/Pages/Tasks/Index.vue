@@ -25,6 +25,17 @@ const showDeleteConfirm = ref(false);
 const taskToDelete = ref(null);
 const processingTaskId = ref(null);
 
+const pauseTask = (task) => {
+    if (!task.id) return;
+    processingTaskId.value = task.id;
+    router.patch(route('tasks.pause', { task: task.id }), {}, {
+        preserveScroll: true,
+        onFinish: () => {
+            processingTaskId.value = null;
+        }
+    });
+};
+
 const toggleTask = (task) => {
     console.log('Task object:', task);
     console.log('Task ID:', task.id);
@@ -72,105 +83,229 @@ const confirmDeletion = async () => {
     });
 };
 
+const isBacklogTask = (task) => {
+    if (task.status === 'completed') return false;
+    if (!task.due_date) return false;
+    const due = new Date(task.due_date);
+    due.setHours(23, 59, 59, 999);
+    return new Date() > due;
+};
+
 const sortedTasks = computed(() => {
-    if (!props.tasks) return [];
-    return [...props.tasks].sort((a, b) => {
-        if (a.completed !== b.completed) {
-            return a.completed ? 1 : -1;
+    if (!props.tasks) return {
+        inProgress: [],
+        backlog: [],
+        todo: [],
+        completed: []
+    };
+
+    const tasks = {
+        inProgress: [],
+        backlog: [],
+        todo: [],
+        completed: []
+    };
+
+    const priorityWeight = { high: 3, medium: 2, low: 1 };
+
+    props.tasks.forEach(task => {
+        if (task.status === 'completed') {
+            tasks.completed.push(task);
+        } else if (task.status === 'in_progress') {
+            tasks.inProgress.push(task);
+        } else if (isBacklogTask(task)) {
+            tasks.backlog.push(task);
+        } else {
+            tasks.todo.push(task);
         }
-        return new Date(b.created_at) - new Date(a.created_at);
     });
+
+    // Sort within each group by priority, then by creation date
+    Object.keys(tasks).forEach(key => {
+        tasks[key].sort((a, b) => {
+            const weightA = priorityWeight[a.priority] || 0;
+            const weightB = priorityWeight[b.priority] || 0;
+            
+            if (weightA !== weightB) return weightB - weightA;
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+    });
+
+    return tasks;
 });
+
+const sectionToggles = ref({
+    active: true,
+    overdue: true,
+    upcoming: true,
+    archives: false
+});
+
+const toggleSection = (section) => {
+    sectionToggles.value[section] = !sectionToggles.value[section];
+};
 </script>
 
 <template>
     <Head title="Scriptorium - Tasks" />
 
     <AuthenticatedLayout 
-        title="Active <span class='text-[#8C6A4A]'>Decrees</span>"
-        subtitle="The Scriptorium's Mandate"
+        title="Active <span class='text-brass'>Decrees</span>"
+        subtitle="THE SCRIPTORIUM'S MANDATE"
     >
-        <div class="p-4 md:p-10 lg:p-12 flex flex-col font-serif relative min-h-full">
-            <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col relative z-20">
-                <!-- Action Bar -->
-                <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-6 mb-12 relative z-10 w-full">
-                    <div class="hidden sm:flex flex-col">
-                        <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Scroll to reveal</span>
-                        <div class="h-[1px] w-12 bg-[#8C6A4A]/20 mt-2"></div>
+        <div class="px-6 md:px-12 lg:px-16 py-8 flex flex-col relative font-serif min-h-full">
+            <div class="max-w-[1500px] mx-auto w-full flex-1 flex flex-col relative z-20">
+                
+                <!-- Enhanced Sticky Action Bar -->
+                <div class="sticky top-20 z-[40] -mx-6 md:-mx-12 lg:-mx-16 px-6 md:px-12 lg:px-16 py-4 bg-void/95 backdrop-blur-md border-b border-white/[0.05] flex flex-col gap-6 mb-8 shadow-2xl transition-all duration-500">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase tracking-[0.5em] text-brass font-black">Volume Tracking</span>
+                            <div class="h-[1px] w-8 bg-brass/30 mt-1"></div>
+                        </div>
+
+                        <button 
+                            @click="showCreateModal = true"
+                            class="group flex items-center gap-4 px-8 py-3 bg-brass hover:bg-cream rounded-sm text-void transition-all duration-500 transform active:scale-95 shadow-[0_0_20px_rgba(176,125,78,0.1)] hover:shadow-[0_0_40px_rgba(176,125,78,0.2)]"
+                        >
+                            <span class="text-[11px] font-black uppercase tracking-[0.4em]">Append Decree</span>
+                            <div class="h-5 w-5 rounded-full bg-void/10 flex items-center justify-center group-hover:bg-void/20 transition-colors">
+                                <svg class="w-3.5 h-3.5 text-void" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 6v12m6-6H6" /></svg>
+                            </div>
+                        </button>
                     </div>
 
-                    <button 
-                        @click="showCreateModal = true"
-                        class="w-full sm:w-auto group flex items-center justify-center gap-4 px-8 md:px-10 py-4 bg-[#8C6A4A]/10 border border-[#8C6A4A]/30 rounded-sm text-[#C9B79C] hover:bg-[#8C6A4A] transition-all duration-500 shadow-lg hover:shadow-[#8C6A4A]/20"
-                    >
-                        <span class="text-[10px] font-black uppercase tracking-[0.3em] font-serif">Append Decree</span>
-                        <div class="h-6 w-6 rounded-full border border-[#C9B79C]/30 flex items-center justify-center group-hover:border-[#C9B79C] transition-colors">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6" />
-                            </svg>
-                        </div>
-                    </button>
+                    <!-- Spreadsheet Align Headers -->
+                    <div class="hidden lg:grid grid-cols-12 gap-4 px-12 opacity-20">
+                        <div class="col-span-5 text-[9px] uppercase tracking-[0.8em] font-black">Decree Identifier</div>
+                        <div class="col-span-2 text-[9px] uppercase tracking-[0.8em] font-black text-center">Urgency</div>
+                        <div class="col-span-3 text-[9px] uppercase tracking-[0.8em] font-black text-center">Ritual State</div>
+                        <div class="col-span-2 text-[9px] uppercase tracking-[0.8em] font-black text-right pr-4">Seal Date</div>
+                    </div>
                 </div>
 
-                <!-- Task List -->
-                <div class="flex-1 overflow-y-auto scrollbar-hide pr-2">
-                    <!-- Skeleton State -->
+                <!-- Simplified Task Volumes -->
+                <div class="flex-1 space-y-12">
+                    <!-- Loading State -->
                     <template v-if="props.tasks === null">
-                        <div class="space-y-12">
-                            <div v-for="i in 2" :key="i" class="space-y-6">
-                                <div class="px-8 flex items-center gap-4">
-                                    <SkeletonLoader width="12rem" height="1rem" opacity="0.05" />
-                                    <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
-                                </div>
-                                <div class="bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden divide-y divide-[#3d352e]/10">
-                                    <div v-for="j in 3" :key="j" class="px-8 py-6 flex items-center justify-between">
-                                        <div class="flex items-center gap-6 flex-1">
-                                            <SkeletonLoader width="1.5rem" height="1.5rem" borderRadius="50%" />
-                                            <div class="space-y-2 flex-1">
-                                                <SkeletonLoader width="40%" height="1.2rem" />
-                                                <SkeletonLoader width="20%" height="0.6rem" opacity="0.03" />
-                                            </div>
-                                        </div>
-                                        <SkeletonLoader width="4rem" height="1.5rem" />
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="space-y-4">
+                            <div v-for="i in 10" :key="i" class="h-16 bg-white/[0.01] border-b border-white/[0.02] animate-pulse"></div>
                         </div>
                     </template>
 
                     <template v-else>
-                        <!-- Outstanding Decrees (Active) -->
-                        <div v-if="sortedTasks.some(t => !t.completed)" class="mb-12">
-                            <div class="px-8 mb-6 flex items-center gap-4">
-                                <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A] font-black">Outstanding Decrees</span>
-                                <div class="h-[1px] flex-1 bg-[#8C6A4A]/10"></div>
+                        <!-- Section: Active -->
+                        <div v-if="sortedTasks.inProgress.length > 0">
+                            <div 
+                                @click="toggleSection('active')"
+                                class="flex items-center gap-4 mb-4 px-6 opacity-40 hover:opacity-100 cursor-pointer transition-opacity group"
+                            >
+                                <span class="text-[9px] uppercase tracking-[0.5em] font-black text-brass">Active Mandates</span>
+                                <div class="h-[1px] flex-1 bg-brass/20"></div>
+                                <svg 
+                                    :class="['w-3 h-3 transition-transform duration-300', sectionToggles.active ? 'rotate-180' : '']" 
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
                             </div>
-                            <div class="divide-y divide-[#3d352e]/10 bg-[#2D2D2D]/20 rounded-[2rem] border border-white/5 overflow-hidden">
+                            
+                            <div v-show="sectionToggles.active" class="flex flex-col rounded-lg overflow-hidden">
                                 <TaskItem 
-                                    v-for="task in sortedTasks.filter(t => !t.completed)" 
+                                    v-for="task in sortedTasks.inProgress" 
                                     :key="task.id"
                                     :task="task"
                                     :processing="processingTaskId === task.id"
                                     @toggle="toggleTask"
                                     @delete="deleteTask"
+                                    @pause="pauseTask"
                                 />
                             </div>
                         </div>
 
-                        <!-- Fulfilled Records (Completed) -->
-                        <div v-if="sortedTasks.some(t => t.completed)" class="opacity-50">
-                            <div class="px-8 mb-6 flex items-center gap-4">
-                                <span class="text-[10px] uppercase tracking-[0.4em] text-[#8C6A4A]/40 font-black">Fulfilled Records</span>
-                                <div class="h-[1px] flex-1 bg-[#8C6A4A]/5"></div>
+                        <!-- Section: Overdue -->
+                        <div v-if="sortedTasks.backlog.length > 0">
+                            <div 
+                                @click="toggleSection('overdue')"
+                                class="flex items-center gap-4 mb-4 px-6 opacity-40 hover:opacity-100 cursor-pointer transition-opacity group"
+                            >
+                                <span class="text-[9px] uppercase tracking-[0.5em] font-black text-red-500">Overdue Ordinances</span>
+                                <div class="h-[1px] flex-1 bg-red-500/20"></div>
+                                <svg 
+                                    :class="['w-3 h-3 transition-transform duration-300', sectionToggles.overdue ? 'rotate-180' : '']" 
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
                             </div>
-                            <div class="divide-y divide-[#3d352e]/5">
+                            
+                            <div v-show="sectionToggles.overdue" class="flex flex-col rounded-lg overflow-hidden">
                                 <TaskItem 
-                                    v-for="task in sortedTasks.filter(t => t.completed)" 
+                                    v-for="task in sortedTasks.backlog" 
                                     :key="task.id"
                                     :task="task"
                                     :processing="processingTaskId === task.id"
                                     @toggle="toggleTask"
                                     @delete="deleteTask"
+                                    @pause="pauseTask"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Section: Upcoming -->
+                        <div v-if="sortedTasks.todo.length > 0">
+                            <div 
+                                @click="toggleSection('upcoming')"
+                                class="flex items-center gap-4 mb-4 px-6 opacity-40 hover:opacity-100 cursor-pointer transition-opacity group"
+                            >
+                                <span class="text-[9px] uppercase tracking-[0.5em] font-black text-parchment">Upcoming Decrees</span>
+                                <div class="h-[1px] flex-1 bg-white/10"></div>
+                                <svg 
+                                    :class="['w-3 h-3 transition-transform duration-300', sectionToggles.upcoming ? 'rotate-180' : '']" 
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                            
+                            <div v-show="sectionToggles.upcoming" class="flex flex-col rounded-lg overflow-hidden">
+                                <TaskItem 
+                                    v-for="task in sortedTasks.todo" 
+                                    :key="task.id"
+                                    :task="task"
+                                    :processing="processingTaskId === task.id"
+                                    @toggle="toggleTask"
+                                    @delete="deleteTask"
+                                    @pause="pauseTask"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Section: Completed -->
+                        <div v-if="sortedTasks.completed.length > 0" class="pb-20">
+                            <div 
+                                @click="toggleSection('archives')"
+                                class="flex items-center gap-4 mb-4 px-6 opacity-30 hover:opacity-100 cursor-pointer transition-all group"
+                            >
+                                <span class="text-[9px] uppercase tracking-[0.5em] font-black">Fulfilled Records</span>
+                                <div class="h-[1px] flex-1 bg-white/5"></div>
+                                <svg 
+                                    :class="['w-3 h-3 transition-transform duration-300', sectionToggles.archives ? 'rotate-180' : '']" 
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                            
+                            <div v-show="sectionToggles.archives" class="flex flex-col rounded-lg overflow-hidden opacity-40 hover:opacity-100 transition-opacity">
+                                <TaskItem 
+                                    v-for="task in sortedTasks.completed" 
+                                    :key="task.id"
+                                    :task="task"
+                                    :processing="processingTaskId === task.id"
+                                    @toggle="toggleTask"
+                                    @delete="deleteTask"
+                                    @pause="pauseTask"
                                 />
                             </div>
                         </div>
